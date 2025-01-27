@@ -1,0 +1,44 @@
+{
+  "id": "ps-command-palette",
+  "name": "Ps Command Palette",
+  "version": "0.1.0",
+  "main": "index.html",
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "26.2.0"
+    }
+  ],
+  "manifestVersion": 5,
+  "requiredPermissions": {
+    "localFileSystem": "plugin"
+  },
+  "entrypoints": [
+    {
+      "type": "command",
+      "id": "launchPalette",
+      "label": "Open Command Palette"
+    },
+    {
+      "type": "command",
+      "id": "reloadPlugin",
+      "label": "Reload Plugin"
+    }
+  ],
+  "icons": [
+    {
+      "width": 23,
+      "height": 23,
+      "path": "icons/dark.png",
+      "scale": [1, 2],
+      "theme": ["darkest", "dark", "medium"]
+    },
+    {
+      "width": 23,
+      "height": 23,
+      "path": "icons/light.png",
+      "scale": [1, 2],
+      "theme": ["lightest", "light"]
+    }
+  ]
+}

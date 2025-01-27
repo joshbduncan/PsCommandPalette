@@ -1,0 +1,15 @@
+#query {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+#commands {
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+}
+
+sp-menu-item {
+  width: 100%;
+  height: 30px;
+}
