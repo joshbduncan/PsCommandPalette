@@ -1,12 +1,11 @@
 # Ps Command Palette
 
-> [!WARNING]
-> This project is experimental and under active development.
-
 Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, and **more**.
 
-> [!TIP]
-> I have a similar ExtendScript/ScriptUI based project for Adobe Illustrator called [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
+![ps-command-palette](https://github.com/user-attachments/assets/edf5e3fb-e0ce-4d42-aaed-a98c150a989e)
+
+> [!WARNING]
+> This project is experimental and under active development. It will be losely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
 
 ## To-dos
 
@@ -16,6 +15,7 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 - [ ] capture keyboard shortcut combinations in modal (not looking good)
 - [ ] remove/hide <sp-menu-item> selected checkmark
 - [ ] figure out workflows
+- [ ] update plugin icons
 
 ## Project Links
 
