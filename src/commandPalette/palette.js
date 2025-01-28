@@ -15,21 +15,17 @@ class CommandPalette {
     const form = document.createElement("form");
     const body = document.createElement("sp-body");
 
-    // setup queryBox
-    const querybox = new QueryBox(this);
-    body.appendChild(querybox.element);
-
-    // setup divider
+    // setup form elements
+    const listbox = new ListBox(this.commands);
+    const querybox = new QueryBox(listbox);
     const divider = document.createElement("sp-divider");
+    divider.setAttribute("id", "query-listbox-divider");
     divider.setAttribute("size", "medium");
-    divider.setAttribute("style", "margin:0 0 5px 0");
+
+    // add elements to the body and the body to the form
+    body.appendChild(querybox.element);
     body.appendChild(divider);
-
-    // setup listbox
-    const listbox = new ListBox(this);
     body.appendChild(listbox.element);
-
-    // add the body to the form
     form.appendChild(body);
 
     // add the form to the dialog
@@ -40,6 +36,13 @@ class CommandPalette {
 
     // setup event listeners
 
+    // auto-focus input
+    dialog.addEventListener("load", () => {
+      setTimeout(() => {
+        querybox.element.focus();
+      }, 150);
+    });
+
     // listen for command clicked event
     document.addEventListener("paletteCommandCLicked", function (event) {
       console.log("clicked command:", event.detail.command);
@@ -47,13 +50,6 @@ class CommandPalette {
         query: querybox.element.value,
         command: event.detail.command,
       });
-    });
-
-    // auto-focus input
-    dialog.addEventListener("load", () => {
-      setTimeout(() => {
-        querybox.element.focus();
-      }, 150);
     });
 
     // allow enter selection
@@ -64,43 +60,12 @@ class CommandPalette {
       event.preventDefault();
     });
 
-    querybox.element.addEventListener("input", (event) => {
-      console.log(`New value: ${event.target.value}`);
-      listbox.filterCommands(event.target.value);
-      listbox.element.selectedIndex = 0;
-    });
-
-    // allow keyboard listbox menu navigation with end-to-end scrolling
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        const items = listbox.element.children.length;
-        const cur = listbox.element.selectedIndex;
-        console.log("current index:", cur, "items:", items);
-        if (cur >= items - 1) {
-          listbox.element.selectedIndex = 0;
-        } else {
-          listbox.element.selectedIndex++;
-        }
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        const items = listbox.element.children.length;
-        const cur = listbox.element.selectedIndex;
-        console.log("current index:", cur, "items:", items);
-        if (cur <= 0) {
-          listbox.element.selectedIndex = items - 1;
-        } else {
-          listbox.element.selectedIndex--;
-        }
-      }
-    });
-
     const result = await dialog.uxpShowModal({
       title: "Ps Command Palette",
-      resize: "both",
+      resize: "vertical",
       size: {
-        width: 600,
-        height: 396,
+        width: 680,
+        height: 680,
       },
     });
 

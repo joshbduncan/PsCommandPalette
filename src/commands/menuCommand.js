@@ -13,9 +13,11 @@ class MenuCommand extends Command {
     this.checked = obj.checked;
     this.menuShortcut = obj.menuShortcut;
     this.path = obj.path;
-    this.textContent = this.path.join(" > ");
+    this.textContent =
+      this.name === "" ? this.title.replace(/\.\.\.$/g, "") : this.name;
+    this.description = this.path.join(" > ");
 
-    this.createElement(this.textContent);
+    this.createElement(this.textContent, this.description);
   }
 
   async getState() {

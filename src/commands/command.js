@@ -4,11 +4,29 @@ class Command {
     this.element;
   }
 
-  createElement(textContent) {
-    const command = document.createElement("sp-menu-item");
-    command.setAttribute("command-id", this.id);
-    command.textContent = textContent;
-    this.element = command;
+  createElement(title, description) {
+    const menuItem = document.createElement("sp-menu-item");
+    menuItem.setAttribute("id", this.id);
+    menuItem.setAttribute("command-id", this.id);
+    menuItem.textContent = title;
+
+    const descriptionLabel = document.createElement("sp-label");
+    descriptionLabel.setAttribute("id", `${this.id}-description`);
+    descriptionLabel.classList.add("description");
+    descriptionLabel.textContent = description;
+
+    // TODO: add keyboard shortcut
+    // <kbd slot="value">⌘S</kbd> or ::after and attr(data-kbd)
+    const kbdShortcut = document.createElement("kbd");
+    kbdShortcut.innerText = "";
+
+    // TODO: add icon
+
+    menuItem.appendChild(descriptionLabel);
+    menuItem.appendChild(kbdShortcut);
+
+    this.element = menuItem;
+
     this.addEventListeners();
   }
 

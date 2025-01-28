@@ -33,16 +33,16 @@ class Commands {
     // TODO: load other command types (built-in, tool, action, script, etc.)
     return this;
   }
-
-  async reloadCommands() {
-    console.log("reloading commands");
-    Object.keys(this.data).forEach((key) => delete obj[key]);
-    this.loadCommands();
-  }
 }
 
 async function loadMenuCommands() {
+  const menusToIgnore = ["Open Recent"];
+  const menuItemsToIgnore = [];
+
   function cleanTitle(title) {
+    if (!title.includes("&")) {
+      return title;
+    }
     const arr = title.split(" & ");
     arr.forEach((value, index) => {
       arr[index] = value.replace(/&/g, "");
@@ -61,16 +61,23 @@ async function loadMenuCommands() {
 
     if (obj.submenu && Array.isArray(obj.submenu)) {
       for (const submenu of obj.submenu) {
-        const title = submenu.title.includes("&")
-          ? cleanTitle(submenu.title)
-          : submenu.title;
-        const newPath = [...path, title];
+        // filter out entire menus known not to work
+        if (menusToIgnore.includes(submenu.title)) continue;
+
+        // filter out menu commands known not to work
+        if (menuItemsToIgnore.includes(submenu.title)) continue;
+
+        const newPath = [...path, cleanTitle(submenu.title)];
         results.push(...buildMenuCommands(submenu, newPath));
       }
     }
 
     if (obj.kind === "item") {
       obj.path = path;
+      obj.title = cleanTitle(obj.title);
+      if (obj.name === "") {
+        obj.name = obj.title;
+      }
       let command = new MenuCommand(obj);
       results.push(command);
     }

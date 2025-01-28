@@ -3,6 +3,14 @@
   margin-bottom: 8px;
 }
 
+#query-listbox-divider {
+  margin: 15px 0 20px 0;
+}
+
+#alert-divider {
+  margin: 5px 0 15px 0;
+}
+
 #commands {
   height: auto;
   width: 100%;
@@ -11,5 +19,48 @@
 
 sp-menu-item {
   width: 100%;
-  height: 30px;
+  height: 45px;
+  padding: 30px 15px;
+  font-size: var(--uxp-h1-font-size);
+
+  /* TODO: truncate with ellipsis */
+
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; */
 }
+
+sp-label.description {
+  display: block !important;
+
+  /* TODO: truncate with ellipsis */
+
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; */
+}
+
+kbd {
+  position: absolute;
+  float: right;
+  height: auto;
+  width: 30px;
+  top: 30%;
+  right: 15px;
+  text-align: center;
+}
+
+[selected] {
+  background-color: var(--uxp-host-link-text-color);
+  color: var(--uxp-host-link-hover-text-color);
+  font-weight: bolder;
+}
+
+[selected] > sp-label.description {
+  color: var(--uxp-host-link-hover-text-color);
+}
+
+/* TODO: remove checkmark */
+/* https://github.com/adobe/spectrum-web-components/blob/main/packages/menu/src/spectrum-checkmark.css */
