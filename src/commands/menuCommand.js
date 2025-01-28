@@ -1,9 +1,9 @@
 const { core } = require("photoshop");
-const { Command } = require("./command.js");
+const { Command, CommandTypes } = require("./command.js");
 
 class MenuCommand extends Command {
   constructor(obj) {
-    super(obj.command);
+    super(obj.command, CommandTypes.MENU);
 
     this.command = obj.command;
     this.title = obj.title;

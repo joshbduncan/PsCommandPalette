@@ -52,14 +52,46 @@ kbd {
   text-align: center;
 }
 
+sp-icon {
+  position: absolute;
+  float: right;
+  height: auto;
+  width: 30px;
+  top: 30%;
+  right: 15px;
+  text-align: center;
+}
+
+.icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+svg {
+  color: white !important;
+  fill: rgba(255, 255, 255, 0.5);
+}
+
+svg .fill {
+  fill: rgba(255, 255, 255, 0.5) !important;
+}
+
 [selected] {
-  background-color: var(--uxp-host-link-text-color);
+  /* TODO: figure out how to hide checkmark */
+  background-color: #378ef0; /* color of check mark to hide */
+  /* background-color: var(--uxp-host-link-text-color); */
   color: var(--uxp-host-link-hover-text-color);
   font-weight: bolder;
 }
 
 [selected] > sp-label.description {
   color: var(--uxp-host-link-hover-text-color);
+}
+
+[selected]:hover {
+  background-color: #4b9cf6;
 }
 
 /* TODO: remove checkmark */

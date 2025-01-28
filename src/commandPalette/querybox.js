@@ -12,7 +12,7 @@ class QueryBox {
   addEventListeners() {
     // update commands on query input
     this.element.addEventListener("input", (event) => {
-      console.log(`New value: ${event.target.value}`);
+      console.log("query:", event.target.value);
       this.listbox.filterCommands(event.target.value);
       this.listbox.element.selectedIndex = 0;
     });

@@ -13,12 +13,8 @@ class ListBox {
     const startupCommandIDs = [1030, 15204, 101];
     let startupCommands = this.commands.data;
 
-    console.log(startupCommandIDs.includes("101"));
-    console.log(typeof this.commands.data[0].id);
-
     for (let i = 0; i < this.commands.data.length; i++) {
       const element = this.commands.data[i];
-      console.log(element.name, startupCommandIDs.includes(element.id));
     }
 
     startupCommands = startupCommands.filter((command) =>
@@ -28,8 +24,8 @@ class ListBox {
     console.log("startupCommands:", startupCommands);
 
     startupCommands.slice(0, 9).forEach((command, index) => {
-      const kbdContent = index === 0 ? "↩" : `⌘${index + 1}`;
-      command.element.getElementsByTagName("kbd")[0].textContent = kbdContent;
+      // const kbdContent = index === 0 ? "↩" : `⌘${index + 1}`;
+      // command.element.getElementsByTagName("kbd")[0].textContent = kbdContent;
       this.element.appendChild(command.element);
     });
 
@@ -45,8 +41,8 @@ class ListBox {
         const cur = this.element.selectedIndex;
 
         // update the current kbd shortcut
-        const curChild = this.element.children[this.element.selectedIndex];
-        curChild.getElementsByTagName("kbd")[0].textContent = `⌘${cur + 1}`;
+        // const curChild = this.element.children[this.element.selectedIndex];
+        // curChild.getElementsByTagName("kbd")[0].textContent = `⌘${cur + 1}`;
 
         // move the selection
         if (cur >= items - 1) {
@@ -56,17 +52,16 @@ class ListBox {
         }
 
         // update the new kbd shortcut
-        const activeChild = this.element.children[this.element.selectedIndex];
-        activeChild.getElementsByTagName("kbd")[0].textContent = "↩";
-        kbd;
+        // const activeChild = this.element.children[this.element.selectedIndex];
+        // activeChild.getElementsByTagName("kbd")[0].textContent = "↩";
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
         const items = this.element.children.length;
         const cur = this.element.selectedIndex;
 
         // update the current kbd shortcut
-        const curChild = this.element.children[this.element.selectedIndex];
-        curChild.getElementsByTagName("kbd")[0].textContent = `⌘${cur + 1}`;
+        // const curChild = this.element.children[this.element.selectedIndex];
+        // curChild.getElementsByTagName("kbd")[0].textContent = `⌘${cur + 1}`;
 
         // move the selection
         if (cur <= 0) {
@@ -76,8 +71,8 @@ class ListBox {
         }
 
         // update the current kbd shortcut
-        const activeChild = this.element.children[this.element.selectedIndex];
-        activeChild.getElementsByTagName("kbd")[0].textContent = "↩";
+        // const activeChild = this.element.children[this.element.selectedIndex];
+        // activeChild.getElementsByTagName("kbd")[0].textContent = "↩";
       }
     });
   }
@@ -110,11 +105,9 @@ class ListBox {
 
     console.log(`found ${matches.length} matches`);
 
-    // TODO: set selected attribute
-    // for (var i = 0; i < 9; i++) {}
     matches.slice(0, 9).forEach((command, index) => {
-      const kbdContent = index === 0 ? "↩" : `⌘${index + 1}`;
-      command.element.getElementsByTagName("kbd")[0].textContent = kbdContent;
+      // const kbdContent = index === 0 ? "↩" : `⌘${index + 1}`;
+      // command.element.getElementsByTagName("kbd")[0].textContent = kbdContent;
       this.element.appendChild(command.element);
     });
   }
