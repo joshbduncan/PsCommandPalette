@@ -5,7 +5,6 @@ const { entrypoints } = require("uxp");
 const { alertDialog } = require("./src/dialogs/alert.js");
 const { CommandsData } = require("./src/commands/CommandsData.js");
 const { CommandPalette } = require("./src/CommandPalette.js");
-const { MenuCommand } = require("./src/commands/MenuCommand.js");
 
 // get plugin info
 const manifest = require("./manifest.json");

@@ -18,27 +18,28 @@ class Command {
    * @param {string|number} id Unique command id
    * @param {string} name Command name
    * @param {string} type Command type
-   * @param {boolean} enabled Is command enabled for use (e.g. menu command not currently applicable)
+   * @param {boolean} enabled Is command enabled for use (defaults to true)
    */
   constructor(id, name, type, enabled = true) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.enabled = enabled;
+    this.hint = null;
     this.element = null;
   }
 
   /**
-   *
-   * @param {string} title Command display title
+   * Create an HTML document `sp-menu-item` element for the command.
+   * @param {string} displayText Command display title
    * @param {string} description Command description for display (e.g. menu path for menu command)
-   * @returns {Element} HTML document `sp-menu-item` element
+   * @returns {Element}
    */
-  createElement(title, description) {
+  createElement(displayText, description) {
     const menuItem = document.createElement("sp-menu-item");
     menuItem.setAttribute("id", this.id);
     menuItem.setAttribute("command-id", this.id);
-    menuItem.textContent = title;
+    menuItem.textContent = displayText;
 
     const descriptionLabel = document.createElement("sp-label");
     descriptionLabel.setAttribute("id", `${this.id}-description`);
