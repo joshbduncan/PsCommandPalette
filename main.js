@@ -3,11 +3,16 @@ const { core } = require("photoshop");
 const { entrypoints } = require("uxp");
 
 const { alertDialog } = require("./src/dialogs/alert.js");
-const { Commands } = require("./src/commands/commands.js");
-const { CommandPalette } = require("./src/commandPalette/palette.js");
-const { MenuCommand } = require("./src/commands/menuCommand.js");
+const { CommandsModel } = require("./src/commands/CommandsModel.js");
+const { CommandPalette } = require("./src/CommandPalette.js");
+const { MenuCommand } = require("./src/commands/MenuCommand.js");
 
-console.log("loading ps-command-palette");
+console.log("loading plugin: ps-command-palette plugin");
+
+// FIXME: temp user data for testing
+const userData = {
+  startupCommands: [1030, 15204, 101],
+};
 
 entrypoints.setup({
   commands: {
@@ -22,16 +27,23 @@ reloadPlugin = () => {
 };
 
 async function launchPalette() {
-  console.log("launching palette");
+  let commands;
 
   // load palette commands
-  const commands = new Commands();
-  await commands.loadCommands();
-  console.log(`loaded ${Object.keys(commands.data).length} total commands`);
+  try {
+    commands = new CommandsModel();
+    await commands.loadCommands();
+    console.log(`loaded ${Object.keys(commands.commands).length} total commands`);
+  } catch (error) {
+    // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
+    console.log("load commands error:", error);
+  }
 
   try {
     // open command palette modal
-    let palette = new CommandPalette(commands);
+    const palette = new CommandPalette(commands);
+    console.log("palette", palette);
+
     const result = await palette.open();
     console.log("modal result:", result);
 

@@ -7,15 +7,22 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 > [!WARNING]
 > This project is experimental and under active development. It will be losely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
 
+## Known Issues
+
+- After an unknown amount of Ps inactivity menu commands that are considered "available" can't be executed via the api even thought they can still be executed in the ui.
+
 ## To-dos
 
 - [ ] load other command types (tools, actions, custom, etc.)
+    - [ ] add getters for other command types
 - [ ] save query history
 - [ ] implement fuzzy filter for querybox (with history scoring)
 - [ ] capture keyboard shortcut combinations in modal (not looking good)
 - [ ] remove/hide <sp-menu-item> selected checkmark
 - [ ] figure out workflows
 - [ ] update plugin icons
+- [ ] add icon to alert modal
+- [ ] enable menu recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
 
 ## Project Links
 
