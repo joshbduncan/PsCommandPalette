@@ -41,6 +41,21 @@ class MenuCommand extends Command {
    */
   async execute() {
     console.log("executing menu command:", this);
+
+    // ensure a menu command is still available since
+    // sometimes after long periods between app operations
+    // ps will report the command is available (e.g. undo and redo)
+    const commandState = await core.getMenuCommandState({ commandID: this.id });
+    console.log("menu command state:", commandState);
+    if (!commandState[0]) {
+      await alertDialog(
+        "Command Not Available",
+        null,
+        "Photoshop is reporting that your selected command not available via the API at this time."
+      );
+      return;
+    }
+
     return await core.performMenuCommand({ commandID: this.command });
   }
 }

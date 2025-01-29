@@ -64,8 +64,7 @@ class Command {
    */
   addEventListeners() {
     this.element.addEventListener("click", (event) => {
-      console.log("clicked command:", event.target.value);
-      const customEvent = new CustomEvent("paletteCommandCLicked", {
+      const customEvent = new CustomEvent("paletteCommandSelected", {
         detail: {
           originalEvent: event,
           command: this,

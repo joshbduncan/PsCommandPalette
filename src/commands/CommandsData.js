@@ -5,7 +5,7 @@ const { Command } = require("./Command.js");
 /**
  * Create a commands data model for the plugin.
  */
-class CommandsModel {
+class CommandsData {
   /**
    * Create a Commands object.
    */
@@ -33,7 +33,7 @@ class CommandsModel {
 
   get startupCommands() {
     return this.commands.filter((command) => {
-      return userData.startupCommands.includes(command.id);
+      return USER_DATA.startupCommands.includes(command.id);
     });
   }
 
@@ -70,7 +70,7 @@ class CommandsModel {
       return command.name.toLowerCase().includes(query.toLowerCase());
     });
 
-    console.log("query match:", matches);
+    console.log("matching commands:", matches.length);
 
     return matches;
   }
@@ -209,5 +209,5 @@ async function loadMenuCommands() {
 }
 
 module.exports = {
-  CommandsModel: CommandsModel,
+  CommandsData: CommandsData,
 };

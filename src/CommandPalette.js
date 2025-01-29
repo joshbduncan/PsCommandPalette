@@ -1,8 +1,4 @@
 class CommandPalette {
-  constructor(commands) {
-    this.commands = commands;
-  }
-
   async open() {
     console.log("opening command palette:", this);
 
@@ -66,9 +62,11 @@ class CommandPalette {
 
     // auto-focus querybox input
     dialog.addEventListener("load", () => {
-      setTimeout(() => {
-        querybox.focus();
-      }, 100);
+      querybox.focus();
+      // TODO: do I need to wait?
+      // setTimeout(() => {
+      //   querybox.focus();
+      // }, 100);
     });
 
     // update commands on query input
@@ -79,7 +77,7 @@ class CommandPalette {
       listbox.innerHTML = "";
 
       // query commands for matches
-      const matches = this.commands.filterByQuery(event.target.value);
+      const matches = COMMAND_DATA.filterByQuery(event.target.value);
 
       // TODO: sort matches
 
@@ -96,8 +94,8 @@ class CommandPalette {
     });
 
     // listen for command clicked event
-    document.addEventListener("paletteCommandCLicked", function (event) {
-      console.log("clicked command:", event.detail.command);
+    document.addEventListener("paletteCommandSelected", function (event) {
+      console.log("selected command:", event.detail.command);
       dialog.close({
         query: querybox.value,
         command: event.detail.command,
@@ -145,7 +143,7 @@ class CommandPalette {
 
     // FIXME: temp adding elements on creation for testing
     console.log("loading startup commands");
-    this.commands.startupCommands.forEach((command) => {
+    COMMAND_DATA.startupCommands.forEach((command) => {
       if (command.element === null) {
         command.createElement();
       }

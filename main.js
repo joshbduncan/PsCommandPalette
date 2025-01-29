@@ -3,16 +3,20 @@ const { core } = require("photoshop");
 const { entrypoints } = require("uxp");
 
 const { alertDialog } = require("./src/dialogs/alert.js");
-const { CommandsModel } = require("./src/commands/CommandsModel.js");
+const { CommandsData } = require("./src/commands/CommandsData.js");
 const { CommandPalette } = require("./src/CommandPalette.js");
 const { MenuCommand } = require("./src/commands/MenuCommand.js");
 
-console.log("loading plugin: ps-command-palette plugin");
+// get plugin info
+const manifest = require("./manifest.json");
+const pluginName = manifest.name;
+const pluginVersion = manifest.version;
+
+console.log("loading plugin:", pluginName, `v${pluginVersion}`);
 
 // FIXME: temp user data for testing
-const userData = {
-  startupCommands: [1030, 15204, 101],
-};
+const USER_DATA = {};
+USER_DATA["startupCommands"] = [1030, 15204, 101];
 
 entrypoints.setup({
   commands: {
@@ -27,13 +31,11 @@ reloadPlugin = () => {
 };
 
 async function launchPalette() {
-  let commands;
-
   // load palette commands
   try {
-    commands = new CommandsModel();
-    await commands.loadCommands();
-    console.log(`loaded ${Object.keys(commands.commands).length} total commands`);
+    COMMAND_DATA = new CommandsData();
+    await COMMAND_DATA.loadCommands();
+    console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
   } catch (error) {
     // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
     console.log("load commands error:", error);
@@ -41,7 +43,7 @@ async function launchPalette() {
 
   try {
     // open command palette modal
-    const palette = new CommandPalette(commands);
+    const palette = new CommandPalette();
     console.log("palette", palette);
 
     const result = await palette.open();
@@ -53,22 +55,6 @@ async function launchPalette() {
 
     const query = result.query;
     const command = result.command;
-
-    // ensure a menu command is still available since
-    // sometimes after long periods between app operations
-    // ps will report the command is available (e.g. undo and redo)
-    if (command instanceof MenuCommand) {
-      const commandState = await core.getMenuCommandState({ commandID: command.id });
-      console.log("menu command state:", commandState);
-      if (!commandState[0]) {
-        await alertDialog(
-          "Command Not Available",
-          null,
-          "Photoshop is reporting that your selected command not available at this time."
-        );
-        return;
-      }
-    }
 
     // execute selected command
     const execution = await command.execute();
