@@ -72,7 +72,7 @@ class MenuCommand extends Command {
     // ensure a menu command is still available since
     // sometimes after long periods between app operations
     // ps will report the command is available (e.g. undo and redo)
-    const commandState = await core.getMenuCommandState({ commandID: this.id });
+    const commandState = await core.getMenuCommandState({ commandID: this.command });
     console.log("menu command state:", commandState);
     if (!commandState[0]) {
       await alertDialog(
