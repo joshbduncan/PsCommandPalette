@@ -3,11 +3,11 @@ const { MenuCommand } = require("./MenuCommand.js");
 const { Command } = require("./Command.js");
 
 /**
- * Create a commands data model for the plugin.
+ * Ps Command Palette Commands Data.
  */
-class CommandsData {
+class CommandData {
   /**
-   * Create a Commands object.
+   * Create a CommandData object.
    */
   constructor() {
     this.commands = [];
@@ -32,8 +32,9 @@ class CommandsData {
   }
 
   get startupCommands() {
+    // TODO: filter out unavailable commands or make them disabled
     return this.commands.filter((command) => {
-      return USER_DATA.startupCommands.includes(command.id);
+      return USER.data.startupCommands.includes(command.id);
     });
   }
 
@@ -121,15 +122,18 @@ class CommandsData {
    */
   async loadCommands() {
     console.log("loading commands...");
+    const commands = [];
 
     // load menu commands
     console.log("loading menu commands");
     try {
       const menuCommands = await loadMenuCommands();
-      this.commands.push(...menuCommands);
+      commands.push(...menuCommands);
     } catch (error) {
       console.log("error loading menu commands:", error);
     }
+
+    this.commands = commands;
   }
 }
 
@@ -209,5 +213,5 @@ async function loadMenuCommands() {
 }
 
 module.exports = {
-  CommandsData: CommandsData,
+  CommandData: CommandData,
 };

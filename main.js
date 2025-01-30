@@ -3,19 +3,20 @@ const { core } = require("photoshop");
 const { entrypoints } = require("uxp");
 
 const { alertDialog } = require("./src/dialogs/alert.js");
-const { CommandsData } = require("./src/commands/CommandsData.js");
+const { User } = require("./src/User.js");
+const { CommandData } = require("./src/commands/CommandData.js");
 const { CommandPalette } = require("./src/CommandPalette.js");
 
 // get plugin info
 const manifest = require("./manifest.json");
-const pluginName = manifest.name;
-const pluginVersion = manifest.version;
+const PLUGIN_NAME = manifest.name;
+const PLUGIN_VERSION = manifest.version;
 
-console.log("loading plugin:", pluginName, `v${pluginVersion}`);
+// setup data objects
+const USER = new User();
+const COMMAND_DATA = new CommandData();
 
-// FIXME: temp user data for testing
-const USER_DATA = {};
-USER_DATA["startupCommands"] = [1030, 15204, 101];
+console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 
 entrypoints.setup({
   commands: {
@@ -30,15 +31,13 @@ reloadPlugin = () => {
 };
 
 async function launchPalette() {
+  // load user data
+  await USER.load();
+  console.log(USER.data);
+
   // load palette commands
-  try {
-    COMMAND_DATA = new CommandsData();
-    await COMMAND_DATA.loadCommands();
-    console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
-  } catch (error) {
-    // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
-    console.log("load commands error:", error);
-  }
+  await COMMAND_DATA.loadCommands();
+  console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
 
   try {
     // open command palette modal
@@ -55,12 +54,18 @@ async function launchPalette() {
     const query = result.query;
     const command = result.command;
 
+    // add result to history
+    if (query != "") {
+      USER.data.history.push({ query: query, commandID: command.id });
+      USER.write();
+    }
+
     // execute selected command
     const execution = await command.execute();
     console.log("execution:", execution);
 
     if (!execution.available) {
-      const z = await alertDialog(
+      await alertDialog(
         "Command Execution Error",
         null,
         "There was an error executing your command."

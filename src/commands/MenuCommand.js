@@ -11,8 +11,9 @@ class MenuCommand extends Command {
    */
   constructor(obj) {
     const name = obj.name === "" ? obj.title.replace(/\.\.\.$/g, "") : obj.name;
+    const id = "ps_menu_" + obj.command.toString();
 
-    super(obj.command, name, CommandTypes.MENU, obj.enabled);
+    super(id, name, CommandTypes.MENU, obj.enabled);
 
     this.command = obj.command;
     this.title = obj.title;
