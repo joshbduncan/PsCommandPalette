@@ -7,7 +7,7 @@
   "host": [
     {
       "app": "PS",
-      "minVersion": "26.2.0",
+      "minVersion": "24.5.0",
       "enableMenuRecording": true
     }
   ],

@@ -111,8 +111,14 @@ sp-detail#main-plugin-info {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
-  /* color: rgba(255, 255, 255, 0.35); */
+  color: rgba(255, 255, 255, 0.35);
   border-radius: 3px;
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+  #commands-list #commands li.command .body kbd.shortcut {
+    color: rgba(0, 0, 0, 0.35);
+  }
 }
 
 #commands-list #commands li.command .type-container {
@@ -125,9 +131,14 @@ sp-detail#main-plugin-info {
   padding: 4px 8px;
   font-size: 10px;
   font-weight: bold;
-  /* color: var(--uxp-host-text-color-secondary); */
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 3px;
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+  #commands-list #commands li.command .type-container span.type {
+    background-color: rgba(0, 0, 0, 0.25);
+  }
 }
 
 #commands-list #commands li.command span.description {
