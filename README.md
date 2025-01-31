@@ -2,7 +2,7 @@
 
 Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, and **more**.
 
-![ps-command-palette](https://github.com/user-attachments/assets/edf5e3fb-e0ce-4d42-aaed-a98c150a989e)
+![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
 > [!WARNING]
 > This project is experimental and under active development. It will be losely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
