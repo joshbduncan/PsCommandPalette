@@ -108,8 +108,9 @@ async function launchPalette() {
     const command = result.command;
 
     // add result to history
+    // TODO: create function for this
     if (query != "") {
-      USER.data.history.push({ query: query, commandID: command.id });
+      USER.data.history.unshift({ query: query, commandID: command.id });
       USER.write();
     }
 
