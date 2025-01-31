@@ -67,21 +67,20 @@ sp-detail#main-plugin-info {
 #commands-list #commands li.command {
   display: flex;
   padding: 14px 12px;
-  color: var(--uxp-host-label-text-color);
+  color: var(--uxp-host-text-color);
 }
 
 #commands-list #commands li.command:hover {
-  color: var(--uxp-host-widget-hover-text-color);
   background-color: var(--uxp-host-widget-hover-background-color);
+  color: var(--uxp-host-widget-hover-text-color);
 }
 
 #commands-list #commands li.command[selected] {
-  color: var(--uxp-host-widget-hover-text-color);
   background-color: #1473e6;
+  color: #fff;
 }
 
 #commands-list #commands li.command[selected]:hover {
-  color: var(--uxp-host-widget-hover-text-color);
   background-color: #0e66d0;
 }
 
@@ -112,7 +111,7 @@ sp-detail#main-plugin-info {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.35);
+  /* color: rgba(255, 255, 255, 0.35); */
   border-radius: 3px;
 }
 
@@ -126,14 +125,14 @@ sp-detail#main-plugin-info {
   padding: 4px 8px;
   font-size: 10px;
   font-weight: bold;
-  color: var(--uxp-host-text-color-secondary);
+  /* color: var(--uxp-host-text-color-secondary); */
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 }
 
 #commands-list #commands li.command span.description {
   display: block;
-  color: var(--uxp-host-text-color-secondary);
+  /* color: var(--uxp-host-text-color-secondary); */
   font-size: 10px;
   white-space: nowrap;
   overflow: hidden;
