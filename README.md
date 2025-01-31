@@ -7,7 +7,7 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 ## Installation
 
 > [!WARNING]
-> This project is experimental and under active development. It will be loosely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
+> This project is experimental and under active development.
 
 You can install easily the plugin via the included CCX file [ps.command.palette_PS.ccx](plugin/ps-command-palette_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
 
