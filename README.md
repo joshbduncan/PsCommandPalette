@@ -5,26 +5,40 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 ![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
 > [!WARNING]
-> This project is experimental and under active development. It will be losely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
+> This project is experimental and under active development. It will be loosely based off of my other project [Ai Command Palette](https://github.com/joshbduncan/AiCommandPalette).
 
-## Known Issues
+## Installation
+
+You can install easily the plugin via the included CCX file [ps.command.palette_PS.ccx](plugin/ps-command-palette_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
+
+You can also install the plugin via [UXP Developer Tools](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/installation/) by [adding an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin). This allows you the ability to poke around the code and access the debug console.
+
+## Future Plans...
+
+Below are some of the things I hope to implement. A lot of these are features of the [Command Palette for Adobe Illustrator]((https://github.com/joshbduncan/AiCommandPalette)).
+
+- [ ] access other command types
+    - [ ] tools
+    - [ ] actions
+    - [ ] scripts
+    - [ ] custom workflows
+    - [ ] bookmarked files and folders
+    - [ ] custom pickers
+- [ ] improved results
+    - [ ] fuzzy filtering
+    - [ ] query latching
+    - [ ] recency bias
+- [ ] plugin menu command recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
+
+## Info
+
+General notes, issues, and things I don't want to forget.
+
+### Known Issues
 
 - After an unknown amount of Ps inactivity menu commands that are considered "available" can't be executed via the api even thought they can still be executed in the ui.
 
-## To-dos
-
-- [ ] load other command types (tools, actions, custom, etc.)
-    - [ ] add getters for other command types
-- [x] save query history
-- [ ] implement fuzzy filter for querybox (with history scoring)
-- [ ] capture keyboard shortcut combinations in modal (not looking good)
-- [ ] figure out workflows
-- [ ] update plugin icons
-- [ ] add icon to alert modal
-- [ ] add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
-- [ ] enable menu recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
-
-## Project Links
+### Project Links
 
 * [Documentation-UXP for Adobe Photoshop](https://developer.adobe.com/photoshop/uxp/2022/)
 * [Photoshop API—UXP for Adobe Photoshop](https://developer.adobe.com/photoshop/uxp/2022/ps\_reference/)
