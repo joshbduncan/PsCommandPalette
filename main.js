@@ -79,7 +79,7 @@ document.getElementById("btnReloadPlugin").addEventListener("click", reloadPlugi
 // command functions //
 ///////////////////////
 
-async function launchPalette() {
+async function loadUserData() {
   // load user data
   try {
     await USER.load();
@@ -87,11 +87,25 @@ async function launchPalette() {
   } catch (error) {
     console.log(error);
   }
+}
 
-  // load palette commands
-  await COMMAND_DATA.loadCommands();
-  console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
+async function loadCommandData() {
+  try {
+    // load palette commands
+    await COMMAND_DATA.loadCommands();
+    console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+async function loadData() {
+  await loadUserData();
+  await loadCommandData();
+}
+
+async function launchPalette() {
+  await loadData();
   try {
     // open command palette modal
     const palette = new CommandPalette();
@@ -134,7 +148,8 @@ async function launchPalette() {
 /**
  * Reload the plugin.
  */
-function reloadPlugin() {
+async function reloadPlugin() {
   console.log("reloading ps-command-palette");
+  await loadData();
   window.location.reload();
 }
