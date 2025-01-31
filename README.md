@@ -15,13 +15,13 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 
 - [ ] load other command types (tools, actions, custom, etc.)
     - [ ] add getters for other command types
-- [ ] save query history
+- [x] save query history
 - [ ] implement fuzzy filter for querybox (with history scoring)
 - [ ] capture keyboard shortcut combinations in modal (not looking good)
-- [ ] remove/hide <sp-menu-item> selected checkmark
 - [ ] figure out workflows
 - [ ] update plugin icons
 - [ ] add icon to alert modal
+- [ ] add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
 - [ ] enable menu recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
 
 ## Project Links

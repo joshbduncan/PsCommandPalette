@@ -32,7 +32,6 @@ class CommandData {
   }
 
   get startupCommands() {
-    // TODO: filter out unavailable commands or make them disabled
     return this.commands.filter((command) => {
       return USER.data.startupCommands.includes(command.id);
     });

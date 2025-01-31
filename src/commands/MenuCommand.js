@@ -20,11 +20,12 @@ class MenuCommand extends Command {
     this.visible = obj.visible;
     this.checked = obj.checked;
     this.menuShortcut = obj.menuShortcut;
+    this.keyboardShortcut = "";
     this.path = obj.path;
     this.description = this.path.join(" > ");
 
     if (this.menuShortcut.hasOwnProperty("keyChar")) {
-      this.description += ` (${this.generateKeyboardShortcut(this.menuShortcut)})`;
+      this.keyboardShortcut = this.generateKeyboardShortcut(this.menuShortcut);
     }
 
     this.createElement(this.name, this.description);
@@ -34,7 +35,6 @@ class MenuCommand extends Command {
     // Control (⌃), Option (⌥), Shift (⇧) Command (⌘)
     // TODO: may need to use escape symbols (see https://brettterpstra.com/2019/04/19/creating-shortcuts-for-mac-symbols-in-html/)
     // TODO: correct order to match adobe ordering (see https://helpx.adobe.com/photoshop/using/default-keyboard-shortcuts.html)
-    // TODO: update display location of keyboard shortcut
     let shortcut = "";
     if (obj.controlKey) {
       shortcut += "⌃";

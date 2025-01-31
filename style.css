@@ -2,8 +2,13 @@
 /* // main plugin panel // */
 /* /////////////////////// */
 
+/* docs:
+  https://developer.adobe.com/photoshop/uxp/2022/uxp-api/reference-css/
+  https://developer.adobe.com/photoshop/uxp/2022/guides/theme-awareness/
+*/
+
 body {
-  color: white;
+  color: var(--uxp-host-text-color);
   padding: 0 16px;
 }
 
@@ -34,104 +39,104 @@ sp-detail#main-plugin-info {
   text-align: center;
 }
 
+/* /////////////////// */
+/* // alert dialogs // */
+/* /////////////////// */
+
+#alert-divider {
+  margin: 5px 0 15px 0;
+}
+
 /* ///////////////////// */
 /* // command palette // */
 /* ///////////////////// */
+
 #query {
   width: 100%;
   margin-bottom: 8px;
 }
 
 #query-listbox-divider {
-  margin: 15px 0 20px 0;
+  margin-top: 4px;
 }
 
-#alert-divider {
-  margin: 5px 0 15px 0;
-}
-
-#commands {
-  height: auto;
+#commands-list {
   width: 100%;
-  overflow: hidden;
 }
 
-sp-menu-item {
+#commands-list #commands li.command {
+  display: flex;
+  padding: 14px 12px;
+  color: var(--uxp-host-label-text-color);
+}
+
+#commands-list #commands li.command:hover {
+  color: var(--uxp-host-widget-hover-text-color);
+  background-color: var(--uxp-host-widget-hover-background-color);
+}
+
+#commands-list #commands li.command[selected] {
+  color: var(--uxp-host-widget-hover-text-color);
+  background-color: #1473e6;
+}
+
+#commands-list #commands li.command[selected]:hover {
+  color: var(--uxp-host-widget-hover-text-color);
+  background-color: #0e66d0;
+}
+
+#commands-list #commands li.command .body {
+  padding-right: 8px;
   width: 100%;
-  height: 45px;
-  padding: 30px 15px;
-  font-size: var(--uxp-h1-font-size);
+}
 
-  /* TODO: truncate with ellipsis */
+#commands-list #commands li.command .body .header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 6px;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
 
-  /* white-space: nowrap;
+#commands-list #commands li.command .body span.title {
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%; */
+  max-width: 100%;
 }
 
-sp-label.description {
-  display: block !important;
+#commands-list #commands li.command .body kbd.shortcut {
+  margin-left: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+}
 
-  /* TODO: truncate with ellipsis */
+#commands-list #commands li.command .type-container {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 8px;
+}
 
-  /* white-space: nowrap;
+#commands-list #commands li.command .type-container span.type {
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--uxp-host-text-color-secondary);
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+#commands-list #commands li.command span.description {
+  display: block;
+  color: var(--uxp-host-text-color-secondary);
+  font-size: 10px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%; */
+  max-width: 100%;
 }
-
-kbd {
-  position: absolute;
-  float: right;
-  height: auto;
-  width: 30px;
-  top: 30%;
-  right: 15px;
-  text-align: center;
-}
-
-sp-icon {
-  position: absolute;
-  float: right;
-  height: auto;
-  width: 30px;
-  top: 30%;
-  right: 15px;
-  text-align: center;
-}
-
-.icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-svg {
-  color: white !important;
-  fill: rgba(255, 255, 255, 0.5);
-}
-
-svg .fill {
-  fill: rgba(255, 255, 255, 0.5) !important;
-}
-
-[selected] {
-  /* TODO: figure out how to hide checkmark */
-  background-color: #378ef0; /* color of check mark to hide */
-  /* background-color: var(--uxp-host-link-text-color); */
-  color: var(--uxp-host-link-hover-text-color);
-  font-weight: bolder;
-}
-
-[selected] > sp-label.description {
-  color: var(--uxp-host-link-hover-text-color);
-}
-
-[selected]:hover {
-  background-color: #4b9cf6;
-}
-
-/* TODO: remove checkmark */
-/* https://github.com/adobe/spectrum-web-components/blob/main/packages/menu/src/spectrum-checkmark.css */

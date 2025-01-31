@@ -36,28 +36,58 @@ class Command {
    * @returns {Element}
    */
   createElement(displayText, description) {
-    const menuItem = document.createElement("sp-menu-item");
-    menuItem.setAttribute("id", this.id);
-    menuItem.setAttribute("command-id", this.id);
-    menuItem.textContent = displayText;
+    // list item
+    const listItem = document.createElement("li");
+    listItem.setAttribute("id", this.id);
+    listItem.classList.add("command");
 
-    const descriptionLabel = document.createElement("sp-label");
-    descriptionLabel.setAttribute("id", `${this.id}-description`);
+    // body
+    const body = document.createElement("div");
+    body.classList.add("body");
+
+    // header
+    const header = document.createElement("div");
+    header.classList.add("header");
+    body.appendChild(header);
+
+    // title
+    const title = document.createElement("span");
+    title.classList.add("title");
+    title.textContent = displayText;
+    header.appendChild(title);
+
+    // shortcut
+    if (this.hasOwnProperty("keyboardShortcut")) {
+      const shortcut = document.createElement("kbd");
+      shortcut.classList.add("shortcut");
+      shortcut.textContent = this.keyboardShortcut;
+      header.appendChild(shortcut);
+    }
+
+    // description
+    const descriptionLabel = document.createElement("span");
     descriptionLabel.classList.add("description");
     descriptionLabel.textContent = description;
+    body.appendChild(descriptionLabel);
 
-    const icon = document.createElement("div");
-    icon.classList.add("icon");
-    icon.innerHTML = getIcon(this.type);
+    // type container
+    const typeContainer = document.createElement("div");
+    typeContainer.classList.add("type-container");
 
-    menuItem.appendChild(descriptionLabel);
-    menuItem.appendChild(icon);
+    // type
+    const type = document.createElement("span");
+    type.classList.add("type");
+    type.textContent = this.type.toUpperCase();
+    typeContainer.appendChild(type);
 
-    this.element = menuItem;
+    listItem.appendChild(body);
+    listItem.appendChild(typeContainer);
+
+    this.element = listItem;
 
     this.addEventListeners();
 
-    return menuItem;
+    return listItem;
   }
 
   /**

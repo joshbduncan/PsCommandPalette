@@ -5,6 +5,9 @@ const AlertTypes = {
   WARNING: "warning",
 };
 
+// TODO: use https://opensource.adobe.com/spectrum-web-components/components/alert-dialog/
+// or await PhotoshopCore.showAlert({ message: 'Operation successful'})
+
 /**
  * Return an svg icon for an alert dialog.
  * @param {string} type Icon to return

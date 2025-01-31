@@ -31,7 +31,6 @@ class User {
       },
       history: [],
       // TODO: add default builtin startup commands with about, docs, etc.
-      // TODO: should unavailable startup commands be shown but disabled or hidden completely?
       startupCommands: ["ps_menu_1030", "ps_menu_15204", "ps_menu_101"],
     };
   }
