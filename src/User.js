@@ -161,6 +161,8 @@ class User {
    * @returns {string|null} File path of the backup file.
    */
   async backup() {
+    // TODO: add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
+
     const dataFolder = await fs.getDataFolder();
     console.log("backing up user data:");
 
