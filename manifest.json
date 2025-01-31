@@ -2,11 +2,13 @@
   "id": "ps-command-palette",
   "name": "Ps Command Palette",
   "version": "0.1.0",
+  "author": "Josh Duncan",
   "main": "index.html",
   "host": [
     {
       "app": "PS",
-      "minVersion": "26.2.0"
+      "minVersion": "26.2.0",
+      "enableMenuRecording": true
     }
   ],
   "manifestVersion": 5,
@@ -23,6 +25,47 @@
       "type": "command",
       "id": "reloadPlugin",
       "label": "Reload Plugin"
+    },
+    {
+      "type": "panel",
+      "id": "ps_command_palette",
+      "minimumSize": {
+        "width": 250,
+        "height": 400
+      },
+      "maximumSize": {
+        "width": 2000,
+        "height": 2000
+      },
+      "preferredDockedSize": {
+        "width": 250,
+        "height": 400
+      },
+      "preferredFloatingSize": {
+        "width": 250,
+        "height": 400
+      },
+      "icons": [
+        {
+          "width": 32,
+          "height": 32,
+          "path": "icons/icon_D.png",
+          "scale": [1, 2],
+          "theme": ["dark", "darkest"],
+          "species": ["generic"]
+        },
+        {
+          "width": 32,
+          "height": 32,
+          "path": "icons/icon_N.png",
+          "scale": [1, 2],
+          "theme": ["lightest", "light"],
+          "species": ["generic"]
+        }
+      ],
+      "label": {
+        "default": "Ps Command Palette"
+      }
     }
   ],
   "icons": [

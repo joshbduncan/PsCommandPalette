@@ -1,3 +1,42 @@
+/* /////////////////////// */
+/* // main plugin panel // */
+/* /////////////////////// */
+
+body {
+  color: white;
+  padding: 0 16px;
+}
+
+sp-heading#main-panel-title {
+  width: 100%;
+  text-align: center;
+}
+
+sp-divider {
+  margin: 8px;
+}
+
+#main-action-buttons li {
+  padding: 8px;
+}
+
+#main-action-buttons sp-button {
+  width: 100%;
+}
+
+sp-detail#main-copyright {
+  width: 100%;
+  text-align: center;
+}
+
+sp-detail#main-plugin-info {
+  width: 100%;
+  text-align: center;
+}
+
+/* ///////////////////// */
+/* // command palette // */
+/* ///////////////////// */
 #query {
   width: 100%;
   margin-bottom: 8px;
