@@ -1,4 +1,10 @@
 class CommandPalette {
+  constructor(commands, startupCommands) {
+    this.commands = commands != undefined ? commands : DATA.commands;
+    this.startupCommands =
+      startupCommands != undefined ? startupCommands : DATA.startupCommands;
+  }
+
   async open() {
     console.log("opening command palette:", this);
 
@@ -110,7 +116,7 @@ class CommandPalette {
       listbox.innerHTML = "";
 
       // query commands for matches
-      const matches = COMMAND_DATA.filterByQuery(event.target.value);
+      const matches = DATA.filterByQuery(this.commands, event.target.value);
 
       // TODO: sort matches
 
@@ -184,7 +190,8 @@ class CommandPalette {
 
     // TODO: filter out unavailable commands or make them disabled
     console.log("loading startup commands");
-    COMMAND_DATA.startupCommands.forEach((command) => {
+
+    this.startupCommands.slice(0, 9).forEach((command) => {
       if (command.element === null) {
         command.createElement();
       }

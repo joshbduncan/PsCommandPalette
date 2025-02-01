@@ -23,7 +23,7 @@ console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 // create data objects //
 /////////////////////////
 const USER = new User();
-const COMMAND_DATA = new CommandData();
+const DATA = new CommandData();
 
 entrypoints.setup({
   commands: {
@@ -92,8 +92,8 @@ async function loadUserData() {
 async function loadCommandData() {
   try {
     // load palette commands
-    await COMMAND_DATA.loadCommands();
-    console.log(`loaded ${Object.keys(COMMAND_DATA.commands).length} total commands`);
+    await DATA.loadCommands();
+    console.log(`loaded ${Object.keys(DATA.commands).length} total commands`);
   } catch (error) {
     console.log(error);
   }

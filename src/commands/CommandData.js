@@ -46,12 +46,12 @@ class CommandData {
     });
   }
 
-  filterByQuery(query, types = [], enabled = true) {
+  filterByQuery(commands, query, types = [], enabled = true) {
     if (query == "") {
       return [];
     }
 
-    let matches = this.commands;
+    let matches = commands != undefined ? commands : this.commands;
 
     // filter by types first
     if (types.length > 0) {
