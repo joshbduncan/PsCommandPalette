@@ -2,6 +2,9 @@
 
 Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, and **more**.
 
+> [!NOTE]  
+> Currently only works with menu commands. Tools are mext on the roadmap.
+
 ![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
 ## Installation
