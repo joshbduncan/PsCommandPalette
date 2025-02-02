@@ -8,7 +8,7 @@ const { Command, CommandTypes } = require("./Command.js");
 class MenuCommand extends Command {
   /**
    * Crete a command palette menu command.
-   * @param { {command: number, title: string, name: string, visible: boolean, enabled: boolean, checked: boolean, path: Array.<String>, menuShortcut: {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean}} } obj Menu command object returned from the `menuBarInfo` property
+   * @param { {command: number, title: string, name: string, visible: boolean, enabled: boolean, checked: boolean, path: Array.<string>, menuShortcut: {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean}} } obj Menu command object returned from the `menuBarInfo` property
    */
   constructor(obj) {
     const name = obj.name === "" ? obj.title.replace(/\.\.\.$/g, "") : obj.name;
@@ -32,6 +32,11 @@ class MenuCommand extends Command {
     this.createElement(this.name, this.description);
   }
 
+  /**
+   * Generate a keyboard shortcut combination string.
+   * @param { {"shiftKey": Boolean, "commandKey": Boolean, "optionKey": Boolean, "controlKey": Boolean, "keyChar": string} } obj Menu command keyboard shortcut object returned from the `menuBarInfo` property.
+   * @returns string
+   */
   generateKeyboardShortcut(obj) {
     // Control (⌃), Option (⌥), Shift (⇧) Command (⌘)
     // TODO: may need to use escape symbols (see https://brettterpstra.com/2019/04/19/creating-shortcuts-for-mac-symbols-in-html/)

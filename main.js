@@ -1,5 +1,6 @@
 const { app } = require("photoshop");
 const { core } = require("photoshop");
+const os = require("os");
 const uxp = require("uxp");
 const { entrypoints } = uxp;
 
@@ -16,6 +17,8 @@ const PLUGIN_VERSION = manifest.version;
 const PLUGIN_AUTHOR = manifest.author;
 const HOST_NAME = uxp.host.name;
 const HOST_VERSION = uxp.host.version;
+const HOST_LOCALE = uxp.host.uiLocale;
+const HOST_OS = os.platform();
 console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 
 /////////////////////////
@@ -124,7 +127,11 @@ async function launchPalette() {
     // add result to history
     // TODO: create function for this
     if (query != "") {
-      USER.data.history.unshift({ query: query, commandID: command.id });
+      USER.data.history.unshift({
+        query: query,
+        commandID: command.id,
+        timestamp: Date.now(),
+      });
       USER.write();
     }
 

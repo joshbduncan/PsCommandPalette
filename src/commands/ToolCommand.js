@@ -26,6 +26,9 @@ class ToolCommand extends Command {
     this.createElement(this.name, this.description);
   }
 
+  /**
+   * Execute the tool command.
+   */
   async execute() {
     console.log("executing tool command:", this);
 

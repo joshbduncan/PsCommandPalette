@@ -1,10 +1,24 @@
+const { Command } = require("./commands/Command");
+
+/**
+ * Create a command palette.
+ */
 class CommandPalette {
+  /**
+   * Create a command palette.
+   * @param {Array.<Command>} commands Queryable command palette commands
+   * @param {Array.<string>} startupCommands Commands displayed when command palette launches
+   */
   constructor(commands, startupCommands) {
     this.commands = commands != undefined ? commands : DATA.commands;
     this.startupCommands =
       startupCommands != undefined ? startupCommands : DATA.startupCommands;
   }
 
+  /**
+   * Open the command palette dialog modal.
+   * @returns {Promise.<object>}
+   */
   async open() {
     console.log("opening command palette:", this);
 
@@ -24,6 +38,10 @@ class CommandPalette {
     return result;
   }
 
+  /**
+   * Create the command palette dialog modal HTML element.
+   * @returns {Element}
+   */
   createModalDialog() {
     console.log("creating command palette modal");
 
@@ -69,16 +87,22 @@ class CommandPalette {
     // helper functions //
     //////////////////////
 
+    /**
+     * Reset the selected command to the first command if available.
+     */
     function resetCommandSelection() {
-      if (listbox.children.length === 0) {
-        return;
+      if (listbox.children.length > 0) {
+        listbox.children.forEach((command) => {
+          command.removeAttribute("selected");
+        });
+        moveCommandSelection(null, 0);
       }
-      listbox.children.forEach((command) => {
-        command.removeAttribute("selected");
-      });
-      moveCommandSelection(null, 0);
     }
 
+    /**
+     * Determine the currently selected command `li` element.
+     * @returns number
+     */
     function getSelectedCommand() {
       for (let index = 0; index < listbox.children.length; index++) {
         const command = listbox.children[index];
@@ -88,6 +112,11 @@ class CommandPalette {
       }
     }
 
+    /**
+     * Change which command is selected.
+     * @param {number} previousIndex Index of currently selected command (before any changes)
+     * @param {number} newIndex Index of next command to be selected
+     */
     function moveCommandSelection(previousIndex, newIndex) {
       if (typeof previousIndex === "number") {
         listbox.children[previousIndex].removeAttribute("selected");
@@ -99,7 +128,9 @@ class CommandPalette {
     // add event listeners //
     /////////////////////////
 
-    // auto-focus querybox input
+    /**
+     * Auto-focus the querybox input element.
+     */
     dialog.addEventListener("load", () => {
       querybox.focus();
       // TODO: do I need to wait?
@@ -108,7 +139,9 @@ class CommandPalette {
       // }, 100);
     });
 
-    // update commands on query input
+    /**
+     * Update listed commands on query input.
+     */
     querybox.addEventListener("input", (event) => {
       console.log("query:", event.target.value);
 
@@ -132,7 +165,9 @@ class CommandPalette {
       resetCommandSelection(listbox);
     });
 
-    // listen for command clicked event
+    /**
+     * Listen for the command clicked event.
+     */
     document.addEventListener("paletteCommandSelected", function (event) {
       console.log("selected command:", event.detail.command);
       dialog.close({
@@ -141,7 +176,9 @@ class CommandPalette {
       });
     });
 
-    // allow enter to submit form with currently selected command
+    /**
+     * Allow enter to submit form with currently selected command.
+     */
     form.addEventListener("submit", (event) => {
       const selectedIndex = getSelectedCommand();
       const selectedCommand = listbox.children[selectedIndex];
@@ -149,7 +186,9 @@ class CommandPalette {
       event.preventDefault();
     });
 
-    // allow keyboard listbox menu navigation with end-to-end scrolling
+    /**
+     * Enable keyboard (up/down arrows) command list navigation with end-to-end scrolling.
+     */
     document.addEventListener("keydown", (event) => {
       if (event.key === "ArrowDown") {
         event.preventDefault();

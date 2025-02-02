@@ -36,6 +36,9 @@ class Data {
     });
   }
 
+  /**
+   * User Selected Startup commands.
+   */
   get startupCommands() {
     return this.commands.filter((command) => {
       return USER.data.startupCommands.includes(command.id);
@@ -43,7 +46,7 @@ class Data {
   }
 
   /**
-   * Action Commands
+   * Action Commands.
    */
   get ActionCommands() {
     return this.commands.filter((command) => {
@@ -52,7 +55,7 @@ class Data {
   }
 
   /**
-   * Menu Commands
+   * Menu Commands.
    */
   get menuCommands() {
     return this.commands.filter((command) => {
@@ -61,7 +64,7 @@ class Data {
   }
 
   /**
-   * Tool Commands
+   * Tool Commands.
    */
   get toolCommands() {
     return this.commands.filter((command) => {
@@ -69,7 +72,16 @@ class Data {
     });
   }
 
-  filterByQuery(commands, query, types = [], enabled = true) {
+  /**
+   *
+   * @param {Array.<Command>} commands Commands to filer
+   * @param {string} query Query string
+   * @param {Array.<CommandTypes>} types Command type to filter for
+   * @param {Boolean} disabled Should disabled commands be included (defaults to false)
+   * @param {Boolean} hidden Should user hidden commands be included (defaults to false)
+   * @returns {Array.<Command>}
+   */
+  filterByQuery(commands, query, types = [], disabled = false, hidden = false) {
     if (query == "") {
       return [];
     }
@@ -81,10 +93,24 @@ class Data {
       matches = this.commandsByTypes(types);
     }
 
-    // filter enabled or all
-    if (enabled) {
+    // filter disabled commands
+    if (!disabled) {
       matches = matches.filter((command) => {
         return command.enabled;
+      });
+    }
+
+    // filter hidden commands
+    console.log("hidden:", hidden, !hidden);
+    console.log(
+      'USER.data.hasOwnProperty("hiddenCommands"):',
+      USER.data.hasOwnProperty("hiddenCommands")
+    );
+    console.log("before", matches.length);
+
+    if (!hidden && USER.data.hasOwnProperty("hiddenCommands")) {
+      matches = matches.filter((command) => {
+        return !USER.data.hiddenCommands.includes(command.id);
       });
     }
 
@@ -93,8 +119,6 @@ class Data {
       return command.name.toLowerCase().includes(query.toLowerCase());
     });
 
-    console.log("matching commands:", matches.length);
-
     return matches;
   }
 
@@ -102,7 +126,7 @@ class Data {
 
   /**
    * Commands with the type of `type`
-   * @param {String} type Command type to match against
+   * @param {string} type Command type to match against
    * @returns {Array.<Command>}
    */
   commandsByType(type) {
@@ -113,7 +137,7 @@ class Data {
 
   /**
    * Command with a type included in `types`.
-   * @param {Array.<String>} types Command types to return
+   * @param {Array.<string>} types Command types to return
    * @returns {Array.<Command>}
    */
   commandsByTypes(types) {
@@ -212,7 +236,7 @@ async function loadMenuCommands() {
   /**
    * Build `MenuCommand` objects for each Photoshop menu command.
    * @param {object} obj Menu bar info object
-   * @param {Array.<String>} path Current menu directory path to `obj`
+   * @param {Array.<string>} path Current menu directory path to `obj`
    * @returns {Array.<MenuCommand>}
    */
   function buildMenuCommands(obj, path = []) {

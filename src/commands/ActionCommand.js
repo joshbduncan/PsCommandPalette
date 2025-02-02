@@ -26,6 +26,9 @@ class ActionCommand extends Command {
     this.createElement(this.name, this.description);
   }
 
+  /**
+   * Execute the command.
+   */
   async execute() {
     console.log("executing action command:", this);
 

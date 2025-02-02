@@ -28,7 +28,10 @@ class User {
       app: {
         name: HOST_NAME,
         version: HOST_VERSION,
+        locale: HOST_LOCALE,
+        os: HOST_OS,
       },
+      hiddenCommands: [],
       history: [],
       // TODO: add default builtin startup commands with about, docs, etc.
       startupCommands: ["ps_menu_1030", "ps_menu_15204", "ps_menu_101"],
@@ -140,6 +143,9 @@ class User {
 
     // write the user data to the file
     try {
+      // update timestamp
+      this.data.timestamp = Date.now();
+
       const data = JSON.stringify(this.data);
       await f.write(data, { append: false });
     } catch (error) {
