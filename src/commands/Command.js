@@ -4,7 +4,9 @@ const { getIcon } = require("../icons.js");
  * Command type enum.
  */
 const CommandTypes = {
+  ACTION: "action",
   MENU: "menu",
+  TOOL: "tool",
   CUSTOM: "custom",
   STARTUP: "startup",
 };

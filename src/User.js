@@ -83,7 +83,6 @@ class User {
       const fileData = await f.read({ format: storage.formats.utf8 });
       this.data = JSON.parse(fileData);
       console.log("user data file loaded:", this.data);
-      this.data;
     } catch (error) {
       console.log("error reading user data file");
       console.log(error);

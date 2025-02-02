@@ -1,11 +1,16 @@
 const { app } = require("photoshop");
-const { MenuCommand } = require("./MenuCommand.js");
-const { Command } = require("./Command.js");
+const { storage } = require("uxp");
+const fs = storage.localFileSystem;
+
+const { Command, CommandTypes } = require("./commands/Command.js");
+const { ActionCommand } = require("./commands/ActionCommand.js");
+const { MenuCommand } = require("./commands/MenuCommand.js");
+const { ToolCommand } = require("./commands/ToolCommand.js");
 
 /**
  * Ps Command Palette Commands Data.
  */
-class CommandData {
+class Data {
   /**
    * Create a CommandData object.
    */
@@ -38,11 +43,29 @@ class CommandData {
   }
 
   /**
+   * Action Commands
+   */
+  get ActionCommands() {
+    return this.commands.filter((command) => {
+      return command.type === CommandTypes.ACTION;
+    });
+  }
+
+  /**
    * Menu Commands
    */
   get menuCommands() {
     return this.commands.filter((command) => {
-      return command.type === "menu";
+      return command.type === CommandTypes.MENU;
+    });
+  }
+
+  /**
+   * Tool Commands
+   */
+  get toolCommands() {
+    return this.commands.filter((command) => {
+      return command.type === CommandTypes.TOOL;
     });
   }
 
@@ -124,10 +147,25 @@ class CommandData {
     const commands = [];
 
     // load menu commands
-    console.log("loading menu commands");
     try {
-      const menuCommands = await loadMenuCommands();
-      commands.push(...menuCommands);
+      const menusCommands = await loadMenuCommands();
+      commands.push(...menusCommands);
+    } catch (error) {
+      console.log("error loading menu commands:", error);
+    }
+
+    // load tool commands
+    try {
+      const toolComands = await loadTools();
+      commands.push(...toolComands);
+    } catch (error) {
+      console.log("error loading tools:", error);
+    }
+
+    // load action commands
+    try {
+      const actionCommands = await loadActions();
+      commands.push(...actionCommands);
     } catch (error) {
       console.log("error loading menu commands:", error);
     }
@@ -137,15 +175,16 @@ class CommandData {
 }
 
 /**
- * Load all current menu commands via batchPlay and the `menuBarInfo` property.
- * @returns {Promise.<Array.<Command>>}
+ * Load Photoshop menu items from the `menuBarInfo` property.
+ * @returns {Promise.<Array.<MenuCommand>>}
  */
 async function loadMenuCommands() {
+  console.log("loading menu commands");
   const menusToIgnore = ["Open Recent"];
   const menuItemsToIgnore = [];
 
   /**
-   * Remove naggy "&" characters that are returned from the `menuBarInfo` property.
+   * Remove nagging "&" characters that are returned from the `menuBarInfo` property.
    * @param {string} title Command title returned from the api
    * @returns {string}
    */
@@ -211,6 +250,61 @@ async function loadMenuCommands() {
   return menuCommands;
 }
 
+/**
+ * Load Photoshop tools from `tools.json`.
+ * @returns {Promise.<Array.<ToolCommand>>}
+ */
+async function loadTools() {
+  const pluginFolder = await fs.getPluginFolder();
+  console.log("loading tool json data:", pluginFolder.nativePath);
+
+  const toolCommands = [];
+  try {
+    const f = await pluginFolder.getEntry("data/tools.json");
+    const fileData = await f.read({ format: storage.formats.utf8 });
+    const toolData = JSON.parse(fileData);
+    console.log("tool data file loaded:", toolData);
+
+    toolData.forEach((obj) => {
+      let tool = new ToolCommand(
+        obj._ref,
+        obj.name,
+        obj.description,
+        obj.keyboardShortcut
+      );
+      toolCommands.push(tool);
+    });
+  } catch (error) {
+    console.log("error getting tool json data");
+    console.log(error);
+  }
+
+  console.log(`loaded ${toolCommands.length} tool commands`);
+  return toolCommands;
+}
+
+/**
+ * Load Photoshop tools from `tools.json`.
+ * @returns {Promise.<Array.<ToolCommand>>}
+ */
+async function loadActions() {
+  console.log("loading action data");
+
+  const actionSets = await app.actionTree;
+  const actionCommands = [];
+
+  const ActionCommands = [];
+  actionSets.forEach((set) => {
+    set.actions.forEach((obj) => {
+      let action = new ActionCommand(obj);
+      actionCommands.push(action);
+    });
+  });
+
+  console.log(`loaded ${actionCommands.length} action commands`);
+  return actionCommands;
+}
+
 module.exports = {
-  CommandData: CommandData,
+  Data: Data,
 };

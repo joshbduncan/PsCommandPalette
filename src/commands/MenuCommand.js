@@ -1,4 +1,5 @@
 const { core } = require("photoshop");
+
 const { Command, CommandTypes } = require("./Command.js");
 
 /**
@@ -83,7 +84,20 @@ class MenuCommand extends Command {
       return;
     }
 
-    return await core.performMenuCommand({ commandID: this.command });
+    try {
+      const result = await core.performMenuCommand({ commandID: this.command });
+
+      if (!result.available) {
+        await alertDialog(
+          "Command Execution Error",
+          null,
+          "There was an error executing your command."
+        );
+      }
+    } catch (error) {
+      console.log("menu command execution error");
+      console.log(error);
+    }
   }
 }
 

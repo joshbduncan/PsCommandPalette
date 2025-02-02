@@ -3,15 +3,14 @@ const { core } = require("photoshop");
 const uxp = require("uxp");
 const { entrypoints } = uxp;
 
-const { alertDialog } = require("./src/dialogs/alert.js");
-const { User } = require("./src/User.js");
-const { CommandData } = require("./src/commands/CommandData.js");
+const manifest = require("./manifest.json");
 const { CommandPalette } = require("./src/CommandPalette.js");
+const { User } = require("./src/User.js");
+const { Data } = require("./src/Data.js");
 
 /////////////////////
 // get plugin info //
 /////////////////////
-const manifest = require("./manifest.json");
 const PLUGIN_NAME = manifest.name;
 const PLUGIN_VERSION = manifest.version;
 const PLUGIN_AUTHOR = manifest.author;
@@ -23,7 +22,7 @@ console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 // create data objects //
 /////////////////////////
 const USER = new User();
-const DATA = new CommandData();
+const DATA = new Data();
 
 entrypoints.setup({
   commands: {
@@ -106,6 +105,7 @@ async function loadData() {
 
 async function launchPalette() {
   await loadData();
+
   try {
     // open command palette modal
     const palette = new CommandPalette();
@@ -129,16 +129,8 @@ async function launchPalette() {
     }
 
     // execute selected command
-    const execution = await command.execute();
-    console.log("execution:", execution);
-
-    if (!execution.available) {
-      await alertDialog(
-        "Command Execution Error",
-        null,
-        "There was an error executing your command."
-      );
-    }
+    const executionResult = await command.execute();
+    console.log("command execution:", executionResult);
   } catch (error) {
     // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
     console.log("palette error:", error);

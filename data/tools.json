@@ -1,0 +1,128 @@
+[
+  {
+    "_ref": "moveTool",
+    "name": "Move tool",
+    "description": "Moves a selection or layer.",
+    "keyboardShortcut": "V"
+  },
+  {
+    "_ref": "artboardTool",
+    "name": "Artboard tool",
+    "description": "Creates, moves, or resizes multiple canvases.",
+    "keyboardShortcut": "V"
+  },
+  {
+    "_ref": "marqueeRectTool",
+    "name": "Rectangular Marquee tool",
+    "description": "Makes a selection in the shape of a rectangle.",
+    "keyboardShortcut": "M"
+  },
+  {
+    "_ref": "marqueeEllipTool",
+    "name": "Elliptical Marquee tool",
+    "description": "Make oval and circular selections.",
+    "keyboardShortcut": "M"
+  },
+  {
+    "_ref": "marqueeSingleRowTool",
+    "name": "Single Row Marquee tool",
+    "description": "Makes a horizontal selection that's a single pixel high.",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "marqueeSingleColumnTool",
+    "name": "Single Column Marquee tool",
+    "description": "Makes a vertical selection that's a single pixel wide.",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "lassoTool",
+    "name": "Lasso tool",
+    "description": "Makes freehand selections.",
+    "keyboardShortcut": "L"
+  },
+  {
+    "_ref": "polySelTool",
+    "name": "Polygonal Lasso tool",
+    "description": "Make selections by connecting straight lines.",
+    "keyboardShortcut": "L"
+  },
+  {
+    "_ref": "magneticLassoTool",
+    "name": "Magnetic Lasso tool",
+    "description": "Make selections that snap to edges in an image as you drag.",
+    "keyboardShortcut": "L"
+  },
+  {
+    "_ref": "quickSelectTool",
+    "name": "Quick Selection tool",
+    "description": "Makes a selection by finding and following the edges in an image.",
+    "keyboardShortcut": "W"
+  },
+  {
+    "_ref": "magicWandTool",
+    "name": "Magic Wand tool",
+    "description": "Select an area based on its color.",
+    "keyboardShortcut": "W"
+  },
+  {
+    "_ref": "cropTool",
+    "name": "Crop tool",
+    "description": "Trims or expands the edges of an image.",
+    "keyboardShortcut": "C"
+  },
+  {
+    "_ref": "perspectiveCropTool",
+    "name": "Perspective Crop tool",
+    "description": "Crops an image to correct distortions caused by perspective.",
+    "keyboardShortcut": "C"
+  },
+  {
+    "_ref": "sliceTool",
+    "name": "Slice tool",
+    "description": "Cuts an image into smaller sections suitable for web design.",
+    "keyboardShortcut": "C"
+  },
+  {
+    "_ref": "sliceSelectTool",
+    "name": "Slice Select tool",
+    "description": "Selects, moves, and resizes slices of an image.",
+    "keyboardShortcut": "C"
+  },
+  {
+    "_ref": "framedGroupTool",
+    "name": "Frame Tool",
+    "description": "Creates placeholder frames for images.",
+    "keyboardShortcut": "K"
+  },
+  {
+    "_ref": "eyedropperTool",
+    "name": "Eyedropper tool",
+    "description": "Samples colors from an image.",
+    "keyboardShortcut": "I"
+  },
+  {
+    "_ref": "colorSamplerTool",
+    "name": "Color Sampler tool",
+    "description": "Displays values for colors in an image.",
+    "keyboardShortcut": "I"
+  },
+  {
+    "_ref": "rulerTool",
+    "name": "Ruler tool",
+    "description": "Measures distances and angles in an image.",
+    "keyboardShortcut": "I"
+  },
+  {
+    "_ref": "textAnnotTool",
+    "name": "Note tool",
+    "description": "Creates text notes that you can attach to an image or file.",
+    "keyboardShortcut": "I"
+  },
+  {
+    "_ref": "countTool",
+    "name": "Count tool",
+    "description": "Counts the number of objects in an image.",
+    "keyboardShortcut": "I"
+  }
+]
