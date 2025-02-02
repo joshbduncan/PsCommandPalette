@@ -1,9 +1,9 @@
 # Ps Command Palette
 
-Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, and **more**.
+Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, **Actions**, and **more**.
 
 > [!NOTE]  
-> Currently only works with menu commands. Tools are mext on the roadmap.
+> Currently only works with MENU commands, some TOOLS, and ACTIONS.
 
 ![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
@@ -21,8 +21,8 @@ You can also install the plugin via [UXP Developer Tools](https://developer.adob
 Below are some of the things I hope to implement. A lot of these are features of the [Command Palette for Adobe Illustrator]((https://github.com/joshbduncan/AiCommandPalette)).
 
 - [ ] access other command types
-    - [ ] tools
-    - [ ] actions
+    - [x] tools
+    - [x] actions
     - [ ] scripts
     - [ ] custom workflows
     - [ ] bookmarked files and folders
