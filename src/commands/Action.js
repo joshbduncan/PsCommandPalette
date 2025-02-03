@@ -5,7 +5,7 @@ const { Command, CommandTypes } = require("./Command.js");
 /**
  * Create a command palette action command.
  */
-class ActionCommand extends Command {
+class Action extends Command {
   /**
    * Crete a command palette action command.
    * @param { {_id: number, id: number, index: number, name: string, parent: {_id: number, actions: Array.<Object>, id: number, index: number, name: string, typename: string}, typename: string} } obj Action object returned from `app.actionTree`
@@ -14,7 +14,7 @@ class ActionCommand extends Command {
     const id = "ps_action_" + obj.parent.name + "_" + obj.name;
 
     // TODO: not sure about using _id/id in command id since index can change
-    // TODO: implement tool shortcut key
+    // TODO: implement action shortcut key?
     super(id, obj.name, CommandTypes.ACTION, true);
     this.obj = obj;
     this._id = obj._id;
@@ -38,5 +38,5 @@ class ActionCommand extends Command {
 }
 
 module.exports = {
-  ActionCommand,
+  Action,
 };

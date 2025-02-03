@@ -5,7 +5,7 @@ const { Command, CommandTypes } = require("./Command.js");
 /**
  * Create a command palette menu command.
  */
-class MenuCommand extends Command {
+class Menu extends Command {
   /**
    * Crete a command palette menu command.
    * @param { {command: number, title: string, name: string, visible: boolean, enabled: boolean, checked: boolean, path: Array.<string>, menuShortcut: {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean}} } obj Menu command object returned from the `menuBarInfo` property
@@ -64,12 +64,12 @@ class MenuCommand extends Command {
    */
   async getState() {
     console.log("getting command state:", this);
-    await core.getMenuCommandState({ commandID: this.command });
+    await core.getMenuState({ commandID: this.command });
     return;
   }
 
   /**
-   * Execute the menu command using the `performMenuCommand` method.
+   * Execute the menu command using the `performMenu` method.
    * @returns {Promise}
    */
   async execute() {
@@ -78,7 +78,7 @@ class MenuCommand extends Command {
     // ensure a menu command is still available since
     // sometimes after long periods between app operations
     // ps will report the command is available (e.g. undo and redo)
-    const commandState = await core.getMenuCommandState({ commandID: this.command });
+    const commandState = await core.getMenuState({ commandID: this.command });
     console.log("menu command state:", commandState);
     if (!commandState[0]) {
       await alertDialog(
@@ -90,7 +90,7 @@ class MenuCommand extends Command {
     }
 
     try {
-      const result = await core.performMenuCommand({ commandID: this.command });
+      const result = await core.performMenu({ commandID: this.command });
 
       if (!result.available) {
         await alertDialog(
@@ -106,6 +106,42 @@ class MenuCommand extends Command {
   }
 }
 
+const menuCommandsPatchShortcutKey = {
+  5069: {
+    // Edit in Quick Mask Mode
+    shiftKey: false,
+    commandKey: false,
+    optionKey: false,
+    controlKey: false,
+    keyChar: "Q",
+  },
+  5991: {
+    // Standard Screen Mode
+    shiftKey: false,
+    commandKey: false,
+    optionKey: false,
+    controlKey: false,
+    keyChar: "F",
+  },
+  5992: {
+    // Full Screen Mode With Menu Bar
+    shiftKey: false,
+    commandKey: false,
+    optionKey: false,
+    controlKey: false,
+    keyChar: "F",
+  },
+  5993: {
+    // Full Screen Mode
+    shiftKey: false,
+    commandKey: false,
+    optionKey: false,
+    controlKey: false,
+    keyChar: "F",
+  },
+};
+
 module.exports = {
-  MenuCommand,
+  Menu,
+  menuCommandsPatchShortcutKey,
 };

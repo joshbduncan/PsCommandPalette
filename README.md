@@ -20,8 +20,10 @@ You can also install the plugin via [UXP Developer Tools](https://developer.adob
 
 Below are some of the things I hope to implement. A lot of these are features of the [Command Palette for Adobe Illustrator]((https://github.com/joshbduncan/AiCommandPalette)).
 
+- [ ] caching to speed up launch (right now all menu commands are reloaded every launch)
 - [ ] access other command types
     - [x] tools
+        - [ ] add all available tools (behind edit toolbar button)
     - [x] actions
     - [ ] scripts
     - [ ] custom workflows

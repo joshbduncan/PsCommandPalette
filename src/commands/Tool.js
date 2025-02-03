@@ -5,7 +5,7 @@ const { Command, CommandTypes } = require("./Command.js");
 /**
  * Create a command palette tool command.
  */
-class ToolCommand extends Command {
+class Tool extends Command {
   /**
    * Create a command palette tool command.
    * @param {string} _ref Tool batchPlay reference string
@@ -34,12 +34,11 @@ class ToolCommand extends Command {
 
     const target = { _ref: [{ _ref: this._ref }] };
     const command = { _obj: "select", _target: target };
+    // TODO: add batchPlay execution error checking https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay/#action-references
     const result = await app.batchPlay([command], {});
-
-    // TODO: add batchplay execution error checking
   }
 }
 
 module.exports = {
-  ToolCommand,
+  Tool,
 };

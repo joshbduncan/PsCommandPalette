@@ -124,5 +124,293 @@
     "name": "Count tool",
     "description": "Counts the number of objects in an image.",
     "keyboardShortcut": "I"
+  },
+  {
+    "_ref": "spotHealingBrushTool",
+    "name": "Spot Healing Brush tool",
+    "description": "Removes marks and blemishes.",
+    "keyboardShortcut": "J"
+  },
+  {
+    "_ref": "magicStampTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "J"
+  },
+  {
+    "_ref": "patchSelection",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "J"
+  },
+  {
+    "_ref": "recomposeSelection",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "J"
+  },
+  {
+    "_ref": "redEyeTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "J"
+  },
+  {
+    "_ref": "paintbrushTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "B"
+  },
+  {
+    "_ref": "pencilTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "B"
+  },
+  {
+    "_ref": "colorReplacementBrushTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "B"
+  },
+  {
+    "_ref": "wetBrushTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "B"
+  },
+  {
+    "_ref": "cloneStampTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "S"
+  },
+  {
+    "_ref": "patternStampTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "S"
+  },
+  {
+    "_ref": "historyBrushTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "Y"
+  },
+  {
+    "_ref": "artBrushTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "Y"
+  },
+  {
+    "_ref": "eraserTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "E"
+  },
+  {
+    "_ref": "backgroundEraserTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "E"
+  },
+  {
+    "_ref": "magicEraserTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "E"
+  },
+  {
+    "_ref": "gradientTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "G"
+  },
+  {
+    "_ref": "bucketTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "G"
+  },
+  {
+    "_ref": "blurTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "sharpenTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "smudgeTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "dodgeTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "O"
+  },
+  {
+    "_ref": "burnInTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "O"
+  },
+  {
+    "_ref": "saturationTool",
+    "name": "",
+    "description": "",
+    "keyboardShortcut": "O"
+  },
+  {
+    "_ref": "penTool",
+    "name": "Pen tool",
+    "description": "Makes and changes paths or shapes with anchor points and handles.",
+    "keyboardShortcut": "P"
+  },
+  {
+    "_ref": "freeformPenTool",
+    "name": "Freeform Pen tool",
+    "description": "Adds anchor points as you draw paths or shapes.",
+    "keyboardShortcut": "P"
+  },
+  {
+    "_ref": "curvaturePenTool",
+    "name": "Curvature Pen Tool",
+    "description": "Makes or changes paths or shapes using points.",
+    "keyboardShortcut": "P"
+  },
+  {
+    "_ref": "addKnotTool",
+    "name": "Add Anchor Point tool",
+    "description": "Adds anchor points to your paths.",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "deleteKnotTool",
+    "name": "Delete Anchor Point tool",
+    "description": "Deletes anchor points and reshapes paths.",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "convertKnotTool",
+    "name": "Convert Point tool",
+    "description": "Edits shapes and paths by converting smooth and corner anchor points.",
+    "keyboardShortcut": null
+  },
+  {
+    "_ref": "typeCreateOrEditTool",
+    "name": "Horizontal Type tool",
+    "description": "Adds horizontal type.",
+    "keyboardShortcut": "T"
+  },
+  {
+    "_ref": "typeVerticalCreateOrEditTool",
+    "name": "Vertical Type tool",
+    "description": "Adds vertical type.",
+    "keyboardShortcut": "T"
+  },
+  {
+    "_ref": "typeVerticalCreateMaskTool",
+    "name": "Vertical Type Mask tool",
+    "description": "Creates a selection in the shape of vertical type.",
+    "keyboardShortcut": "T"
+  },
+  {
+    "_ref": "typeCreateMaskTool",
+    "name": "Horizontal Type Mask tool",
+    "description": "Creates a selection in the shape of horizontal type.",
+    "keyboardShortcut": "T"
+  },
+  {
+    "_ref": "pathComponentSelectTool",
+    "name": "Path Selection tool",
+    "description": "Selects a whole path.",
+    "keyboardShortcut": ""
+  },
+  {
+    "_ref": "directSelectTool",
+    "name": "Direct Selection tool",
+    "description": "Select and adjust points and segments in a path or shape.",
+    "keyboardShortcut": "A"
+  },
+  {
+    "_ref": "customShapeTool",
+    "name": "Custom Shape tool",
+    "description": "Draws shapes from a custom shape list.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "ellipseTool",
+    "name": "Ellipse tool",
+    "description": "Draw oval and circular shapes.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "polygonTool",
+    "name": "Polygon tool",
+    "description": "Draws polygons.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "lineTool",
+    "name": "Line tool",
+    "description": "Draws lines.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "customShapeTool",
+    "name": "Custom Shape tool",
+    "description": "Draws shapes from a custom shape list.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "handTool",
+    "name": "Hand tool",
+    "description": "Pans over different parts of an image.",
+    "keyboardShortcut": "H"
+  },
+  {
+    "_ref": "rotateTool",
+    "name": "Rotate View tool",
+    "description": "Rotates the view of an image.",
+    "keyboardShortcut": "R"
+  },
+  {
+    "_ref": "zoomTool",
+    "name": "Zoom tool",
+    "description": "Zoom in and out on an image.",
+    "keyboardShortcut": "Z"
+  },
+  {
+    "_ref": "adjustmentBrushTool",
+    "name": "Adjustment Brush tool",
+    "description": "Create local adjustment layers.",
+    "keyboardShortcut": "B"
+  },
+  {
+    "_ref": "selectionBrushTool",
+    "name": "Selection Brush tool",
+    "description": "Make selections with single or multiple brush strokes, ideal for trackpad users, and for adding and removing content with generative fill..",
+    "keyboardShortcut": "L"
+  },
+  {
+    "_ref": "triangleTool",
+    "name": "Triangle tool",
+    "description": "Draw three-sided shapes.",
+    "keyboardShortcut": "U"
+  },
+  {
+    "_ref": "removeTool",
+    "name": "Remove tool",
+    "description": "Easily remove distractions such as objects, people, and imperfections.",
+    "keyboardShortcut": "J"
   }
 ]
