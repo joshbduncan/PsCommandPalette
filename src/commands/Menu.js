@@ -64,7 +64,7 @@ class Menu extends Command {
    */
   async getState() {
     console.log("getting command state:", this);
-    await core.getMenuState({ commandID: this.command });
+    await core.getMenuCommandState({ commandID: this.command });
     return;
   }
 
@@ -78,7 +78,7 @@ class Menu extends Command {
     // ensure a menu command is still available since
     // sometimes after long periods between app operations
     // ps will report the command is available (e.g. undo and redo)
-    const commandState = await core.getMenuState({ commandID: this.command });
+    const commandState = await core.getMenuCommandState({ commandID: this.command });
     console.log("menu command state:", commandState);
     if (!commandState[0]) {
       await alertDialog(
@@ -90,7 +90,7 @@ class Menu extends Command {
     }
 
     try {
-      const result = await core.performMenu({ commandID: this.command });
+      const result = await core.performMenuCommand({ commandID: this.command });
 
       if (!result.available) {
         await alertDialog(
