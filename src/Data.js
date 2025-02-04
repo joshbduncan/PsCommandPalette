@@ -201,22 +201,6 @@ async function loadMenus() {
   const menuItemsToIgnore = [];
 
   /**
-   * Remove nagging "&" characters that are returned from the `menuBarInfo` property.
-   * @param {string} title Command title returned from the api
-   * @returns {string}
-   */
-  function cleanTitle(title) {
-    if (!title.includes("&")) {
-      return title;
-    }
-    const arr = title.split(" & ");
-    arr.forEach((value, index) => {
-      arr[index] = value.replace(/&/g, "");
-    });
-    return arr.length > 1 ? arr.join(" & ") : arr[0];
-  }
-
-  /**
    * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
    * @returns {Promise.<object>}
    */
