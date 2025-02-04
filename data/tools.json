@@ -133,140 +133,140 @@
   },
   {
     "_ref": "magicStampTool",
-    "name": "",
-    "description": "",
+    "name": "Healing Brush tool",
+    "description": "Repair imperfections by painting with pixels from another part of the image.",
     "keyboardShortcut": "J"
   },
   {
     "_ref": "patchSelection",
-    "name": "",
-    "description": "",
+    "name": "Patch tool",
+    "description": "Replace a selected area with pixels from another part of the image.",
     "keyboardShortcut": "J"
   },
   {
     "_ref": "recomposeSelection",
-    "name": "",
-    "description": "",
+    "name": "Content-Aware Move tool",
+    "description": "Selects and moves part of an image and automatically fills the area left behind.",
     "keyboardShortcut": "J"
   },
   {
     "_ref": "redEyeTool",
-    "name": "",
-    "description": "",
+    "name": "Red Eye tool",
+    "description": "Fixes the red-eye effect caused by a camera flash.",
     "keyboardShortcut": "J"
   },
   {
     "_ref": "paintbrushTool",
-    "name": "",
-    "description": "",
+    "name": "Brush tool",
+    "description": "Paints custom brush strokes.",
     "keyboardShortcut": "B"
   },
   {
     "_ref": "pencilTool",
-    "name": "",
-    "description": "",
+    "name": "Pencil tool",
+    "description": "Paints hard-edged brush strokes.",
     "keyboardShortcut": "B"
   },
   {
     "_ref": "colorReplacementBrushTool",
-    "name": "",
-    "description": "",
+    "name": "Color Replacement tool",
+    "description": "Paints the selected color over an existing color.",
     "keyboardShortcut": "B"
   },
   {
     "_ref": "wetBrushTool",
-    "name": "",
-    "description": "",
+    "name": "Mixer Brush tool",
+    "description": "Simulates real painting techniques, such as blending colors and varying paint wetness.",
     "keyboardShortcut": "B"
   },
   {
     "_ref": "cloneStampTool",
-    "name": "",
-    "description": "",
+    "name": "Clone Stamp tool",
+    "description": "Paints with pixels from another part of the image.",
     "keyboardShortcut": "S"
   },
   {
     "_ref": "patternStampTool",
-    "name": "",
-    "description": "",
+    "name": "Pattern Stamp tool",
+    "description": "Paints using a chosen pattern.",
     "keyboardShortcut": "S"
   },
   {
     "_ref": "historyBrushTool",
-    "name": "",
-    "description": "",
+    "name": "History Brush tool",
+    "description": "Restores parts of an image to an earlier state.",
     "keyboardShortcut": "Y"
   },
   {
     "_ref": "artBrushTool",
-    "name": "",
-    "description": "",
+    "name": "Art History Brush tool",
+    "description": "Paints stylized strokes with pixels from an earlier state of the image.",
     "keyboardShortcut": "Y"
   },
   {
     "_ref": "eraserTool",
-    "name": "",
-    "description": "",
+    "name": "Eraser tool",
+    "description": "Changes pixels to the background color or makes them transparent.",
     "keyboardShortcut": "E"
   },
   {
     "_ref": "backgroundEraserTool",
-    "name": "",
-    "description": "",
+    "name": "Background Eraser tool",
+    "description": "Erases the pixels of a sampled color.",
     "keyboardShortcut": "E"
   },
   {
     "_ref": "magicEraserTool",
-    "name": "",
-    "description": "",
+    "name": "Magic Eraser tool",
+    "description": "Erases similarly colored areas with a single click.",
     "keyboardShortcut": "E"
   },
   {
     "_ref": "gradientTool",
-    "name": "",
-    "description": "",
+    "name": "Gradient tool",
+    "description": "Creates a gradual blend between colors.",
     "keyboardShortcut": "G"
   },
   {
     "_ref": "bucketTool",
-    "name": "",
-    "description": "",
+    "name": "Paint Bucket tool",
+    "description": "Fill areas of similar color with the foreground color.",
     "keyboardShortcut": "G"
   },
   {
     "_ref": "blurTool",
-    "name": "",
-    "description": "",
+    "name": "Blur tool",
+    "description": "Blurs areas in an image.",
     "keyboardShortcut": null
   },
   {
     "_ref": "sharpenTool",
-    "name": "",
-    "description": "",
+    "name": "Sharpen tool",
+    "description": "Sharpens the soft edges in an image.",
     "keyboardShortcut": null
   },
   {
     "_ref": "smudgeTool",
-    "name": "",
-    "description": "",
+    "name": "Smudge tool",
+    "description": "Smear and blend colors together.",
     "keyboardShortcut": null
   },
   {
     "_ref": "dodgeTool",
-    "name": "",
-    "description": "",
+    "name": "Dodge tool",
+    "description": "Lightens areas in an image.",
     "keyboardShortcut": "O"
   },
   {
     "_ref": "burnInTool",
-    "name": "",
-    "description": "",
+    "name": "Burn tool",
+    "description": "Selectively darken areas in an image",
     "keyboardShortcut": "O"
   },
   {
     "_ref": "saturationTool",
-    "name": "",
-    "description": "",
+    "name": "Sponge tool",
+    "description": "Changes the color saturation of areas in an image.",
     "keyboardShortcut": "O"
   },
   {
