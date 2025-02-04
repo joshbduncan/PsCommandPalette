@@ -77,8 +77,8 @@ class Data {
    * @param {Array.<Command>} commands Commands to filer
    * @param {string} query Query string
    * @param {Array.<CommandTypes>} types Command type to filter for
-   * @param {Boolean} disabled Should disabled commands be included (defaults to false)
-   * @param {Boolean} hidden Should user hidden commands be included (defaults to false)
+   * @param {boolean} disabled Should disabled commands be included (defaults to false)
+   * @param {boolean} hidden Should user hidden commands be included (defaults to false)
    * @returns {Array.<Command>}
    */
   filterByQuery(commands, query, types = [], disabled = false, hidden = false) {

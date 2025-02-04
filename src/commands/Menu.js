@@ -8,7 +8,7 @@ const { Command, CommandTypes } = require("./Command.js");
 class Menu extends Command {
   /**
    * Crete a command palette menu command.
-   * @param { {command: number, title: string, name: string, visible: boolean, enabled: boolean, checked: boolean, path: Array.<string>, menuShortcut: {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean}} } obj Menu command object returned from the `menuBarInfo` property
+   * @param {object} obj Menu command object returned from the `menuBarInfo` property
    */
   constructor(obj) {
     const name = obj.name === "" ? obj.title.replace(/\.\.\.$/g, "") : obj.name;
@@ -34,7 +34,7 @@ class Menu extends Command {
 
   /**
    * Generate a keyboard shortcut combination string.
-   * @param { {"shiftKey": Boolean, "commandKey": Boolean, "optionKey": Boolean, "controlKey": Boolean, "keyChar": string} } obj Menu command keyboard shortcut object returned from the `menuBarInfo` property.
+   * @param { {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean, "keyChar": string} } obj Menu command keyboard shortcut object returned from the `menuBarInfo` property.
    * @returns string
    */
   generateKeyboardShortcut(obj) {
