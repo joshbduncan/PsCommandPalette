@@ -8,7 +8,7 @@ const { Command, CommandTypes } = require("./Command.js");
 class Action extends Command {
   /**
    * Crete a command palette action command.
-   * @param { {_id: number, id: number, index: number, name: string, parent: {_id: number, actions: Array.<object>, id: number, index: number, name: string, typename: string}, typename: string} } obj Action object returned from `app.actionTree`
+   * @param {object} obj Action object returned from `app.actionTree`
    */
   constructor(obj) {
     const id = "ps_action_" + obj.parent.name + "_" + obj.name;
@@ -30,8 +30,6 @@ class Action extends Command {
    * Execute the command.
    */
   async execute() {
-    console.log("executing action command:", this);
-
     const result = await core.executeAsModal(() => this.obj.play());
     console.log("action result:", result);
   }

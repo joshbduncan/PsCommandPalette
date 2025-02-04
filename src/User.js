@@ -47,9 +47,6 @@ class User {
     const dataFolder = await fs.getDataFolder();
     console.log("loading user data:", dataFolder.nativePath);
 
-    // reset current data
-    this.data = {};
-
     let f = this.file;
 
     // if file property is undefined, create the an entry

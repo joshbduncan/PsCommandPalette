@@ -1,5 +1,4 @@
-const { app } = require("photoshop");
-const { core } = require("photoshop");
+const { app, core } = require("photoshop");
 const os = require("os");
 const uxp = require("uxp");
 const { entrypoints } = uxp;
@@ -27,7 +26,6 @@ console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 const USER = new User();
 USER.load();
 const DATA = new Data();
-DATA.load();
 
 entrypoints.setup({
   commands: {
@@ -84,14 +82,11 @@ document.getElementById("btnReloadPlugin").addEventListener("click", reloadPlugi
 ///////////////////////
 
 async function launchPalette() {
-  await USER.load();
   await DATA.load();
 
   try {
     // open command palette modal
     const palette = new CommandPalette();
-    console.log("palette", palette);
-
     const result = await palette.open();
     console.log("modal result:", result);
 
@@ -114,8 +109,7 @@ async function launchPalette() {
     }
 
     // execute selected command
-    const executionResult = await command.execute();
-    console.log("command execution:", executionResult);
+    await command.execute();
   } catch (error) {
     // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
     console.log("palette error:", error);

@@ -1,3 +1,5 @@
+const { core } = require("photoshop");
+
 const { Command } = require("./commands/Command");
 
 /**
@@ -20,11 +22,7 @@ class CommandPalette {
    * @returns {Promise.<object>}
    */
   async open() {
-    console.log("opening command palette:", this);
-
     const modal = this.createModalDialog();
-    console.log("command palette document object:", modal);
-
     const result = await modal.uxpShowModal({
       title: "Ps Command Palette",
       resize: "vertical",
@@ -133,18 +131,12 @@ class CommandPalette {
      */
     dialog.addEventListener("load", () => {
       querybox.focus();
-      // TODO: do I need to wait?
-      // setTimeout(() => {
-      //   querybox.focus();
-      // }, 100);
     });
 
     /**
      * Update listed commands on query input.
      */
     querybox.addEventListener("input", (event) => {
-      console.log("query:", event.target.value);
-
       // clear current commands
       listbox.innerHTML = "";
 
@@ -169,7 +161,6 @@ class CommandPalette {
      * Listen for the command clicked event.
      */
     document.addEventListener("paletteCommandSelected", function (event) {
-      console.log("selected command:", event.detail.command);
       dialog.close({
         query: querybox.value,
         command: event.detail.command,

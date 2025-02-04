@@ -17,27 +17,25 @@ const CommandTypes = {
 class Command {
   /**
    * Crete a command palette command.
-   * @param {string|number} id Unique command id
+   * @param {string} id Unique command id
    * @param {string} name Command name
    * @param {string} type Command type
    * @param {boolean} enabled Is command enabled for use (defaults to true)
    */
-  constructor(id, name, type, enabled = true) {
+  constructor(id, name, type, description = "", enabled = true) {
     this.id = id;
     this.name = name;
     this.type = type;
+    this.description = description;
     this.enabled = enabled;
-    this.hint = null;
     this.element = null;
   }
 
   /**
    * Create an HTML document `sp-menu-item` element for the command.
-   * @param {string} displayText Command display title
-   * @param {string} description Command description for display (e.g. menu path for menu command)
    * @returns {Element}
    */
-  createElement(displayText, description) {
+  createElement() {
     // list item
     const listItem = document.createElement("li");
     listItem.setAttribute("id", this.id);
@@ -55,7 +53,7 @@ class Command {
     // title
     const title = document.createElement("span");
     title.classList.add("title");
-    title.textContent = displayText;
+    title.textContent = this.name;
     header.appendChild(title);
 
     // shortcut
@@ -69,7 +67,7 @@ class Command {
     // description
     const descriptionLabel = document.createElement("span");
     descriptionLabel.classList.add("description");
-    descriptionLabel.textContent = description;
+    descriptionLabel.textContent = this.description;
     body.appendChild(descriptionLabel);
 
     // type container

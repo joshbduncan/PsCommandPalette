@@ -195,7 +195,6 @@ class Data {
    * Reload all command data.
    */
   async reload() {
-    this.commands = {};
     this.load();
   }
 }

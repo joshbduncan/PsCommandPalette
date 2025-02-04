@@ -21,7 +21,7 @@ class Menu extends Command {
     super(id, name, CommandTypes.MENU, obj.enabled);
 
     this.obj = obj;
-    this.commandID = obj.commandID;
+    this.commandID = obj.command;
     this.visible = obj.visible;
     this.checked = obj.checked;
     this.keyboardShortcut = "";
@@ -69,16 +69,12 @@ class Menu extends Command {
 
   /**
    * Execute the menu command using the `performMenu` method.
-   * @returns {Promise}
    */
   async execute() {
-    console.log("executing menu command:", this);
-
     // ensure a menu command is still available since
     // sometimes after long periods between app operations
     // ps will report the command is available (e.g. undo and redo)
-    const commandState = await core.getMenuCommandState({ commandID: this.command });
-    console.log("menu command state:", commandState);
+    const commandState = await core.getMenuCommandState({ commandID: this.commandID });
     if (!commandState[0]) {
       await alertDialog(
         "Command Not Available",
@@ -89,7 +85,7 @@ class Menu extends Command {
     }
 
     try {
-      const result = await core.performMenuCommand({ commandID: this.command });
+      const result = await core.performMenuCommand({ commandID: this.commandID });
 
       if (!result.available) {
         await alertDialog(
