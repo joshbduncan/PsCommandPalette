@@ -70,6 +70,11 @@ sp-detail#main-plugin-info {
   color: var(--uxp-host-text-color);
 }
 
+/* #commands-list #commands li.command[disabled] {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: black !important;
+} */
+
 #commands-list #commands li.command:hover {
   background-color: var(--uxp-host-widget-hover-background-color);
   color: var(--uxp-host-widget-hover-text-color);

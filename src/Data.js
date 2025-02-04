@@ -1,12 +1,7 @@
-const { app } = require("photoshop");
-const { storage } = require("uxp");
-const fs = storage.localFileSystem;
-
 const { Command, CommandTypes } = require("./commands/Command.js");
-const { Action } = require("./commands/Action.js");
-const { Menu, menuCommandsPatchShortcutKey } = require("./commands/Menu.js");
-const { Tool } = require("./commands/Tool.js");
-const { cleanTitle } = require("./utils.js");
+const { loadMenus } = require("./commands/Menu.js");
+const { loadTools } = require("./commands/Tool.js");
+const { loadActions } = require("./commands/Action.js");
 
 /**
  * Ps Command Palette Commands Data.
@@ -94,12 +89,13 @@ class Data {
       matches = this.commandsByTypes(types);
     }
 
+    //  TODO: determine how to handle disabled commands
     // filter disabled commands
-    if (!disabled) {
-      matches = matches.filter((command) => {
-        return command.enabled;
-      });
-    }
+    // if (!disabled) {
+    //   matches = matches.filter((command) => {
+    //     return command.enabled;
+    //   });
+    // }
 
     // filter hidden commands
     if (!hidden && USER.data.hasOwnProperty("hiddenCommands")) {
@@ -197,116 +193,6 @@ class Data {
   async reload() {
     this.load();
   }
-}
-
-/**
- * Load Photoshop menu items from the `menuBarInfo` property.
- * @returns {Promise.<Array.<Menu>>}
- */
-async function loadMenus() {
-  const menusToIgnore = ["Open Recent"];
-  const menuItemsToIgnore = [];
-
-  /**
-   * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
-   * @returns {Promise.<object>}
-   */
-  async function getMenuBarItems() {
-    const target = { _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }] };
-    const command = { _obj: "get", _target: target };
-
-    // TODO: add batchPlay execution error checking https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay/#action-references
-    return await app.batchPlay([command], {});
-  }
-
-  /**
-   * Build `Menu` objects for each Photoshop menu command.
-   * @param {object} obj Menu bar info object
-   * @param {Array.<string>} path Current menu directory path to `obj`
-   * @returns {Array.<Menu>}
-   */
-  function buildMenus(obj, path = []) {
-    const results = [];
-
-    if (obj.submenu && Array.isArray(obj.submenu)) {
-      for (const submenu of obj.submenu) {
-        // filter out entire menus known not to work
-        if (menusToIgnore.includes(submenu.title)) continue;
-
-        // filter out menu commands known not to work
-        if (menuItemsToIgnore.includes(submenu.title)) continue;
-
-        const newPath = [...path, cleanTitle(submenu.title)];
-        results.push(...buildMenus(submenu, newPath));
-      }
-    }
-
-    // set name to title when missing
-    if (obj.kind === "item") {
-      obj.path = path;
-      obj.title = cleanTitle(obj.title);
-      if (obj.name === "") {
-        obj.name = obj.title;
-      }
-
-      // add key combination to commands available in tool bar
-      if (obj.command in menuCommandsPatchShortcutKey) {
-        obj.menuShortcut = menuCommandsPatchShortcutKey[obj.command];
-      }
-
-      let command = new Menu(obj);
-      results.push(command);
-    }
-
-    return results;
-  }
-
-  const menuBarItems = await getMenuBarItems();
-  const menuCommands = buildMenus(menuBarItems[0].menuBarInfo);
-  console.log(`loaded ${menuCommands.length} menu commands`);
-  return menuCommands;
-}
-
-/**
- * Load Photoshop tools from `tools.json`.
- * @returns {Promise.<Array.<Tool>>}
- */
-async function loadTools() {
-  const pluginFolder = await fs.getPluginFolder();
-
-  const toolCommands = [];
-  try {
-    const f = await pluginFolder.getEntry("data/tools.json");
-    const fileData = await f.read({ format: storage.formats.utf8 });
-    const toolData = JSON.parse(fileData);
-    toolData.forEach((obj) => {
-      let tool = new Tool(obj._ref, obj.name, obj.description, obj.keyboardShortcut);
-      toolCommands.push(tool);
-    });
-  } catch (error) {
-    console.log("error getting tool json data:", error);
-  }
-
-  console.log(`loaded ${toolCommands.length} tool commands`);
-  return toolCommands;
-}
-
-/**
- * Load Photoshop tools from `tools.json`.
- * @returns {Promise.<Array.<Tool>>}
- */
-async function loadActions() {
-  const actionSets = await app.actionTree;
-  const actionCommands = [];
-  actionSets.forEach((set) => {
-    set.actions.forEach((obj) => {
-      let action = new Action(obj);
-      actionCommands.push(action);
-    });
-  });
-
-  console.log(`loaded ${actionCommands.length} action commands`);
-  return actionCommands;
 }
 
 module.exports = {

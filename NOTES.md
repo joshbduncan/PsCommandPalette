@@ -10,7 +10,7 @@
     "name": "New",
     "visible": true,
     "enabled": true,
-        "checked": false,
+    "checked": false,
     "kind": "item",
     "menuShortcut": {
         "shiftKey": false,

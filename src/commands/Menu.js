@@ -1,6 +1,7 @@
-const { core } = require("photoshop");
+const { app, core } = require("photoshop");
 
 const { Command, CommandTypes } = require("./Command.js");
+const { alertDialog } = require("../dialogs/alert.js");
 const { cleanTitle, generateKeyboardShortcut } = require("../utils.js");
 
 /**
@@ -17,15 +18,15 @@ class Menu extends Command {
       name = cleanTitle(obj.title.replace(/\.\.\.$/g, ""));
     }
     const id = "ps_menu_" + obj.command.toString();
+    const description = obj.path.join(" > ");
 
-    super(id, name, CommandTypes.MENU, obj.enabled);
+    super(id, name, CommandTypes.MENU, description, obj.enabled);
 
     this.obj = obj;
     this.commandID = obj.command;
     this.visible = obj.visible;
     this.checked = obj.checked;
     this.keyboardShortcut = "";
-    this.description = obj.path.join(" > ");
 
     if (obj.menuShortcut.hasOwnProperty("keyChar")) {
       this.keyboardShortcut = generateKeyboardShortcut(obj.menuShortcut);
@@ -43,28 +44,11 @@ class Menu extends Command {
   }
 
   /**
-   * Update the title of the command <li> element.
-   */
-  async updateTitle() {
-    const updatedTitle = await this.getTitle();
-    this.element.querySelector(".title").textContent(updatedTitle);
-  }
-
-  /**
    * Check the current menu command state.
    * @returns {Promise.<boolean>}
    */
   async getState() {
     return core.getMenuCommandState({ commandID: this.commandID });
-  }
-
-  /**
-   * Update the state of the command <li> element.
-   * @returns {Element} Updated command <li> element
-   */
-  async updateState() {
-    const updatedTitle = await this.getTitle();
-    // TODO: update enabled state with a css class
   }
 
   /**
@@ -74,7 +58,7 @@ class Menu extends Command {
     // ensure a menu command is still available since
     // sometimes after long periods between app operations
     // ps will report the command is available (e.g. undo and redo)
-    const commandState = await core.getMenuCommandState({ commandID: this.commandID });
+    const commandState = await this.getState();
     if (!commandState[0]) {
       await alertDialog(
         "Command Not Available",
@@ -135,7 +119,74 @@ const menuCommandsPatchShortcutKey = {
   },
 };
 
+/**
+ * Load Photoshop menu items from the `menuBarInfo` property.
+ * @returns {Promise.<Array.<Menu>>}
+ */
+async function loadMenus() {
+  const menusToIgnore = ["Open Recent"];
+  const menuItemsToIgnore = [];
+
+  /**
+   * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
+   * @returns {Promise.<object>}
+   */
+  async function getMenuBarItems() {
+    const target = { _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }] };
+    const command = { _obj: "get", _target: target };
+
+    // TODO: add batchPlay execution error checking https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay/#action-references
+    return await app.batchPlay([command], {});
+  }
+
+  /**
+   * Build `Menu` objects for each Photoshop menu command.
+   * @param {object} obj Menu bar info object
+   * @param {Array.<string>} path Current menu directory path to `obj`
+   * @returns {Array.<Menu>}
+   */
+  function buildMenus(obj, path = []) {
+    const results = [];
+
+    if (obj.submenu && Array.isArray(obj.submenu)) {
+      for (const submenu of obj.submenu) {
+        // filter out entire menus known not to work
+        if (menusToIgnore.includes(submenu.title)) continue;
+
+        // filter out menu commands known not to work
+        if (menuItemsToIgnore.includes(submenu.title)) continue;
+
+        const newPath = [...path, cleanTitle(submenu.title)];
+        results.push(...buildMenus(submenu, newPath));
+      }
+    }
+
+    // set name to title when missing
+    if (obj.kind === "item") {
+      obj.path = path;
+      let cleanedTitle = cleanTitle(obj.title);
+      obj.title = cleanedTitle;
+
+      // add key combination to commands available in tool bar
+      if (obj.command in menuCommandsPatchShortcutKey) {
+        obj.menuShortcut = menuCommandsPatchShortcutKey[obj.command];
+      }
+
+      let command = new Menu(obj);
+      results.push(command);
+    }
+
+    return results;
+  }
+
+  const menuBarItems = await getMenuBarItems();
+  const menuCommands = buildMenus(menuBarItems[0].menuBarInfo);
+  console.log(`loaded ${menuCommands.length} menu commands`);
+  return menuCommands;
+}
+
 module.exports = {
   Menu,
+  loadMenus,
   menuCommandsPatchShortcutKey,
 };

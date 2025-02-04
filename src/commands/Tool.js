@@ -1,4 +1,6 @@
 const { core } = require("photoshop");
+const { storage } = require("uxp");
+const fs = storage.localFileSystem;
 
 const { Command, CommandTypes } = require("./Command.js");
 
@@ -36,6 +38,31 @@ class Tool extends Command {
   }
 }
 
+/**
+ * Load Photoshop tools from `tools.json`.
+ * @returns {Promise.<Array.<Tool>>}
+ */
+async function loadTools() {
+  const pluginFolder = await fs.getPluginFolder();
+
+  const toolCommands = [];
+  try {
+    const f = await pluginFolder.getEntry("data/tools.json");
+    const fileData = await f.read({ format: storage.formats.utf8 });
+    const toolData = JSON.parse(fileData);
+    toolData.forEach((obj) => {
+      let tool = new Tool(obj._ref, obj.name, obj.description, obj.keyboardShortcut);
+      toolCommands.push(tool);
+    });
+  } catch (error) {
+    console.log("error getting tool json data:", error);
+  }
+
+  console.log(`loaded ${toolCommands.length} tool commands`);
+  return toolCommands;
+}
+
 module.exports = {
   Tool,
+  loadTools,
 };

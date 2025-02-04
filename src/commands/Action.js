@@ -1,4 +1,4 @@
-const { core } = require("photoshop");
+const { app, core } = require("photoshop");
 
 const { Command, CommandTypes } = require("./Command.js");
 
@@ -35,6 +35,25 @@ class Action extends Command {
   }
 }
 
+/**
+ * Load Photoshop action.
+ * @returns {Promise.<Array.<Tool>>}
+ */
+async function loadActions() {
+  const actionSets = await app.actionTree;
+  const actionCommands = [];
+  actionSets.forEach((set) => {
+    set.actions.forEach((obj) => {
+      let action = new Action(obj);
+      actionCommands.push(action);
+    });
+  });
+
+  console.log(`loaded ${actionCommands.length} action commands`);
+  return actionCommands;
+}
+
 module.exports = {
   Action,
+  loadActions,
 };

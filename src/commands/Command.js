@@ -20,6 +20,7 @@ class Command {
    * @param {string} id Unique command id
    * @param {string} name Command name
    * @param {string} type Command type
+   * @param {string} description Command description (displayed below command)
    * @param {boolean} enabled Is command enabled for use (defaults to true)
    */
   constructor(id, name, type, description = "", enabled = true) {
@@ -40,6 +41,10 @@ class Command {
     const listItem = document.createElement("li");
     listItem.setAttribute("id", this.id);
     listItem.classList.add("command");
+
+    if (!this.enabled) {
+      listItem.setAttribute("disabled", "");
+    }
 
     // body
     const body = document.createElement("div");
