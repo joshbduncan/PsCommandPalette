@@ -6,6 +6,7 @@ const { Command, CommandTypes } = require("./commands/Command.js");
 const { Action } = require("./commands/Action.js");
 const { Menu, menuCommandsPatchShortcutKey } = require("./commands/Menu.js");
 const { Tool } = require("./commands/Tool.js");
+const { cleanTitle } = require("./utils.js");
 
 /**
  * Ps Command Palette Commands Data.
@@ -159,7 +160,7 @@ class Data {
   /**
    * Load all commands types into the commands set.
    */
-  async loadCommands() {
+  async load() {
     console.log("loading commands...");
     const commands = [];
 
@@ -184,10 +185,18 @@ class Data {
       const actionCommands = await loadActions();
       commands.push(...actionCommands);
     } catch (error) {
-      console.log("error loading menu commands:", error);
+      console.log("error loading action:", error);
     }
 
     this.commands = commands;
+  }
+
+  /**
+   * Reload all command data.
+   */
+  async reload() {
+    this.commands = {};
+    this.load();
   }
 }
 
@@ -196,7 +205,6 @@ class Data {
  * @returns {Promise.<Array.<Menu>>}
  */
 async function loadMenus() {
-  console.log("loading menu commands");
   const menusToIgnore = ["Open Recent"];
   const menuItemsToIgnore = [];
 
@@ -266,22 +274,18 @@ async function loadMenus() {
  */
 async function loadTools() {
   const pluginFolder = await fs.getPluginFolder();
-  console.log("loading tool json data:", pluginFolder.nativePath);
 
   const toolCommands = [];
   try {
     const f = await pluginFolder.getEntry("data/tools.json");
     const fileData = await f.read({ format: storage.formats.utf8 });
     const toolData = JSON.parse(fileData);
-    console.log("tool data file loaded:", toolData);
-
     toolData.forEach((obj) => {
       let tool = new Tool(obj._ref, obj.name, obj.description, obj.keyboardShortcut);
       toolCommands.push(tool);
     });
   } catch (error) {
-    console.log("error getting tool json data");
-    console.log(error);
+    console.log("error getting tool json data:", error);
   }
 
   console.log(`loaded ${toolCommands.length} tool commands`);
@@ -293,11 +297,8 @@ async function loadTools() {
  * @returns {Promise.<Array.<Tool>>}
  */
 async function loadActions() {
-  console.log("loading action data");
-
   const actionSets = await app.actionTree;
   const actionCommands = [];
-
   actionSets.forEach((set) => {
     set.actions.forEach((obj) => {
       let action = new Action(obj);

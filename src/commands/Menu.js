@@ -1,6 +1,7 @@
 const { core } = require("photoshop");
 
 const { Command, CommandTypes } = require("./Command.js");
+const { cleanTitle, generateKeyboardShortcut } = require("../utils.js");
 
 /**
  * Create a command palette menu command.
@@ -11,51 +12,42 @@ class Menu extends Command {
    * @param {object} obj Menu command object returned from the `menuBarInfo` property
    */
   constructor(obj) {
-    const name = obj.name === "" ? obj.title.replace(/\.\.\.$/g, "") : obj.name;
+    let name = obj.name;
+    if (obj.name === "") {
+      name = cleanTitle(obj.title.replace(/\.\.\.$/g, ""));
+    }
     const id = "ps_menu_" + obj.command.toString();
 
     super(id, name, CommandTypes.MENU, obj.enabled);
 
-    this.command = obj.command;
-    this.title = obj.title;
+    this.obj = obj;
+    this.commandID = obj.commandID;
     this.visible = obj.visible;
     this.checked = obj.checked;
-    this.menuShortcut = obj.menuShortcut;
     this.keyboardShortcut = "";
-    this.path = obj.path;
-    this.description = this.path.join(" > ");
+    this.description = obj.path.join(" > ");
 
-    if (this.menuShortcut.hasOwnProperty("keyChar")) {
-      this.keyboardShortcut = this.generateKeyboardShortcut(this.menuShortcut);
+    if (obj.menuShortcut.hasOwnProperty("keyChar")) {
+      this.keyboardShortcut = generateKeyboardShortcut(obj.menuShortcut);
     }
 
     this.createElement(this.name, this.description);
   }
 
   /**
-   * Generate a keyboard shortcut combination string.
-   * @param { {"shiftKey": boolean, "commandKey": boolean, "optionKey": boolean, "controlKey": boolean, "keyChar": string} } obj Menu command keyboard shortcut object returned from the `menuBarInfo` property.
-   * @returns string
+   * Get the current command title (some titles change based on current context/app state).
+   * @returns {Promise.<boolean>}
    */
-  generateKeyboardShortcut(obj) {
-    // Control (⌃), Option (⌥), Shift (⇧) Command (⌘)
-    // TODO: may need to use escape symbols (see https://brettterpstra.com/2019/04/19/creating-shortcuts-for-mac-symbols-in-html/)
-    // TODO: correct order to match adobe ordering (see https://helpx.adobe.com/photoshop/using/default-keyboard-shortcuts.html)
-    let shortcut = "";
-    if (obj.controlKey) {
-      shortcut += "⌃";
-    }
-    if (obj.optionKey) {
-      shortcut += "⌥";
-    }
-    if (obj.shiftKey) {
-      shortcut += "⇧";
-    }
-    if (obj.commandKey) {
-      shortcut += "⌘";
-    }
+  async getTitle() {
+    return await core.getMenuCommandTitle({ commandID: this.commandID });
+  }
 
-    return shortcut + obj.keyChar;
+  /**
+   * Update the title of the command <li> element.
+   */
+  async updateTitle() {
+    const updatedTitle = await this.getTitle();
+    this.element.querySelector(".title").textContent(updatedTitle);
   }
 
   /**
@@ -63,9 +55,16 @@ class Menu extends Command {
    * @returns {Promise.<boolean>}
    */
   async getState() {
-    console.log("getting command state:", this);
-    await core.getMenuCommandState({ commandID: this.command });
-    return;
+    return core.getMenuCommandState({ commandID: this.commandID });
+  }
+
+  /**
+   * Update the state of the command <li> element.
+   * @returns {Element} Updated command <li> element
+   */
+  async updateState() {
+    const updatedTitle = await this.getTitle();
+    // TODO: update enabled state with a css class
   }
 
   /**
@@ -100,8 +99,7 @@ class Menu extends Command {
         );
       }
     } catch (error) {
-      console.log("menu command execution error");
-      console.log(error);
+      console.log("menu command execution error:", error);
     }
   }
 }

@@ -25,7 +25,9 @@ console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 // create data objects //
 /////////////////////////
 const USER = new User();
+USER.load();
 const DATA = new Data();
+DATA.load();
 
 entrypoints.setup({
   commands: {
@@ -81,33 +83,9 @@ document.getElementById("btnReloadPlugin").addEventListener("click", reloadPlugi
 // command functions //
 ///////////////////////
 
-async function loadUserData() {
-  // load user data
-  try {
-    await USER.load();
-    console.log(USER.data);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function loadCommandData() {
-  try {
-    // load palette commands
-    await DATA.loadCommands();
-    console.log(`loaded ${Object.keys(DATA.commands).length} total commands`);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function loadData() {
-  await loadUserData();
-  await loadCommandData();
-}
-
 async function launchPalette() {
-  await loadData();
+  await USER.load();
+  await DATA.load();
 
   try {
     // open command palette modal
@@ -149,6 +127,7 @@ async function launchPalette() {
  */
 async function reloadPlugin() {
   console.log("reloading ps-command-palette");
-  await loadData();
+  await USER.reload();
+  await DATA.reload();
   window.location.reload();
 }

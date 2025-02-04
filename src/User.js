@@ -40,7 +40,6 @@ class User {
 
   /**
    * Load the user data file.
-   * @returns {Object}
    */
   async load() {
     // https://developer.adobe.com/xd/uxp/develop/reference/uxp/module/storage/
@@ -62,8 +61,7 @@ class User {
         });
         this.file = f;
       } catch (error) {
-        console.log("error creating user file entry");
-        console.log(error);
+        console.log("error creating user file entry:", error);
         console.log("using default data");
         this.data = this.defaultData();
         return this.data;
@@ -74,8 +72,7 @@ class User {
     try {
       f = await dataFolder.getEntry(this.fileName);
     } catch (error) {
-      console.log("error getting user data file entry");
-      console.log(error);
+      console.log("error getting user data file entry:", error);
       console.log("using default user data");
       this.data = this.defaultData;
       return this.data;
@@ -87,8 +84,7 @@ class User {
       this.data = JSON.parse(fileData);
       console.log("user data file loaded:", this.data);
     } catch (error) {
-      console.log("error reading user data file");
-      console.log(error);
+      console.log("error reading user data file:", error);
       console.log("using default user data");
       this.data = this.defaultData;
 
@@ -104,9 +100,16 @@ class User {
             backupFilePath
         );
       }
-
-      return this.data;
     }
+  }
+
+  /**
+   * Reload all user data from disk.
+   */
+  async reload() {
+    this.data = {};
+    this.file = undefined;
+    this.load();
   }
 
   /**
@@ -128,8 +131,7 @@ class User {
         });
         this.file = f;
       } catch (error) {
-        console.log("error creating user file entry");
-        console.log(error);
+        console.log("error creating user file entry:", error);
 
         // TODO: add custom dialog
         await alertDialog(
@@ -149,8 +151,7 @@ class User {
       const data = JSON.stringify(this.data);
       await f.write(data, { append: false });
     } catch (error) {
-      console.log("error writing user data file");
-      console.log(error);
+      console.log("error writing user data file:", error);
       // TODO: add custom dialog
       await alertDialog(
         "User Data Error",
@@ -183,8 +184,7 @@ class User {
       await dataFolder.renameEntry(f, f.name + ".bak");
       console.log("user data file backed up to:", f.nativePath);
     } catch (error) {
-      console.log("error creating user data backup file");
-      console.log(error);
+      console.log("error creating user data backup file:", error);
       await alertDialog(
         "User Data Error",
         null,
