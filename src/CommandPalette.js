@@ -38,10 +38,10 @@ class CommandPalette {
 
     /**
      * Create the command palette dialog modal HTML element.
-     * @returns {Element}
+     * @returns {HTMLElement}
      */
     createModalDialog() {
-        console.log("creating command palette modal");
+        console.log("Creating command palette modal");
 
         /////////////////////////
         // create modal dialog //
@@ -223,7 +223,7 @@ class CommandPalette {
         ///////////////////////////
 
         // TODO: filter out unavailable commands or make them disabled
-        console.log("loading startup commands");
+        console.log("Loading startup commands");
 
         this.startupCommands.slice(0, 9).forEach((command) => {
             if (command.element === null) {
