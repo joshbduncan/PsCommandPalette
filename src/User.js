@@ -1,5 +1,6 @@
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
+
 const { alertDialog } = require("./dialogs/alert.js");
 
 /**
@@ -12,7 +13,6 @@ class User {
     constructor() {
         this.data = {};
         this.fileName = "pscp_user_data.json";
-        this.file;
     }
 
     /**
@@ -45,59 +45,27 @@ class User {
         // https://developer.adobe.com/xd/uxp/develop/reference/uxp/module/storage/
 
         const dataFolder = await fs.getDataFolder();
-        console.log("loading user data:", dataFolder.nativePath);
+        console.log("Loading user data:", dataFolder.nativePath);
 
-        let f = this.file;
-
-        // if file property is undefined, create the an entry
-        if (f === undefined) {
-            try {
-                f = await dataFolder.createEntry(this.fileName, {
-                    type: storage.types.file,
-                    overwrite: true,
-                });
-                this.file = f;
-            } catch (error) {
-                console.log("error creating user file entry:", error);
-                console.log("using default data");
-                this.data = this.defaultData();
-                return this.data;
-            }
-        }
-
-        // check to see if the file exist on disk
         try {
-            f = await dataFolder.getEntry(this.fileName);
-        } catch (error) {
-            console.log("error getting user data file entry:", error);
-            console.log("using default user data");
-            this.data = this.defaultData;
-            return this.data;
-        }
-
-        // try to read the file data
-        try {
-            const fileData = await f.read({ format: storage.formats.utf8 });
+            this.file = await dataFolder.getEntry(this.fileName);
+            const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
-            console.log(this.data);
         } catch (error) {
-            console.log("error reading user data file:", error);
-            console.log("using default user data");
+            console.error("Error loading user data file");
             this.data = this.defaultData;
 
-            // backup user data file for inspection
+            // create backup
             const backupFilePath = await this.backup();
-
-            if (backupFilePath != null) {
-                // TODO: add custom dialog
+            if (backupFilePath) {
                 await alertDialog(
                     "User Data Error",
-                    null,
-                    "There was an error reading your user data file. A backup was created at the following location.\n" +
-                        backupFilePath
+                    `There was an error reading your user data file. A backup was created at: ${backupFilePath}`
                 );
             }
         }
+
+        return this.data;
     }
 
     /**
@@ -106,7 +74,7 @@ class User {
     async reload() {
         this.data = {};
         this.file = undefined;
-        this.load();
+        await this.load();
     }
 
     /**
@@ -114,48 +82,25 @@ class User {
      * @returns {storage.<File>}
      */
     async write() {
-        const dataFolder = await fs.getDataFolder();
-        console.log("writing user data:", dataFolder.nativePath);
-
-        let f = this.file;
-
-        // if file property is undefined, create the an entry
-        if (f === undefined) {
-            try {
-                f = await dataFolder.createEntry(this.fileName, {
+        console.log("Writing user data");
+        try {
+            const dataFolder = await fs.getDataFolder();
+            if (!this.file) {
+                this.file = await dataFolder.createEntry(this.fileName, {
                     type: storage.types.file,
                     overwrite: true,
                 });
-                this.file = f;
-            } catch (error) {
-                console.log("error creating user file entry:", error);
-
-                // TODO: add custom dialog
-                await alertDialog(
-                    "User Data Error",
-                    null,
-                    "There was an error creating your user data file."
-                );
-                return f;
             }
-        }
+            console.log(this.file.nativePath);
 
-        // write the user data to the file
-        try {
-            // update timestamp
             this.data.timestamp = Date.now();
-
-            const data = JSON.stringify(this.data);
-            await f.write(data, { append: false });
+            await this.file.write(JSON.stringify(this.data), { append: false });
         } catch (error) {
-            console.log("error writing user data file:", error);
-            // TODO: add custom dialog
+            console.error("Error writing user data file:", error);
             await alertDialog(
                 "User Data Error",
-                null,
                 "There was an error writing your user data file."
             );
-            return f;
         }
     }
 
@@ -166,30 +111,39 @@ class User {
     async backup() {
         // TODO: add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
 
-        const dataFolder = await fs.getDataFolder();
-        console.log("backing up user data:");
-
-        let f = this.file;
-        let backupFile;
-
-        // check if file entry is set
-        if (f === undefined) {
-            return null;
-        }
+        if (!this.file) return null;
 
         try {
+            const dataFolder = await fs.getDataFolder();
+            const f = this.file;
+
             await dataFolder.renameEntry(f, f.name + ".bak");
-            console.log("user data file backed up to:", f.nativePath);
+            console.log("User data file backed up to:", f.nativePath);
+            return f.nativePath;
         } catch (error) {
-            console.log("error creating user data backup file:", error);
+            console.error("Error creating user data backup file:", error);
             await alertDialog(
                 "User Data Error",
-                null,
                 "There was an error backing up your user data file."
             );
+            return null;
         }
+    }
 
-        return f.nativePath;
+    /**
+     * Add an item to the user command history.
+     * @param {string} query Palette query string
+     * @param {string} commandID Selected command id
+     */
+    async historyAdd(query, commandID) {
+        if (!query || !commandID) return;
+
+        this.data.history.unshift({
+            query: query,
+            commandID: commandID,
+            timestamp: Date.now(),
+        });
+        await this.write();
     }
 }
 
