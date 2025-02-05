@@ -14,7 +14,7 @@ const CommandTypes = {
  */
 class Command {
     /**
-     * Crete a command palette command.
+     * Create a command palette command.
      * @param {string} id Unique command id
      * @param {string} name Command name
      * @param {string} type Command type
@@ -22,6 +22,10 @@ class Command {
      * @param {boolean} enabled Is command enabled for use (defaults to true)
      */
     constructor(id, name, type, description = "", enabled = true) {
+        if (!id || !name || !type) {
+            throw new Error("Command requires a valid ID, name, and type.");
+        }
+
         this.id = id;
         this.name = name;
         this.type = type;
@@ -32,9 +36,11 @@ class Command {
 
     /**
      * Create an HTML document `sp-menu-item` element for the command.
-     * @returns {Element}
+     * @returns {HTMLElement}
      */
     createElement() {
+        if (this.element) return this.element;
+
         // list item
         const listItem = document.createElement("li");
         listItem.setAttribute("id", this.id);
@@ -60,7 +66,7 @@ class Command {
         header.appendChild(title);
 
         // shortcut
-        if (this.hasOwnProperty("keyboardShortcut")) {
+        if (this.keyboardShortcut) {
             const shortcut = document.createElement("kbd");
             shortcut.classList.add("shortcut");
             shortcut.textContent = this.keyboardShortcut;
@@ -68,10 +74,12 @@ class Command {
         }
 
         // description
-        const descriptionLabel = document.createElement("span");
-        descriptionLabel.classList.add("description");
-        descriptionLabel.textContent = this.description;
-        body.appendChild(descriptionLabel);
+        if (this.description) {
+            const descriptionLabel = document.createElement("span");
+            descriptionLabel.classList.add("description");
+            descriptionLabel.textContent = this.description;
+            body.appendChild(descriptionLabel);
+        }
 
         // type container
         const typeContainer = document.createElement("div");
@@ -89,7 +97,6 @@ class Command {
         this.element = listItem;
 
         this.addEventListeners();
-
         return listItem;
     }
 
@@ -97,14 +104,20 @@ class Command {
      * Add all command related event listeners.
      */
     addEventListeners() {
+        if (!this.element) {
+            console.error("Command element not created before adding event listeners.");
+            return;
+        }
+
         this.element.addEventListener("click", (event) => {
-            const customEvent = new CustomEvent("paletteCommandSelected", {
-                detail: {
-                    originalEvent: event,
-                    command: this,
-                },
-            });
-            document.dispatchEvent(customEvent);
+            document.dispatchEvent(
+                new CustomEvent("paletteCommandSelected", {
+                    detail: {
+                        originalEvent: event,
+                        command: this,
+                    },
+                })
+            );
         });
     }
 
@@ -112,7 +125,7 @@ class Command {
      * Execute the command.
      */
     execute() {
-        console.log(`base 'Command' execute for ${this.id}`);
+        throw new Error(`Execute method not implemented for command: ${this.id}`);
     }
 }
 
