@@ -31,10 +31,10 @@ const alertIcon = (type) => {
 /**
  * Display an alert dialog.
  * @param {string} title Alert dialog title
- * @param {string} icon Dialog icon
  * @param {string} message Dialog message
+ * @param {string} icon Dialog icon
  */
-const alertDialog = async (title, icon, message) => {
+const alertDialog = async (title, message, icon) => {
     const dialog = document.createElement("dialog");
     const form = document.createElement("form");
     const heading = document.createElement("sp-heading");

@@ -59,13 +59,11 @@ entrypoints.setup({
 // add main panel info //
 /////////////////////////
 const year = new Date().getFullYear();
-document.getElementById(
-    "main-copyright"
-).textContent = `Copyright ${year} ${PLUGIN_AUTHOR}`;
+document.getElementById("main-copyright").textContent =
+    `Copyright ${year} ${PLUGIN_AUTHOR}`;
 
-document.getElementById(
-    "main-plugin-info"
-).textContent = `Plugin Version ${PLUGIN_VERSION}`;
+document.getElementById("main-plugin-info").textContent =
+    `Plugin Version ${PLUGIN_VERSION}`;
 
 ////////////////////////////////////
 // add main panel event listeners //

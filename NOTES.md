@@ -1,3 +1,7 @@
+## PS API Links
+
+[batchPlay](https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay)
+
 ## PS API Objects
 
 ### Menu Command
