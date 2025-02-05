@@ -22,9 +22,9 @@ Below are some of the things I hope to implement. A lot of these are features of
 -   [ ] caching to speed up launch (right now all menu commands are reloaded every launch)
 -   [ ] access other command types
     -   [x] tools
-        -   [ ] add all available tools (behind edit toolbar button)
+        -   [ ] localize tool names
     -   [x] actions
-    -   [ ] scripts
+    -   [ ] scripts - ℹ️ already works with scripts loaded into Ps (e.g. File > Scripts > script.jsx)
     -   [ ] custom workflows
     -   [ ] bookmarked files and folders
     -   [ ] custom pickers
