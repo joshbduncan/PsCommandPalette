@@ -1,5 +1,3 @@
-const { getIcon } = require("../icons.js");
-
 /**
  * Command type enum.
  */

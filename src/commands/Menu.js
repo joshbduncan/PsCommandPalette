@@ -63,19 +63,21 @@ class Menu extends Command {
       await alertDialog(
         "Command Not Available",
         null,
-        "Photoshop is reporting that your selected command not available via the API at this time."
+        "Photoshop is reporting that your selected command not available via the API at this time.",
       );
       return;
     }
 
     try {
-      const result = await core.performMenuCommand({ commandID: this.commandID });
+      const result = await core.performMenuCommand({
+        commandID: this.commandID,
+      });
 
       if (!result.available) {
         await alertDialog(
           "Command Execution Error",
           null,
-          "There was an error executing your command."
+          "There was an error executing your command.",
         );
       }
     } catch (error) {
@@ -131,13 +133,15 @@ async function loadMenus() {
    * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
    * @returns {Promise.<object>}
    */
-  async function getMenuBarItems() {
-    const target = { _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }] };
+  const getMenuBarItems = async () => {
+    const target = {
+      _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }],
+    };
     const command = { _obj: "get", _target: target };
 
     // TODO: add batchPlay execution error checking https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay/#action-references
     return await app.batchPlay([command], {});
-  }
+  };
 
   /**
    * Build `Menu` objects for each Photoshop menu command.
@@ -145,7 +149,7 @@ async function loadMenus() {
    * @param {Array.<string>} path Current menu directory path to `obj`
    * @returns {Array.<Menu>}
    */
-  function buildMenus(obj, path = []) {
+  const buildMenus = (obj, path = []) => {
     const results = [];
 
     if (obj.submenu && Array.isArray(obj.submenu)) {
@@ -177,7 +181,7 @@ async function loadMenus() {
     }
 
     return results;
-  }
+  };
 
   const menuBarItems = await getMenuBarItems();
   const menuCommands = buildMenus(menuBarItems[0].menuBarInfo);

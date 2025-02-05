@@ -101,42 +101,28 @@ class CommandPalette {
      * Determine the currently selected command `li` element.
      * @returns number
      */
-    function getSelectedCommand() {
+    const getSelectedCommand = () => {
       for (let index = 0; index < listbox.children.length; index++) {
         const command = listbox.children[index];
         if (command.hasAttribute("selected")) {
           return index;
         }
       }
-    }
+    };
 
     /**
      * Change which command is selected.
      * @param {number} previousIndex Index of currently selected command (before any changes)
      * @param {number} newIndex Index of next command to be selected
      */
-    function moveCommandSelection(previousIndex, newIndex) {
+    const moveCommandSelection = (previousIndex, newIndex) => {
       if (typeof previousIndex === "number") {
         listbox.children[previousIndex].removeAttribute("selected");
       }
       listbox.children[newIndex].setAttribute("selected", "");
-    }
+    };
 
-    /////////////////////////
-    // add event listeners //
-    /////////////////////////
-
-    /**
-     * Auto-focus the querybox input element.
-     */
-    dialog.addEventListener("load", () => {
-      querybox.focus();
-    });
-
-    /**
-     * Update listed commands on query input.
-     */
-    querybox.addEventListener("input", (event) => {
+    const queryCommands = (event) => {
       // clear current commands
       listbox.innerHTML = "";
 
@@ -155,32 +141,9 @@ class CommandPalette {
 
       // select the first item
       resetCommandSelection(listbox);
-    });
+    };
 
-    /**
-     * Listen for the command clicked event.
-     */
-    document.addEventListener("paletteCommandSelected", function (event) {
-      dialog.close({
-        query: querybox.value,
-        command: event.detail.command,
-      });
-    });
-
-    /**
-     * Allow enter to submit form with currently selected command.
-     */
-    form.addEventListener("submit", (event) => {
-      const selectedIndex = getSelectedCommand();
-      const selectedCommand = listbox.children[selectedIndex];
-      selectedCommand.click();
-      event.preventDefault();
-    });
-
-    /**
-     * Enable keyboard (up/down arrows) command list navigation with end-to-end scrolling.
-     */
-    document.addEventListener("keydown", (event) => {
+    const keyboardNavigation = (event) => {
       if (event.key === "ArrowDown") {
         event.preventDefault();
 
@@ -212,7 +175,48 @@ class CommandPalette {
 
         moveCommandSelection(previousIndex, newIndex);
       }
+    };
+
+    /////////////////////////
+    // add event listeners //
+    /////////////////////////
+
+    /**
+     * Auto-focus the querybox input element.
+     */
+    dialog.addEventListener("load", () => {
+      querybox.focus();
     });
+
+    /**
+     * Update listed commands on query input.
+     */
+    querybox.addEventListener("input", queryCommands);
+
+    /**
+     * Listen for the command clicked event.
+     */
+    document.addEventListener("paletteCommandSelected", function (event) {
+      dialog.close({
+        query: querybox.value,
+        command: event.detail.command,
+      });
+    });
+
+    /**
+     * Allow enter to submit form with currently selected command.
+     */
+    form.addEventListener("submit", (event) => {
+      const selectedIndex = getSelectedCommand();
+      const selectedCommand = listbox.children[selectedIndex];
+      selectedCommand.click();
+      event.preventDefault();
+    });
+
+    /**
+     * Enable keyboard (up/down arrows) command list navigation with end-to-end scrolling.
+     */
+    document.addEventListener("keydown", keyboardNavigation);
 
     ///////////////////////////
     // load startup commands //

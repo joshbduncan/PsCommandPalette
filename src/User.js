@@ -79,7 +79,7 @@ class User {
     try {
       const fileData = await f.read({ format: storage.formats.utf8 });
       this.data = JSON.parse(fileData);
-      console.log("user data file loaded:", this.data);
+      console.log(this.data);
     } catch (error) {
       console.log("error reading user data file:", error);
       console.log("using default user data");
@@ -94,7 +94,7 @@ class User {
           "User Data Error",
           null,
           "There was an error reading your user data file. A backup was created at the following location.\n" +
-            backupFilePath
+            backupFilePath,
         );
       }
     }
@@ -134,7 +134,7 @@ class User {
         await alertDialog(
           "User Data Error",
           null,
-          "There was an error creating your user data file."
+          "There was an error creating your user data file.",
         );
         return f;
       }
@@ -153,7 +153,7 @@ class User {
       await alertDialog(
         "User Data Error",
         null,
-        "There was an error writing your user data file."
+        "There was an error writing your user data file.",
       );
       return f;
     }
@@ -185,7 +185,7 @@ class User {
       await alertDialog(
         "User Data Error",
         null,
-        "There was an error backing up your user data file."
+        "There was an error backing up your user data file.",
       );
     }
 

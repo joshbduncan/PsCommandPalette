@@ -51,7 +51,12 @@ async function loadTools() {
     const fileData = await f.read({ format: storage.formats.utf8 });
     const toolData = JSON.parse(fileData);
     toolData.forEach((obj) => {
-      let tool = new Tool(obj._ref, obj.name, obj.description, obj.keyboardShortcut);
+      let tool = new Tool(
+        obj._ref,
+        obj.name,
+        obj.description,
+        obj.keyboardShortcut,
+      );
       toolCommands.push(tool);
     });
   } catch (error) {
