@@ -1,4 +1,3 @@
-const { core } = require("photoshop");
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 
@@ -16,25 +15,37 @@ class Tool extends Command {
      * @param {string} keyboardShortcut Tool keyboard shortcut
      */
     constructor(ref, name, description, keyboardShortcut) {
-        const id = "ps_tool_" + ref;
+        if (!ref || !name) {
+            throw new Error("Tool requires a valid reference and name.");
+        }
 
         // TODO: check to see if tool availability can be determined from the api
         // TODO: implement tool shortcut key
+        const id = "ps_tool_" + ref;
         super(id, name, CommandTypes.TOOL, description);
+
         this.ref = ref;
         this.keyboardShortcut = keyboardShortcut;
-
-        this.createElement(this.name, this.description);
     }
 
     /**
      * Execute the tool command.
      */
     async execute() {
-        const target = { _ref: [{ _ref: this.ref }] };
-        const command = { _obj: "select", _target: target };
-        // TODO: add batchPlay execution error checking https://developer.adobe.com/photoshop/uxp/2022/ps_reference/media/batchplay/#action-references
-        const result = await app.batchPlay([command], {});
+        try {
+            const target = { _ref: [{ _ref: this.ref }] };
+            const command = { _obj: "select", _target: target };
+
+            const result = await app.batchPlay([command], {});
+
+            if (!result || result.length === 0) {
+                throw new Error(`Tool activation failed for: ${this.name}`);
+            }
+
+            console.log(`Executed tool: ${this.name}`);
+        } catch (error) {
+            console.error(`Error activating tool "${this.name}":`, error);
+        }
     }
 }
 
@@ -43,28 +54,44 @@ class Tool extends Command {
  * @returns {Promise.<Array.<Tool>>}
  */
 async function loadTools() {
-    const pluginFolder = await fs.getPluginFolder();
-
-    const toolCommands = [];
     try {
-        const f = await pluginFolder.getEntry("data/tools.json");
-        const fileData = await f.read({ format: storage.formats.utf8 });
-        const toolData = JSON.parse(fileData);
-        toolData.forEach((obj) => {
-            let tool = new Tool(
+        const pluginFolder = await fs.getPluginFolder();
+        const fileEntry = await pluginFolder.getEntry("data/tools.json");
+
+        if (!fileEntry) {
+            throw new Error("tools.json file not found.");
+        }
+
+        const fileData = await fileEntry.read({ format: storage.formats.utf8 });
+
+        let toolData;
+        try {
+            toolData = JSON.parse(fileData);
+        } catch (error) {
+            throw new Error(`Error parsing tools.json: ${error.message}`);
+        }
+
+        if (!Array.isArray(toolData)) {
+            throw new Error("Invalid tools.json format: Expected an array.");
+        }
+
+        const toolCommands = toolData.map((obj) => {
+            const tool = new Tool(
                 obj._ref,
                 obj.name,
                 obj.description,
                 obj.keyboardShortcut
             );
-            toolCommands.push(tool);
+            tool.createElement();
+            return tool;
         });
-    } catch (error) {
-        console.log("error getting tool json data:", error);
-    }
 
-    console.log(`loaded ${toolCommands.length} tool commands`);
-    return toolCommands;
+        console.log(`Loaded ${toolCommands.length} tool commands.`);
+        return toolCommands;
+    } catch (error) {
+        console.error("Error loading tools:", error);
+        return [];
+    }
 }
 
 module.exports = {
