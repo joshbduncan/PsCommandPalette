@@ -157,7 +157,7 @@ class Data {
      * Load all commands types into the commands set.
      */
     async load() {
-        console.log("loading commands...");
+        console.log("Loading commands...");
         const commands = [];
 
         // load menu commands
@@ -165,7 +165,7 @@ class Data {
             const menusCommands = await loadMenus();
             commands.push(...menusCommands);
         } catch (error) {
-            console.log("error loading menu commands:", error);
+            console.error("Error loading menu commands:", error);
         }
 
         // load tool commands
@@ -173,7 +173,7 @@ class Data {
             const toolComands = await loadTools();
             commands.push(...toolComands);
         } catch (error) {
-            console.log("error loading tools:", error);
+            console.error("Error loading tools:", error);
         }
 
         // load action commands
@@ -181,7 +181,7 @@ class Data {
             const actionCommands = await loadActions();
             commands.push(...actionCommands);
         } catch (error) {
-            console.log("error loading action:", error);
+            console.error("Error loading action:", error);
         }
 
         this.commands = commands;
