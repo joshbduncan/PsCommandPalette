@@ -1,26 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+    <head>
+        <script src="main.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <title>Ps Command Palette</title>
+    </head>
 
-<head>
-  <script src="main.js"></script>
-  <link rel="stylesheet" href="style.css">
-  <title>Ps Command Palette</title>
-</head>
-
-<body>
-
-  <sp-heading id="main-panel-title">Ps Command Palette</sp-heading>
-  <sp-divider></sp-divider>
-  <div id="main-action-buttons">
-    <ul>
-      <li><sp-button id="btnOpenCommandPalette">Open Command Palette</sp-button></li>
-      <li><sp-button id="btnReloadPlugin">Reload Plugin</sp-button></li>
-    </ul>
-  </div>
-  <sp-divider></sp-divider>
-  <sp-detail id="main-copyright"></sp-detail>
-  <sp-detail size="s" weight="light" id="main-plugin-info"></sp-detail>
-
-</body>
-
+    <body>
+        <sp-heading id="main-panel-title">Ps Command Palette</sp-heading>
+        <sp-divider></sp-divider>
+        <div id="main-action-buttons">
+            <ul>
+                <li>
+                    <sp-button id="btnOpenCommandPalette"
+                        >Open Command Palette</sp-button
+                    >
+                </li>
+                <li><sp-button id="btnReloadPlugin">Reload Plugin</sp-button></li>
+            </ul>
+        </div>
+        <sp-divider></sp-divider>
+        <sp-detail id="main-copyright"></sp-detail>
+        <sp-detail size="s" weight="light" id="main-plugin-info"></sp-detail>
+    </body>
 </html>
