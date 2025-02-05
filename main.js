@@ -18,7 +18,7 @@ const HOST_NAME = uxp.host.name;
 const HOST_VERSION = uxp.host.version;
 const HOST_LOCALE = uxp.host.uiLocale;
 const HOST_OS = os.platform();
-console.log("loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
+console.log("Loading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
 
 /////////////////////////
 // create data objects //
@@ -59,11 +59,13 @@ entrypoints.setup({
 // add main panel info //
 /////////////////////////
 const year = new Date().getFullYear();
-document.getElementById("main-copyright").textContent =
-    `Copyright ${year} ${PLUGIN_AUTHOR}`;
+document.getElementById(
+    "main-copyright"
+).textContent = `Copyright ${year} ${PLUGIN_AUTHOR}`;
 
-document.getElementById("main-plugin-info").textContent =
-    `Plugin Version ${PLUGIN_VERSION}`;
+document.getElementById(
+    "main-plugin-info"
+).textContent = `Plugin Version ${PLUGIN_VERSION}`;
 
 ////////////////////////////////////
 // add main panel event listeners //
@@ -83,34 +85,24 @@ async function launchPalette() {
     await DATA.load();
 
     try {
-        // open command palette modal
         const palette = new CommandPalette();
         const result = await palette.open();
-        console.log("modal result:", result);
+        console.log("Modal result:", result);
 
-        if (result == "reasonCanceled") {
+        if (result === "reasonCanceled" || !result) return;
+
+        const { query, command } = result;
+        if (!command) {
+            console.error("No command selected.");
             return;
         }
 
-        const query = result.query;
-        const command = result.command;
+        await USER.historyAdd(query, command.id);
 
-        // add result to history
-        // TODO: create function for this
-        if (query != "") {
-            USER.data.history.unshift({
-                query: query,
-                commandID: command.id,
-                timestamp: Date.now(),
-            });
-            USER.write();
-        }
-
-        // execute selected command
         await command.execute();
     } catch (error) {
-        // TODO: add alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
-        console.log("palette error:", error);
+        console.error("Palette error:", error);
+        // TODO: Add user alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
     }
 }
 
@@ -118,7 +110,7 @@ async function launchPalette() {
  * Reload the plugin.
  */
 async function reloadPlugin() {
-    console.log("reloading ps-command-palette");
+    console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
     await USER.reload();
     await DATA.reload();
     window.location.reload();
