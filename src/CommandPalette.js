@@ -4,8 +4,12 @@
 class CommandPalette {
     /**
      * Create a command palette.
+     * @param {Array.<Command>} commands Queryable command palette commands
+     * @param {Array.<string>} startupCommands Commands displayed when command palette launches
      */
-    constructor() {
+    constructor(commands = DATA.commands, startupCommands = DATA.startupCommands) {
+        this.commands = commands;
+        this.startupCommands = startupCommands;
         this.dialog = null;
         this.querybox = null;
         this.listbox = null;
@@ -105,11 +109,10 @@ class CommandPalette {
      * Query and update the command list based on user input.
      */
     queryCommands(event) {
-        while (this.listbox.firstChild) {
-            this.listbox.removeChild(this.listbox.firstChild);
-        }
+        const query = event.target.value;
+        this.listbox.innerHTML = "";
 
-        const matches = DATA.filterByQuery(DATA.commands, event.target.value);
+        const matches = DATA.filterByQuery(event.target.value, this.commands);
         matches.slice(0, 9).forEach((command) => {
             if (!command.element) {
                 command.createElement();
@@ -202,14 +205,28 @@ class CommandPalette {
      * Load startup commands.
      */
     loadStartupCommands() {
-        // Placeholder: Load and display default commands if necessary.
+        // TODO: filter out unavailable commands or make them disabled
         console.log("Loading startup commands");
+
+        this.startupCommands.slice(0, 9).forEach((command) => {
+            if (command.element === null) {
+                command.createElement();
+            }
+            this.listbox.appendChild(command.element);
+        });
+        this.resetCommandSelection();
     }
 
     /**
      * Cleanup event listeners and remove the modal.
      */
     cleanup() {
+        document.removeEventListener(
+            "paletteCommandSelected",
+            this.handleCommandSelection
+        );
+        this.querybox.removeEventListener("input", this.queryCommands);
+        this.dialog.removeEventListener("keydown", this.keyboardNavigation);
         if (this.dialog) {
             this.dialog.remove();
             this.dialog = null;

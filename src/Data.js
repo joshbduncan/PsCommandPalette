@@ -70,14 +70,20 @@ class Data {
 
     /**
      *
-     * @param {Array.<Command>} commands Commands to filer
      * @param {string} query Query string
+     * @param {Array.<Command>} commands Commands to filer (defaults to all commands `this.commands`)
      * @param {Array.<CommandTypes>} types Command type to filter for
      * @param {boolean} disabled Should disabled commands be included (defaults to false)
      * @param {boolean} hidden Should user hidden commands be included (defaults to false)
      * @returns {Array.<Command>}
      */
-    filterByQuery(commands, query, types = [], disabled = false, hidden = false) {
+    filterByQuery(
+        query,
+        commands = this.commands,
+        types = [],
+        disabled = false,
+        hidden = false
+    ) {
         if (query == "") {
             return [];
         }

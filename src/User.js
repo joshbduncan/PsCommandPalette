@@ -138,6 +138,7 @@ class User {
     async historyAdd(query, commandID) {
         if (!query || !commandID) return;
 
+        // TODO: limit history length
         this.data.history.unshift({
             query: query,
             commandID: commandID,
