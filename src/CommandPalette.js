@@ -1,20 +1,14 @@
-const { core } = require("photoshop");
-
-const { Command } = require("./commands/Command");
-
 /**
  * Create a command palette.
  */
 class CommandPalette {
     /**
      * Create a command palette.
-     * @param {Array.<Command>} commands Queryable command palette commands
-     * @param {Array.<string>} startupCommands Commands displayed when command palette launches
      */
-    constructor(commands, startupCommands) {
-        this.commands = commands != undefined ? commands : DATA.commands;
-        this.startupCommands =
-            startupCommands != undefined ? startupCommands : DATA.startupCommands;
+    constructor() {
+        this.dialog = null;
+        this.querybox = null;
+        this.listbox = null;
     }
 
     /**
@@ -22,8 +16,8 @@ class CommandPalette {
      * @returns {Promise.<object>}
      */
     async open() {
-        const modal = this.createModalDialog();
-        const result = await modal.uxpShowModal({
+        this.dialog = this.createModalDialog();
+        const result = await this.dialog.uxpShowModal({
             title: "Ps Command Palette",
             resize: "vertical",
             size: {
@@ -32,7 +26,7 @@ class CommandPalette {
             },
         });
 
-        modal.remove();
+        this.cleanup();
         return result;
     }
 
@@ -47,17 +41,18 @@ class CommandPalette {
         // create modal dialog //
         /////////////////////////
 
-        // setup dialog
         const dialog = document.createElement("dialog");
         dialog.setAttribute("id", "ps-command-palette");
+
+        // form
         const form = document.createElement("form");
 
         // querybox
-        const querybox = document.createElement("sp-textfield");
-        querybox.setAttribute("id", "query");
-        querybox.setAttribute("type", "search");
-        querybox.setAttribute("placeholder", "Search for commands...");
-        form.appendChild(querybox);
+        this.querybox = document.createElement("sp-textfield");
+        this.querybox.setAttribute("id", "query");
+        this.querybox.setAttribute("type", "search");
+        this.querybox.setAttribute("placeholder", "Search for commands...");
+        form.appendChild(this.querybox);
 
         // divider
         const divider = document.createElement("sp-divider");
@@ -71,9 +66,9 @@ class CommandPalette {
         form.appendChild(commandsList);
 
         // listbox
-        const listbox = document.createElement("ul");
-        listbox.setAttribute("id", "commands");
-        commandsList.appendChild(listbox);
+        this.listbox = document.createElement("ul");
+        this.listbox.setAttribute("id", "commands");
+        commandsList.appendChild(this.listbox);
 
         // add the form to the dialog
         dialog.appendChild(form);
@@ -81,164 +76,144 @@ class CommandPalette {
         // add dialog to the document
         document.body.appendChild(dialog);
 
-        //////////////////////
-        // helper functions //
-        //////////////////////
-
-        /**
-         * Reset the selected command to the first command if available.
-         */
-        function resetCommandSelection() {
-            if (listbox.children.length > 0) {
-                listbox.children.forEach((command) => {
-                    command.removeAttribute("selected");
-                });
-                moveCommandSelection(null, 0);
-            }
-        }
-
-        /**
-         * Determine the currently selected command `li` element.
-         * @returns number
-         */
-        const getSelectedCommand = () => {
-            for (let index = 0; index < listbox.children.length; index++) {
-                const command = listbox.children[index];
-                if (command.hasAttribute("selected")) {
-                    return index;
-                }
-            }
-        };
-
-        /**
-         * Change which command is selected.
-         * @param {number} previousIndex Index of currently selected command (before any changes)
-         * @param {number} newIndex Index of next command to be selected
-         */
-        const moveCommandSelection = (previousIndex, newIndex) => {
-            if (typeof previousIndex === "number") {
-                listbox.children[previousIndex].removeAttribute("selected");
-            }
-            listbox.children[newIndex].setAttribute("selected", "");
-        };
-
-        const queryCommands = (event) => {
-            // clear current commands
-            listbox.innerHTML = "";
-
-            // query commands for matches
-            const matches = DATA.filterByQuery(this.commands, event.target.value);
-
-            // TODO: sort matches
-
-            // load highest scoring matches
-            matches.slice(0, 9).forEach((command) => {
-                if (command.element === null) {
-                    command.createElement();
-                }
-                listbox.appendChild(command.element);
-            });
-
-            // select the first item
-            resetCommandSelection(listbox);
-        };
-
-        const keyboardNavigation = (event) => {
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-
-                const items = listbox.children.length;
-                const previousIndex = getSelectedCommand();
-                let newIndex;
-
-                // move the selection
-                if (previousIndex >= items - 1) {
-                    newIndex = 0;
-                } else {
-                    newIndex = previousIndex + 1;
-                }
-
-                moveCommandSelection(previousIndex, newIndex);
-            } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-
-                const items = listbox.children.length;
-                const previousIndex = getSelectedCommand();
-                let newIndex;
-
-                // move the selection
-                if (previousIndex <= 0) {
-                    newIndex = items - 1;
-                } else {
-                    newIndex = previousIndex - 1;
-                }
-
-                moveCommandSelection(previousIndex, newIndex);
-            }
-        };
-
-        /////////////////////////
-        // add event listeners //
-        /////////////////////////
-
-        /**
-         * Auto-focus the querybox input element.
-         */
-        dialog.addEventListener("load", () => {
-            querybox.focus();
-        });
-
-        /**
-         * Update listed commands on query input.
-         */
-        querybox.addEventListener("input", queryCommands);
-
-        /**
-         * Listen for the command clicked event.
-         */
-        document.addEventListener("paletteCommandSelected", function (event) {
-            dialog.close({
-                query: querybox.value,
-                command: event.detail.command,
-            });
-        });
-
-        /**
-         * Allow enter to submit form with currently selected command.
-         */
-        form.addEventListener("submit", (event) => {
-            const selectedIndex = getSelectedCommand();
-            const selectedCommand = listbox.children[selectedIndex];
-            selectedCommand.click();
-            event.preventDefault();
-        });
-
-        /**
-         * Enable keyboard (up/down arrows) command list navigation with end-to-end scrolling.
-         */
-        document.addEventListener("keydown", keyboardNavigation);
-
-        ///////////////////////////
-        // load startup commands //
-        ///////////////////////////
-
-        // TODO: filter out unavailable commands or make them disabled
-        console.log("Loading startup commands");
-
-        this.startupCommands.slice(0, 9).forEach((command) => {
-            if (command.element === null) {
-                command.createElement();
-            }
-            listbox.appendChild(command.element);
-            listbox.selectedIndex = 0;
-        });
-        resetCommandSelection(listbox);
-
-        /////////////////////////
-        // return modal dialog //
-        /////////////////////////
+        this.addEventListeners(dialog);
+        this.loadStartupCommands();
 
         return dialog;
+    }
+
+    /**
+     * Add event listeners to the modal.
+     */
+    addEventListeners(dialog) {
+        const queryCommands = (event) => this.queryCommands(event);
+        const keyboardNavigation = (event) => this.keyboardNavigation(event);
+
+        dialog.addEventListener("load", () => this.querybox.focus());
+        this.querybox.addEventListener("input", queryCommands);
+        document.addEventListener("paletteCommandSelected", (event) =>
+            this.handleCommandSelection(event, dialog)
+        );
+        dialog.addEventListener("keydown", keyboardNavigation);
+        dialog.querySelector("form").addEventListener("submit", (event) => {
+            event.preventDefault();
+            this.submitCommand();
+        });
+    }
+
+    /**
+     * Query and update the command list based on user input.
+     */
+    queryCommands(event) {
+        while (this.listbox.firstChild) {
+            this.listbox.removeChild(this.listbox.firstChild);
+        }
+
+        const matches = DATA.filterByQuery(DATA.commands, event.target.value);
+        matches.slice(0, 9).forEach((command) => {
+            if (!command.element) {
+                command.createElement();
+            }
+            this.listbox.appendChild(command.element);
+        });
+
+        this.resetCommandSelection();
+    }
+
+    /**
+     * Handle keyboard navigation for command selection.
+     */
+    keyboardNavigation(event) {
+        if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
+        event.preventDefault();
+
+        const items = this.listbox.children.length;
+        if (items === 0) return;
+
+        const previousIndex = this.getSelectedCommand();
+        let newIndex = previousIndex;
+
+        if (event.key === "ArrowDown") {
+            newIndex = previousIndex >= items - 1 ? 0 : previousIndex + 1;
+        } else if (event.key === "ArrowUp") {
+            newIndex = previousIndex <= 0 ? items - 1 : previousIndex - 1;
+        }
+
+        this.moveCommandSelection(previousIndex, newIndex);
+    }
+
+    /**
+     * Reset the selected command to the first item if available.
+     */
+    resetCommandSelection() {
+        if (this.listbox.children.length > 0) {
+            [...this.listbox.children].forEach((command) =>
+                command.removeAttribute("selected")
+            );
+            this.moveCommandSelection(null, 0);
+        }
+    }
+
+    /**
+     * Get the currently selected command's index.
+     * @returns {number}
+     */
+    getSelectedCommand() {
+        return [...this.listbox.children].findIndex((command) =>
+            command.hasAttribute("selected")
+        );
+    }
+
+    /**
+     * Change the currently selected command.
+     * @param {number|null} previousIndex
+     * @param {number} newIndex
+     */
+    moveCommandSelection(previousIndex, newIndex) {
+        if (typeof previousIndex === "number" && this.listbox.children[previousIndex]) {
+            this.listbox.children[previousIndex].removeAttribute("selected");
+        }
+        if (this.listbox.children[newIndex]) {
+            this.listbox.children[newIndex].setAttribute("selected", "");
+        }
+    }
+
+    /**
+     * Handle command selection from event.
+     */
+    handleCommandSelection(event, dialog) {
+        dialog.close({
+            query: this.querybox.value,
+            command: event.detail.command,
+        });
+    }
+
+    /**
+     * Submit the selected command on form submission.
+     */
+    submitCommand() {
+        const selectedIndex = this.getSelectedCommand();
+        if (selectedIndex !== -1) {
+            this.listbox.children[selectedIndex].click();
+        }
+    }
+
+    /**
+     * Load startup commands.
+     */
+    loadStartupCommands() {
+        // Placeholder: Load and display default commands if necessary.
+        console.log("Loading startup commands");
+    }
+
+    /**
+     * Cleanup event listeners and remove the modal.
+     */
+    cleanup() {
+        if (this.dialog) {
+            this.dialog.remove();
+            this.dialog = null;
+        }
     }
 }
 
