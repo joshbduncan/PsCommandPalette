@@ -117,7 +117,7 @@ const menuCommandsPatchShortcutKey = {
 };
 
 /**
- * Load Photoshop menu items from the `menuBarInfo` property.
+ * Load menu commands.
  * @returns {Promise.<Array.<Menu>>}
  */
 async function loadMenus() {

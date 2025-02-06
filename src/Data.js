@@ -1,7 +1,8 @@
 const { Command, CommandTypes } = require("./commands/Command.js");
+const { loadActions } = require("./commands/Action.js");
+const { loadBuiltins } = require("./commands/Builtin.js");
 const { loadMenus } = require("./commands/Menu.js");
 const { loadTools } = require("./commands/Tool.js");
-const { loadActions } = require("./commands/Action.js");
 
 /**
  * Ps Command Palette Commands Data.
@@ -44,9 +45,18 @@ class Data {
     /**
      * Action Commands.
      */
-    get Actions() {
+    get actionCommands() {
         return this.commands.filter((command) => {
             return command.type === CommandTypes.ACTION;
+        });
+    }
+
+    /**
+     * User Selected Startup commands.
+     */
+    get builtinCommands() {
+        return this.commands.filter((command) => {
+            return command.type === CommandTypes.BUILTIN;
         });
     }
 
@@ -166,29 +176,46 @@ class Data {
         console.log("Loading commands...");
         const commands = [];
 
-        // load menu commands
-        try {
-            const menusCommands = await loadMenus();
-            commands.push(...menusCommands);
-        } catch (error) {
-            console.error("Error loading menu commands:", error);
+        const toLoad = {
+            actionCommands: loadActions,
+            builtinCommands: loadBuiltins,
+            menusCommands: loadMenus,
+            toolCommands: loadTools,
+        };
+
+        for (const [key, func] of Object.entries(toLoad)) {
+            try {
+                console.log(`Loading ${key}...`);
+                let loadedCommands = await func();
+                commands.push(...loadedCommands);
+            } catch (error) {
+                console.error("Error loading:", error);
+            }
         }
 
-        // load tool commands
-        try {
-            const toolComands = await loadTools();
-            commands.push(...toolComands);
-        } catch (error) {
-            console.error("Error loading tools:", error);
-        }
+        // // load action commands
+        // try {
+        //     const actionCommands = await loadActions();
+        //     commands.push(...actionCommands);
+        // } catch (error) {
+        //     console.error("Error loading action:", error);
+        // }
 
-        // load action commands
-        try {
-            const actionCommands = await loadActions();
-            commands.push(...actionCommands);
-        } catch (error) {
-            console.error("Error loading action:", error);
-        }
+        // // load menu commands
+        // try {
+        //     const menusCommands = await loadMenus();
+        //     commands.push(...menusCommands);
+        // } catch (error) {
+        //     console.error("Error loading menu commands:", error);
+        // }
+
+        // // load tool commands
+        // try {
+        //     const toolComands = await loadTools();
+        //     commands.push(...toolComands);
+        // } catch (error) {
+        //     console.error("Error loading tools:", error);
+        // }
 
         this.commands = commands;
     }

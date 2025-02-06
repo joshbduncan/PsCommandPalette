@@ -50,7 +50,7 @@ class Tool extends Command {
 }
 
 /**
- * Load Photoshop tools from `tools.json`.
+ * Load tool commands.
  * @returns {Promise.<Array.<Tool>>}
  */
 async function loadTools() {

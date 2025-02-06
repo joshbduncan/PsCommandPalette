@@ -44,7 +44,7 @@ class Action extends Command {
 }
 
 /**
- * Load Photoshop action.
+ * Load action commands.
  * @returns {Promise.<Array.<Tool>>}
  */
 async function loadActions() {

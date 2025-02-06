@@ -3,10 +3,11 @@
  */
 const CommandTypes = {
     ACTION: "action",
-    MENU: "menu",
-    TOOL: "tool",
+    BUILTIN: "builtin",
     CUSTOM: "custom",
+    MENU: "menu",
     STARTUP: "startup",
+    TOOL: "tool",
 };
 
 /**
