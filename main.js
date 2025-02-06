@@ -80,7 +80,7 @@ document.getElementById("btnReloadPlugin").addEventListener("click", reloadPlugi
 ///////////////////////
 
 async function launchPalette() {
-    await DATA.load();
+    DATA.load();
 
     try {
         const palette = new CommandPalette();
@@ -95,7 +95,7 @@ async function launchPalette() {
             return;
         }
 
-        await USER.historyAdd(query, command.id);
+        USER.historyAdd(query, command.id);
 
         await command.execute();
     } catch (error) {
