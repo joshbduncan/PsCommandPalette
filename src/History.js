@@ -4,65 +4,39 @@ const fs = storage.localFileSystem;
 const { alertDialog } = require("./dialogs/alert.js");
 
 /**
- * Ps Command Palette User Data.
+ * Ps Command Palette User History.
  */
-class User {
+class History {
     /**
-     * Create a User object.
+     * Create a History object.
      */
     constructor() {
         this.data = null;
-        this.fileName = "user.json";
+        this.fileName = "history.json";
         this.file = null;
     }
 
     /**
-     * Return a default object of sample user data.
-     */
-    get defaultData() {
-        // FIXME: temp user data for testing
-        return {
-            plugin: {
-                name: PLUGIN_NAME,
-                version: PLUGIN_VERSION,
-            },
-            app: {
-                name: HOST_NAME,
-                version: HOST_VERSION,
-                locale: HOST_LOCALE,
-                os: HOST_OS,
-            },
-            hiddenCommands: [],
-            history: [],
-            // TODO: add default builtin startup commands with about, docs, etc.
-            startupCommands: ["ps_menu_1030", "ps_menu_15204", "ps_menu_101"],
-        };
-    }
-
-    /**
-     * Load the user data file.
+     * Load the user history file.
      */
     async load() {
-        // https://developer.adobe.com/xd/uxp/develop/reference/uxp/module/storage/
-
         const dataFolder = await fs.getDataFolder();
-        console.log("Loading user data:", dataFolder.nativePath);
+        console.log("Loading user history:", dataFolder.nativePath);
 
         try {
             this.file = await dataFolder.getEntry(this.fileName);
             const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
         } catch (error) {
-            console.error("Error loading user data file:", error);
-            this.data = this.defaultData;
-            console.log("Using default user data");
+            console.error("Error loading user history file:", error);
+            this.data = [];
 
             // create backup
             const backupFilePath = await this.backup();
             if (backupFilePath) {
                 await alertDialog(
                     "User Data Error",
-                    `There was an error reading your user data file. A backup was created at: ${backupFilePath}`
+                    `There was an error reading your user history file. A backup was created at: ${backupFilePath}`
                 );
             }
         }
@@ -71,7 +45,7 @@ class User {
     }
 
     /**
-     * Reload all user data from disk.
+     * Reload all user history from disk.
      */
     async reload() {
         this.data = null;
@@ -80,11 +54,11 @@ class User {
     }
 
     /**
-     * Write user data to disk.
+     * Write user history to disk.
      * @returns {storage.<File>}
      */
     async write() {
-        console.log("Writing user data");
+        console.log("Writing user history");
         try {
             const dataFolder = await fs.getDataFolder();
             if (!this.file) {
@@ -98,21 +72,19 @@ class User {
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
         } catch (error) {
-            console.error("Error writing user data file:", error);
+            console.error("Error writing user history file:", error);
             await alertDialog(
                 "User Data Error",
-                "There was an error writing your user data file."
+                "There was an error writing your user history file."
             );
         }
     }
 
     /**
-     * Backup the user data file.
+     * Backup the user history file.
      * @returns {string|null} File path of the backup file.
      */
     async backup() {
-        // TODO: add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
-
         if (!this.file) return null;
 
         try {
@@ -120,13 +92,13 @@ class User {
             const f = this.file;
 
             await dataFolder.renameEntry(f, f.name + ".bak");
-            console.log("User data file backed up to:", f.nativePath);
+            console.log("User history file backed up to:", f.nativePath);
             return f.nativePath;
         } catch (error) {
-            console.error("Error creating user data backup file:", error);
+            console.error("Error creating user history backup file:", error);
             await alertDialog(
                 "User Data Error",
-                "There was an error backing up your user data file."
+                "There was an error backing up your user history file."
             );
             return null;
         }
@@ -137,11 +109,11 @@ class User {
      * @param {string} query Palette query string
      * @param {string} commandID Selected command id
      */
-    async historyAdd(query, commandID) {
+    async add(query, commandID) {
         if (!query || !commandID) return;
 
         // TODO: limit history length
-        this.data.history.unshift({
+        this.data.unshift({
             query: query,
             commandID: commandID,
             timestamp: Date.now(),
@@ -151,5 +123,5 @@ class User {
 }
 
 module.exports = {
-    User,
+    History,
 };
