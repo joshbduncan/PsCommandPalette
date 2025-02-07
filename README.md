@@ -46,7 +46,7 @@ General notes, issues, and things I don't want to forget.
 
 - [Documentation-UXP for Adobe Photoshop](https://developer.adobe.com/photoshop/uxp/2022/)
 - [Photoshop API—UXP for Adobe Photoshop](https://developer.adobe.com/photoshop/uxp/2022/ps_reference/)
-- [https://developer.adobe.com/photoshop/uxp/2022/uxp-api/](https://developer.adobe.com/photoshop/uxp/2022/uxp-api/)
+- [UXP API Reference](https://developer.adobe.com/photoshop/uxp/2022/uxp-api/)
 - [Adobe Creative Cloud Developer Forums](https://forums.creativeclouddeveloper.com/)
 - [Menu: Spectrum Web Components](https://opensource.adobe.com/spectrum-web-components/components/menu/)
 - [Icons - Spectrum](https://spectrum.adobe.com/page/icons/)
