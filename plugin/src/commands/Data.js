@@ -193,30 +193,6 @@ class Data {
             }
         }
 
-        // // load action commands
-        // try {
-        //     const actionCommands = await loadActions();
-        //     commands.push(...actionCommands);
-        // } catch (error) {
-        //     console.error("Error loading action:", error);
-        // }
-
-        // // load menu commands
-        // try {
-        //     const menusCommands = await loadMenus();
-        //     commands.push(...menusCommands);
-        // } catch (error) {
-        //     console.error("Error loading menu commands:", error);
-        // }
-
-        // // load tool commands
-        // try {
-        //     const toolComands = await loadTools();
-        //     commands.push(...toolComands);
-        // } catch (error) {
-        //     console.error("Error loading tools:", error);
-        // }
-
         this.commands = commands;
     }
 
