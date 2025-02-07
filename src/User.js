@@ -58,6 +58,7 @@ class User {
             console.log("Using default user data");
 
             // create backup
+            // TODO: overwrite old file
             const backupFilePath = await this.backup();
             if (backupFilePath) {
                 await alertDialog(
@@ -81,10 +82,14 @@ class User {
 
     /**
      * Write user data to disk.
-     * @returns {storage.<File>}
+     * @returns {storage.<File>|void}
      */
     async write() {
         console.log("Writing user data");
+        if (this.data == {} || this.data === null) {
+            console.log("No user data to write...");
+            return;
+        }
         try {
             const dataFolder = await fs.getDataFolder();
             if (!this.file) {
@@ -108,12 +113,12 @@ class User {
 
     /**
      * Backup the user data file.
-     * @returns {string|null} File path of the backup file.
+     * @returns {string|void} File path of the backup file.
      */
     async backup() {
         // TODO: add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
 
-        if (!this.file) return null;
+        if (!this.file) return;
 
         try {
             const dataFolder = await fs.getDataFolder();
@@ -128,7 +133,7 @@ class User {
                 "User Data Error",
                 "There was an error backing up your user data file."
             );
-            return null;
+            return;
         }
     }
 

@@ -62,6 +62,7 @@ async function launchPalette() {
         }
 
         HISTORY.add(query, command.id);
+        USER.write();
 
         await command.execute();
     } catch (error) {

@@ -32,6 +32,7 @@ class History {
             this.data = [];
 
             // create backup
+            // TODO: overwrite old file
             const backupFilePath = await this.backup();
             if (backupFilePath) {
                 await alertDialog(
@@ -55,10 +56,14 @@ class History {
 
     /**
      * Write user history to disk.
-     * @returns {storage.<File>}
+     * @returns {storage.<File>|void}
      */
     async write() {
         console.log("Writing user history");
+        if (this.data == {} || this.data === null) {
+            console.log("No user data to write...");
+            return;
+        }
         try {
             const dataFolder = await fs.getDataFolder();
             if (!this.file) {
@@ -82,10 +87,10 @@ class History {
 
     /**
      * Backup the user history file.
-     * @returns {string|null} File path of the backup file.
+     * @returns {string|void} File path of the backup file.
      */
     async backup() {
-        if (!this.file) return null;
+        if (!this.file) return;
 
         try {
             const dataFolder = await fs.getDataFolder();
@@ -100,7 +105,7 @@ class History {
                 "User Data Error",
                 "There was an error backing up your user history file."
             );
-            return null;
+            return;
         }
     }
 
