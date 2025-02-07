@@ -15,7 +15,7 @@ class Action extends Command {
             throw new Error("Invalid action object");
         }
 
-        const id = "ps_action_" + obj.parent.name + "_" + obj.name;
+        const id = "ps_action_" + obj.parent.name + "_" + obj.name + "_" + obj.id;
         const note = "Action Set: " + obj.parent.name;
 
         // TODO: not sure about using _id/id in command id since index can change
@@ -50,6 +50,7 @@ class Action extends Command {
 async function loadActions() {
     try {
         const actionSets = await app.actionTree;
+        console.log(actionSets);
         const actionCommands = [];
 
         actionSets.forEach((set) => {
