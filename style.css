@@ -114,7 +114,7 @@
     }
 }
 
-#commands-list #commands li.command span.description {
+#commands-list #commands li.command span.note {
     display: block;
     /* color: var(--uxp-host-text-color-secondary); */
     font-size: 10px;

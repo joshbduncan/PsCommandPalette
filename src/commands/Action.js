@@ -16,7 +16,7 @@ class Action extends Command {
         }
 
         const id = "ps_action_" + obj.parent.name + "_" + obj.name;
-        const description = "Action Set: " + obj.parent.name;
+        const note = "Action Set: " + obj.parent.name;
 
         // TODO: not sure about using _id/id in command id since index can change
         // TODO: implement action shortcut key?
@@ -27,7 +27,7 @@ class Action extends Command {
         this.action_id = obj.id;
         this.parent = obj.parent;
         this.typename = obj.typename;
-        this.description = description;
+        this.note = note;
     }
 
     /**

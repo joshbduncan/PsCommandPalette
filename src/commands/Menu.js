@@ -17,10 +17,10 @@ class Menu extends Command {
             obj;
 
         const id = `ps_menu_${command}`;
-        const description = path.join(" > ");
+        const note = path.join(" > ");
         const commandName = name || cleanTitle(title.replace(/\.\.\.$/g, ""));
 
-        super(id, commandName, CommandTypes.MENU, description, enabled);
+        super(id, commandName, CommandTypes.MENU, note, enabled);
 
         this.obj = obj;
         this.commandID = obj.command;

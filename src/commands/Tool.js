@@ -11,10 +11,10 @@ class Tool extends Command {
      * Create a command palette tool command.
      * @param {string} ref Tool batchPlay reference string
      * @param {string} name Tool name
-     * @param {string} description Tool description
+     * @param {string} note Note displayed below tool
      * @param {string} keyboardShortcut Tool keyboard shortcut
      */
-    constructor(ref, name, description, keyboardShortcut) {
+    constructor(ref, name, note, keyboardShortcut) {
         if (!ref || !name) {
             throw new Error("Tool requires a valid reference and name.");
         }
@@ -22,7 +22,7 @@ class Tool extends Command {
         // TODO: check to see if tool availability can be determined from the api
         // TODO: implement tool shortcut key
         const id = "ps_tool_" + ref;
-        super(id, name, CommandTypes.TOOL, description);
+        super(id, name, CommandTypes.TOOL, note);
 
         this.ref = ref;
         this.keyboardShortcut = keyboardShortcut;
@@ -76,12 +76,7 @@ async function loadTools() {
         }
 
         const toolCommands = toolData.map((obj) => {
-            const tool = new Tool(
-                obj._ref,
-                obj.name,
-                obj.description,
-                obj.keyboardShortcut
-            );
+            const tool = new Tool(obj._ref, obj.name, obj.note, obj.keyboardShortcut);
             tool.createElement();
             return tool;
         });

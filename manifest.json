@@ -1,23 +1,18 @@
 {
+    "manifestVersion": 5,
     "id": "ps-command-palette",
     "name": "Ps Command Palette",
     "version": "0.1.0",
     "author": "Josh Duncan",
     "main": "index.html",
-    "host": [
-        {
-            "app": "PS",
-            "minVersion": "23.0.0",
-            "data": {
-                "apiVersion": 2,
-                "loadEvent": "use",
-                "enableMenuRecording": true
-            }
+    "host": {
+        "app": "PS",
+        "minVersion": "23.0.0",
+        "data": {
+            "apiVersion": 2,
+            "loadEvent": "use",
+            "enableMenuRecording": true
         }
-    ],
-    "manifestVersion": 5,
-    "requiredPermissions": {
-        "localFileSystem": "plugin"
     },
     "entrypoints": [
         {
@@ -28,6 +23,14 @@
             }
         }
     ],
+    "requiredPermissions": {
+        "clipboard": "readAndWrite",
+        "localFileSystem": "request",
+        "launchProcess": {
+            "schemes": ["https"],
+            "extensions": ["psd", "js", "jsx", ""]
+        }
+    },
     "icons": [
         {
             "width": 23,

@@ -1,5 +1,6 @@
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
+const shell = require("uxp").shell;
 
 const { alertDialog } = require("./dialogs/alert.js");
 
@@ -33,7 +34,6 @@ class User {
                 os: HOST_OS,
             },
             hiddenCommands: [],
-            history: [],
             // TODO: add default builtin startup commands with about, docs, etc.
             startupCommands: ["ps_menu_1030", "ps_menu_15204", "ps_menu_101"],
         };
@@ -138,20 +138,15 @@ class User {
     }
 
     /**
-     * Add an item to the user command history.
-     * @param {string} query Palette query string
-     * @param {string} commandID Selected command id
+     * Open the user data folder in the file system explorer.
      */
-    async historyAdd(query, commandID) {
-        if (!query || !commandID) return;
-
-        // TODO: limit history length
-        this.data.history.unshift({
-            query: query,
-            commandID: commandID,
-            timestamp: Date.now(),
-        });
-        await this.write();
+    async reveal() {
+        try {
+            const dataFolder = await fs.getDataFolder();
+            await shell.openPath(dataFolder.nativePath);
+        } catch (error) {
+            console.error("Error revealing user data folder:", error);
+        }
     }
 }
 
