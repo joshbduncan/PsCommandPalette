@@ -1,3 +1,7 @@
+const { app, core } = require("photoshop");
+const { storage } = require("uxp");
+const fs = storage.localFileSystem;
+
 /**
  * Return an svg icon matching `name`.
  * @param {string} name Icon to return
@@ -64,8 +68,54 @@ const generateKeyboardShortcut = (obj) => {
     return [...modifiers, keyChar].filter(Boolean).join("");
 };
 
+/**
+ * Execute a PSJS script file.
+ * @param {File} f UXP storage file entry
+ */
+const executePSJSScriptFile = async (f) => {
+    try {
+        await core.executeAsModal(async () => {
+            app.open(f);
+        });
+    } catch (error) {
+        console.error(`Error executing PSJS script file ${f.nativePath}:`, error);
+    }
+};
+
+/**
+ * Execute a JSX ExtendScript script file.
+ * @param {File} f UXP storage file entry
+ */
+const executeJSXScriptFile = async (f) => {
+    try {
+        await core.executeAsModal(async () => {
+            let fileToken = await fs.createSessionToken(f);
+            let command = [
+                {
+                    _obj: "AdobeScriptAutomation Scripts",
+                    javaScript: {
+                        _kind: "local",
+                        _path: fileToken,
+                    },
+                    javaScriptMessage: "undefined",
+                    _options: {
+                        dialogOptions: "dontDisplay",
+                    },
+                },
+            ];
+            await app.batchPlay(command, {
+                commandName: "External JSX Script",
+            });
+        });
+    } catch (error) {
+        console.error(`Error executing JSX script file ${f.nativePath}:`, error);
+    }
+};
+
 module.exports = {
     getIcon,
     cleanTitle,
     generateKeyboardShortcut,
+    executePSJSScriptFile,
+    executeJSXScriptFile,
 };

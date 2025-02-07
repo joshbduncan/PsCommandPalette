@@ -1,8 +1,10 @@
+const { app, core } = require("photoshop");
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
 
 const { Command, CommandTypes } = require("./Command.js");
+const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
 
 /**
  * Create a command palette builtin command.
@@ -77,6 +79,36 @@ builtinCommands.openUserDataFolder = {
     note: "Ps Command Palette > Open Plugin User Data Folder",
     callback: async () => {
         USER.reveal();
+    },
+};
+
+builtinCommands.runPSJSScript = {
+    name: "Run PSJS Script File",
+    note: "Ps Command Palette > Run PSJS Script File...",
+    callback: async () => {
+        const f = await fs.getFileForOpening({
+            allowMultiple: false,
+            types: storage.fileTypes.all,
+        });
+        if (!f) {
+            return;
+        }
+        await executePSJSScriptFile(f);
+    },
+};
+
+builtinCommands.runJSXScript = {
+    name: "Run JSX (ExtendScript) Script File",
+    note: "Ps Command Palette > Run JSX (ExtendScript) Script File...",
+    callback: async () => {
+        const f = await fs.getFileForOpening({
+            allowMultiple: false,
+            types: storage.fileTypes.all,
+        });
+        if (!f) {
+            return;
+        }
+        await executeJSXScriptFile(f);
     },
 };
 
