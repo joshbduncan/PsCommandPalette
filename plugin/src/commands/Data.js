@@ -1,8 +1,8 @@
-const { Command, CommandTypes } = require("./commands/Command.js");
-const { loadActions } = require("./commands/Action.js");
-const { loadBuiltins } = require("./commands/Builtin.js");
-const { loadMenus } = require("./commands/Menu.js");
-const { loadTools } = require("./commands/Tool.js");
+const { Command, CommandTypes } = require("./Command.js");
+const { loadActions } = require("./Action.js");
+const { loadBuiltins } = require("./Builtin.js");
+const { loadMenus } = require("./Menu.js");
+const { loadTools } = require("./Tool.js");
 
 /**
  * Ps Command Palette Commands Data.

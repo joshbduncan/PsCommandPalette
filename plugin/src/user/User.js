@@ -2,7 +2,7 @@ const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
 
-const { alertDialog } = require("./dialogs/alert.js");
+const { alertDialog } = require("../dialogs/alert.js");
 
 /**
  * Ps Command Palette User Data.

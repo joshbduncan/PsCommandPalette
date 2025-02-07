@@ -4,10 +4,10 @@ const uxp = require("uxp");
 const { entrypoints } = uxp;
 
 const manifest = require("./manifest.json");
-const { CommandPalette } = require("./src/CommandPalette.js");
-const { User } = require("./src/User.js");
-const { History } = require("./src/History.js");
-const { Data } = require("./src/Data.js");
+const { CommandPalette } = require("./src/palettes/CommandPalette.js");
+const { User } = require("./src/user/User.js");
+const { History } = require("./src/user/History.js");
+const { Data } = require("./src/commands/Data.js");
 
 /////////////////////
 // get plugin info //

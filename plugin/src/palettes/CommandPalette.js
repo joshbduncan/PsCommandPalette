@@ -196,8 +196,12 @@ class CommandPalette {
      */
     submitCommand() {
         const selectedIndex = this.getSelectedCommand();
-        if (selectedIndex !== -1) {
-            this.listbox.children[selectedIndex].click();
+        try {
+            if (selectedIndex !== -1) {
+                this.listbox.children[selectedIndex].click();
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
 

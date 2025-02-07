@@ -47,9 +47,10 @@ class Command {
         listItem.setAttribute("id", this.id);
         listItem.classList.add("command");
 
-        if (!this.enabled) {
-            listItem.setAttribute("disabled", "");
-        }
+        // TODO: re-enable after editing filter gallery commands
+        // if (!this.enabled) {
+        //     listItem.setAttribute("disabled", "");
+        // }
 
         // body
         const body = document.createElement("div");
