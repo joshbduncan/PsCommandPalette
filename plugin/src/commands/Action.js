@@ -50,7 +50,6 @@ class Action extends Command {
 async function loadActions() {
     try {
         const actionSets = await app.actionTree;
-        console.log(actionSets);
         const actionCommands = [];
 
         actionSets.forEach((set) => {

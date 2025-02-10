@@ -38,6 +38,7 @@ HISTORY.load();
 entrypoints.setup({
     commands: {
         launchPalette: () => launchPalette(),
+        reloadPlugin: () => reloadPlugin(),
     },
 });
 
@@ -62,12 +63,7 @@ async function launchPalette() {
         }
 
         HISTORY.add(query, command.id);
-        // async takes time so writing synchronous unless required
-        if (command.id === "ps_builtin_reload") {
-            await USER.write();
-        } else {
-            USER.write();
-        }
+        USER.write();
 
         await command.execute();
     } catch (error) {
@@ -75,4 +71,12 @@ async function launchPalette() {
         // TODO: Add user alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
         app.showAlert(error);
     }
+}
+
+async function reloadPlugin() {
+    console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
+    await USER.reload();
+    await HISTORY.reload();
+    await DATA.reload();
+    app.showAlert(`${PLUGIN_NAME} reloaded.`);
 }

@@ -1,4 +1,4 @@
-const { app, core } = require("photoshop");
+const { app } = require("photoshop");
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
@@ -59,18 +59,6 @@ builtinCommands.help = {
             "https://github.com/joshbduncan/PsCommandPalette/wiki",
             "Ps Command Palette Help Wiki"
         );
-    },
-};
-
-builtinCommands.reload = {
-    name: "Reload Plugin",
-    note: "Ps Command Palette > Reload Plugin",
-    callback: async () => {
-        console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
-        await USER.reload();
-        await HISTORY.reload();
-        await DATA.reload();
-        app.showAlert("Plugin reloaded.");
     },
 };
 
