@@ -390,9 +390,9 @@ const tools = [
         keyboardShortcut: "A",
     },
     {
-        _ref: "customShapeTool",
-        name: "Custom Shape tool",
-        note: "Draws shapes from a custom shape list.",
+        _ref: "rectangleTool",
+        name: "Rectangle Tool",
+        note: "Draws rectangles.",
         keyboardShortcut: "U",
     },
     {
