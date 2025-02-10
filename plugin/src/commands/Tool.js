@@ -38,8 +38,6 @@ class Tool extends Command {
             if (!result || result.length === 0) {
                 throw new Error(`Tool activation failed for: ${this.name}`);
             }
-
-            console.log(`Executed tool: ${this.name}`);
         } catch (error) {
             console.error(`Error activating tool "${this.name}":`, error);
         }

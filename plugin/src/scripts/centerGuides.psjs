@@ -1,0 +1,35 @@
+// Place center guides for the entire document or current selection.
+//
+// PLEASE NOTE: Guides are placed based on the document ruler origin,
+// so if they are offset, you made need to reset your ruler origin.
+
+const { app } = require("photoshop");
+const constants = require("photoshop").constants;
+
+// check for an active document
+const doc = app.activeDocument;
+if (!doc) {
+    app.showAlert("No active documents.");
+    return;
+}
+
+let left = 0;
+let right = doc.width;
+let top = 0;
+let bottom = doc.height;
+
+// check for an active selection
+if (doc.selection.bounds) {
+    left = doc.selection.bounds.left;
+    right = doc.selection.bounds.right;
+    top = doc.selection.bounds.top;
+    bottom = doc.selection.bounds.bottom;
+}
+
+// calculate the center for x and y
+const centerX = (right - left) / 2 + left;
+const centerY = (bottom - top) / 2 + top;
+
+// add the guides
+doc.guides.add(constants.Direction.VERTICAL, centerX);
+doc.guides.add(constants.Direction.HORIZONTAL, centerY);

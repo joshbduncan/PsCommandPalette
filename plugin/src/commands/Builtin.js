@@ -15,9 +15,8 @@ class Builtin extends Command {
      * @param {string} id Unique command id
      * @param {string} name Command name
      * @param {string} note Note displayed below command
-     * @param {boolean} enabled Is command enabled for use (defaults to true)
      */
-    constructor(id, name, note = "", enabled = true) {
+    constructor(id, name, note = "") {
         const _id = "ps_builtin_" + id;
         super(_id, name, CommandTypes.BUILTIN, note);
     }

@@ -1,0 +1,4 @@
+// Example alert from the Photoshop UXP API
+
+const { app } = require("photoshop");
+app.showAlert("Alert from Photoshop UXP!");

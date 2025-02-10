@@ -2,6 +2,7 @@ const { Command, CommandTypes } = require("./Command.js");
 const { loadActions } = require("./Action.js");
 const { loadBuiltins } = require("./Builtin.js");
 const { loadMenus } = require("./Menu.js");
+const { loadScripts } = require("./Script.js");
 const { loadTools } = require("./Tool.js");
 
 /**
@@ -66,6 +67,15 @@ class Data {
     get menuCommands() {
         return this.commands.filter((command) => {
             return command.type === CommandTypes.MENU;
+        });
+    }
+
+    /**
+     * Script Commands.
+     */
+    get scriptCommands() {
+        return this.commands.filter((command) => {
+            return command.type === CommandTypes.SCRIPT;
         });
     }
 
@@ -179,7 +189,8 @@ class Data {
         const toLoad = {
             actionCommands: loadActions,
             builtinCommands: loadBuiltins,
-            menusCommands: loadMenus,
+            menuCommands: loadMenus,
+            scriptCommands: loadScripts,
             toolCommands: loadTools,
         };
 

@@ -31,7 +31,7 @@ class Action extends Command {
     }
 
     /**
-     * Execute the command.
+     * Execute the action command.
      */
     async execute() {
         try {

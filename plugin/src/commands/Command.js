@@ -6,6 +6,7 @@ const CommandTypes = {
     BUILTIN: "builtin",
     CUSTOM: "custom",
     MENU: "menu",
+    SCRIPT: "script",
     STARTUP: "startup",
     TOOL: "tool",
 };

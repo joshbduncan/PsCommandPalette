@@ -1,0 +1,23 @@
+// Resize current image by percentage or unit value.
+
+const { app } = require("photoshop");
+
+// check for an active document
+const doc = app.activeDocument;
+if (!doc) {
+    app.showAlert("No active documents.");
+    return;
+}
+
+// TODO: get input from user (% or unitValue)
+
+const method = "percentage";
+let width = doc.width;
+let height = doc.height;
+
+if (method === "percentage") {
+    width = doc.width * 0.5;
+    height = doc.height * 0.5;
+}
+
+await doc.resizeImage(width, height);
