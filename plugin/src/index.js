@@ -62,7 +62,12 @@ async function launchPalette() {
         }
 
         HISTORY.add(query, command.id);
-        USER.write();
+        // async takes time so writing synchronous unless required
+        if (command.id === "ps_builtin_reload") {
+            await USER.write();
+        } else {
+            USER.write();
+        }
 
         await command.execute();
     } catch (error) {
