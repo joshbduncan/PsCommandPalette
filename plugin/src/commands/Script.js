@@ -61,7 +61,6 @@ async function loadScripts() {
         }
 
         const entries = await scriptsFolder.getEntries();
-        console.log("entries:", entries);
         const scriptFiles = entries.filter((entry) => entry.isFile);
 
         const pluginScripts = scriptFiles.map((entry) => {
@@ -70,7 +69,6 @@ async function loadScripts() {
                 undefined,
                 "Ps Command Palette > Scripts > " + entry.name
             );
-            script.createElement();
             return script;
         });
 

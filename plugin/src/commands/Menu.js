@@ -181,9 +181,7 @@ async function loadMenus() {
             // TODO: edit enabled key for Filter Gallery Commands
             // Artistic, Brush Strokes, Distort, Sketch, Stylize, Texture
 
-            const command = new Menu(menuObj);
-            command.createElement();
-            results.push(command);
+            results.push(new Menu(menuObj));
         }
 
         return results;

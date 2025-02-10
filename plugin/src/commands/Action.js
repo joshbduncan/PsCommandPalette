@@ -54,12 +54,7 @@ async function loadActions() {
 
         actionSets.forEach((set) => {
             set.actions.forEach((obj) => {
-                try {
-                    const action = new Action(obj);
-                    actionCommands.push(action);
-                } catch (error) {
-                    console.warn(`Skipping invalid action:`, obj, error);
-                }
+                actionCommands.push(new Action(obj));
             });
         });
 

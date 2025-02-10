@@ -468,9 +468,7 @@ const tools = [
 function loadTools() {
     try {
         const toolCommands = tools.map((obj) => {
-            const tool = new Tool(obj._ref, obj.name, obj.note, obj.keyboardShortcut);
-            tool.createElement();
-            return tool;
+            return new Tool(obj._ref, obj.name, obj.note, obj.keyboardShortcut);
         });
         console.log(`Loaded ${toolCommands.length} tool commands.`);
         return toolCommands;

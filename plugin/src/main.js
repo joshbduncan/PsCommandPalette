@@ -47,7 +47,10 @@ entrypoints.setup({
 ///////////////////////
 
 async function launchPalette() {
+    const start = performance.now();
     await DATA.load();
+    const end = performance.now();
+    console.log(`Data.load() execution time: ${(end - start).toFixed(3)} ms`);
 
     try {
         const palette = new CommandPalette();
