@@ -50,14 +50,9 @@ class Action extends Command {
 async function loadActions() {
     try {
         const actionSets = await app.actionTree;
-        const actionCommands = [];
-
-        actionSets.forEach((set) => {
-            set.actions.forEach((obj) => {
-                actionCommands.push(new Action(obj));
-            });
-        });
-
+        const actionCommands = actionSets.flatMap((set) =>
+            set.actions.map((obj) => new Action(obj))
+        );
         console.log(`Loaded ${actionCommands.length} action commands`);
         return actionCommands;
     } catch (error) {
