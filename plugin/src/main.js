@@ -68,14 +68,18 @@ async function launchPalette() {
         // to allow for external user data file editing, don't write
         // user data when "Reload Plugin Data" command is executed
 
-        if (!command.id === "ps_builtin_reload") {
+        if (command.id !== "ps_builtin_reload") {
             HISTORY.add(query, command.id);
             USER.write();
         }
 
-        await command.execute();
+        try {
+            await command.execute();
+        } catch (error) {
+            console.error(`Error executing command ${command.id}:`, error);
+        }
     } catch (error) {
-        console.error("Palette error:", error);
+        console.error(error);
         // TODO: Add user alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
         app.showAlert(error);
     }

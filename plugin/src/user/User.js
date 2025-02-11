@@ -1,9 +1,7 @@
+const { app } = require("photoshop");
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
-
-const { CommandTypes } = require("../commands/Command.js");
-const { alertDialog } = require("../dialogs/alert.js");
 
 /**
  * Ps Command Palette User Data.
@@ -44,27 +42,24 @@ class User {
      * Load the user data file.
      */
     async load() {
-        // https://developer.adobe.com/xd/uxp/develop/reference/uxp/module/storage/
-
-        const dataFolder = await fs.getDataFolder();
-        console.log("Loading user data:", dataFolder.nativePath);
-
+        console.log("Loading user data:");
         try {
+            const dataFolder = await fs.getDataFolder();
             this.file = await dataFolder.getEntry(this.fileName);
             const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
         } catch (error) {
-            console.error("Error loading user data file:", error);
+            console.error(error);
             this.data = this.defaultData;
             console.log("Using default user data");
 
+            if (!this.file) return;
+
             // create backup
-            // TODO: overwrite old file
-            const backupFilePath = await this.backup();
-            if (backupFilePath) {
-                await alertDialog(
-                    "User Data Error",
-                    `There was an error reading your user data file. A backup was created at: ${backupFilePath}`
+            const backupFile = this.backup();
+            if (backupFile) {
+                app.showAlert(
+                    "User Data Error!\n\nThere was an error reading your user data file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
                 );
             }
         }
@@ -83,7 +78,7 @@ class User {
 
     /**
      * Write user data to disk.
-     * @returns {storage.<File>|void}
+     * @returns {storage.File|void}
      */
     async write() {
         console.log("Writing user data");
@@ -99,42 +94,37 @@ class User {
                     overwrite: true,
                 });
             }
-            console.log(this.file.nativePath);
-
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
         } catch (error) {
-            console.error("Error writing user data file:", error);
-            await alertDialog(
-                "User Data Error",
-                "There was an error writing your user data file."
+            console.error(error);
+            app.showAlert(
+                "User Data Error!\n\nThere was an error writing your user data file."
             );
         }
     }
 
     /**
      * Backup the user data file.
-     * @returns {string|void} File path of the backup file.
+     * @returns {storage.File|void}
      */
     async backup() {
-        // TODO: add dialog with <sp-code> to display user data json file, maybe with save button (view user data) [docs](https://spectrum.adobe.com/page/code/)
-
         if (!this.file) return;
 
         try {
             const dataFolder = await fs.getDataFolder();
             const f = this.file;
+            const backupName = `${f.name}.bak`;
 
-            await dataFolder.renameEntry(f, f.name + ".bak");
-            console.log("User data file backed up to:", f.nativePath);
-            return f.nativePath;
+            await dataFolder.renameEntry(f, backupName, { overwrite: true });
+            console.log("User data file backed up to:", nativePath);
+
+            return f;
         } catch (error) {
-            console.error("Error creating user data backup file:", error);
-            await alertDialog(
-                "User Data Error",
-                "There was an error backing up your user data file."
+            console.error(error);
+            app.showAlert(
+                "User Data Error!\n\nAn error occurred while backing up your user data file."
             );
-            return;
         }
     }
 
@@ -146,7 +136,7 @@ class User {
             const dataFolder = await fs.getDataFolder();
             await shell.openPath(dataFolder.nativePath);
         } catch (error) {
-            console.error("Error revealing user data folder:", error);
+            console.error(error);
         }
     }
 }

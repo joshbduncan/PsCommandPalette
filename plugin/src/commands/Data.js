@@ -91,11 +91,11 @@ class Data {
     /**
      *
      * @param {string} query Query string
-     * @param {Array.<Command>} commands Commands to filer (defaults to all commands `this.commands`)
-     * @param {Array.<CommandTypes>} types Command type to filter for
+     * @param {Command[]} commands Commands to filer (defaults to all commands `this.commands`)
+     * @param {CommandTypes[]} types Command types to filter for
      * @param {boolean} disabled Should disabled commands be included (defaults to false)
      * @param {boolean} hidden Should user hidden commands be included (defaults to false)
-     * @returns {Array.<Command>}
+     * @returns {Command[]}
      */
     filterByQuery(
         query,
@@ -143,7 +143,7 @@ class Data {
     /**
      * Commands with the type of `type`
      * @param {string} type Command type to match against
-     * @returns {Array.<Command>}
+     * @returns {Command[]}
      */
     commandsByType(type) {
         return this.commands.filter((command) => {
@@ -153,8 +153,8 @@ class Data {
 
     /**
      * Command with a type included in `types`.
-     * @param {Array.<string>} types Command types to return
-     * @returns {Array.<Command>}
+     * @param {string[]} types Command types to return
+     * @returns {Command[]}
      */
     commandsByTypes(types) {
         return this.command.filter((command) => {
@@ -205,9 +205,10 @@ class Data {
             try {
                 console.log(`Loading ${key} commands...`);
                 let loadedCommands = await func();
+                console.log(`Loaded ${loadedCommands.length} ${key} commands`);
                 commands.push(...loadedCommands);
             } catch (error) {
-                console.error("Error loading:", error);
+                console.error(`Error loading ${key} commands:`, error);
             }
         }
 

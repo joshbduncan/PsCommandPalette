@@ -1,7 +1,6 @@
 const { app, core } = require("photoshop");
 
 const { Command, CommandTypes } = require("./Command.js");
-const { alertDialog } = require("../dialogs/alert.js");
 const { cleanTitle, generateKeyboardShortcut } = require("../utils.js");
 
 /**
@@ -10,11 +9,11 @@ const { cleanTitle, generateKeyboardShortcut } = require("../utils.js");
 class Menu extends Command {
     /**
      * Create a command palette menu command.
-     * @param {object} obj Menu command object returned from the `menuBarInfo` property
+     * @param {object} menuCommand Menu command object returned from the `menuBarInfo` property
      */
-    constructor(obj) {
+    constructor(menuCommand) {
         const { name, title, command, path, enabled, visible, checked, menuShortcut } =
-            obj;
+            menuCommand;
 
         const id = `ps_menu_${command}`;
         const note = path.join(" > ");
@@ -22,10 +21,10 @@ class Menu extends Command {
 
         super(id, commandName, CommandTypes.MENU, note, enabled);
 
-        this.obj = obj;
-        this.commandID = obj.command;
-        this.visible = obj.visible;
-        this.checked = obj.checked;
+        this.obj = menuCommand;
+        this.commandID = menuCommand.command;
+        this.visible = menuCommand.visible;
+        this.checked = menuCommand.checked;
         this.keyboardShortcut = menuShortcut?.keyChar
             ? generateKeyboardShortcut(menuShortcut)
             : "";
@@ -33,7 +32,7 @@ class Menu extends Command {
 
     /**
      * Get the current command title (some titles change based on current context/app state).
-     * @returns {Promise.<boolean>}
+     * @returns {Promise<boolean>}
      */
     async getTitle() {
         return core.getMenuCommandTitle({ commandID: this.commandID });
@@ -41,7 +40,7 @@ class Menu extends Command {
 
     /**
      * Check the current menu command state.
-     * @returns {Promise.<boolean>}
+     * @returns {Promise<boolean>}
      */
     async getState() {
         return core.getMenuCommandState({ commandID: this.commandID });
@@ -49,35 +48,32 @@ class Menu extends Command {
 
     /**
      * Execute the menu command using the `performMenu` method.
+     * @returns {Promise<void>}
      */
     async execute() {
         // ensure a menu command is still available since
         // sometimes after long periods between app operations
         // ps will report the command is available (e.g. undo and redo)
 
-        try {
-            const commandState = await this.getState();
-            const isAvailable = commandState?.[0];
+        const commandState = await this.getState();
+        const isAvailable = commandState?.[0];
 
-            if (!isAvailable) {
-                await alertDialog(
-                    "Command Not Available",
-                    "Photoshop is reporting that your selected command is not available via the API at this time."
-                );
-                return;
-            }
-
-            const result = await core.performMenuCommand({ commandID: this.commandID });
-
-            if (!result?.available) {
-                await alertDialog(
-                    "Command Execution Error",
-                    "There was an error executing your command."
-                );
-            }
-        } catch (error) {
-            console.error("Menu command execution error:", error);
+        if (!isAvailable) {
+            app.showAlert(
+                "Command Not Available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
+            );
+            return;
         }
+
+        const result = await core.performMenuCommand({ commandID: this.commandID });
+
+        if (!result?.available) {
+            app.showAlert(
+                "Command Execution Error\n\nThere was an error executing your command."
+            );
+        }
+
+        return result;
     }
 }
 
@@ -118,7 +114,7 @@ const menuCommandsPatchShortcutKey = {
 
 /**
  * Load menu commands.
- * @returns {Promise.<Array.<Menu>>}
+ * @returns {Promise<Menu[]>}
  */
 async function loadMenus() {
     const menusToIgnore = new Set(["Open Recent"]);
@@ -126,7 +122,7 @@ async function loadMenus() {
 
     /**
      * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
-     * @returns {Promise.<object>}
+     * @returns {Promise<object>}
      */
     const getMenuBarItems = async () => {
         try {
@@ -134,19 +130,17 @@ async function loadMenus() {
                 _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }],
             };
             const command = { _obj: "get", _target: target };
-
             return await app.batchPlay([command], {});
         } catch (error) {
             console.error("Error fetching menuBarInfo:", error);
-            return null;
         }
     };
 
     /**
      * Build `Menu` objects for each Photoshop menu command.
      * @param {object} obj Menu bar info object
-     * @param {Array.<string>} path Current menu directory path to `obj`
-     * @returns {Array.<Menu>}
+     * @param {string[]} path Current menu directory path to `obj`
+     * @returns {Menu[]}
      */
     const buildMenus = (obj, path = []) => {
         if (!obj) return [];

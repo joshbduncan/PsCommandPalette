@@ -10,7 +10,7 @@ const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
 class Script extends Command {
     /**
      * Create a command palette script command.
-     * @param {File} file Script file entry
+     * @param {storage.File} file Script file entry
      * @param {string} name Command name
      * @param {string} note Note displayed below command
      */
@@ -24,32 +24,20 @@ class Script extends Command {
 
     /**
      * Execute the script command.
+     * @returns {Promise<void>}
      */
     async execute() {
-        try {
-            // determine script type
-            const regex = /\.psjs$/i;
-            const type = regex.test(this.file.name) ? "psjs" : "jsx";
-            const func = type === "psjs" ? executePSJSScriptFile : executeJSXScriptFile;
-            func(this.file);
-        } catch (error) {
-            console.error(`Error running script "${this.file.nativePath}":`, error);
-        }
+        // determine script type
+        const regex = /\.psjs$/i;
+        const type = regex.test(this.file.name) ? "psjs" : "jsx";
+        const func = type === "psjs" ? executePSJSScriptFile : executeJSXScriptFile;
+        return func(this.file);
     }
 }
 
-//////////////////////
-// builtin commands //
-//////////////////////
-
-// TODO: help builtin
-// TODO: updates builtin
-// TODO: pluginSettings builtin
-// TODO: viewUserData builtin
-
 /**
- * Load builtin commands.
- * @returns {Array.<Builtin>}
+ * Load plugin script commands.
+ * @returns {Script[]}
  */
 async function loadScripts() {
     try {
@@ -79,7 +67,7 @@ async function loadScripts() {
 
         return scripts;
     } catch (error) {
-        console.error("Error loading scripts:", error);
+        console.error(error);
         return [];
     }
 }

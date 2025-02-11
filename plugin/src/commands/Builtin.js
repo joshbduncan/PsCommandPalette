@@ -75,8 +75,8 @@ builtinCommands.reload = {
 };
 
 builtinCommands.openUserDataFolder = {
-    name: "Open Plugin User Data Folder",
-    note: "Ps Command Palette > Open Plugin User Data Folder",
+    name: "Open Plugin Data Folder",
+    note: "Ps Command Palette > Open Plugin Data Folder",
     callback: async () => {
         USER.reveal();
     },
@@ -114,7 +114,7 @@ builtinCommands.runJSXScript = {
 
 /**
  * Load builtin commands.
- * @returns {Array.<Builtin>}
+ * @returns {Builtin[]}
  */
 function loadBuiltins() {
     return Object.entries(builtinCommands).map(([key, obj]) =>

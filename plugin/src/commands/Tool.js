@@ -17,7 +17,6 @@ class Tool extends Command {
         }
 
         // TODO: check to see if tool availability can be determined from the api
-        // TODO: implement tool shortcut key
         const id = "ps_tool_" + ref;
         super(id, name, CommandTypes.TOOL, note);
 
@@ -27,20 +26,12 @@ class Tool extends Command {
 
     /**
      * Execute the tool command.
+     * @returns {Promise}
      */
     async execute() {
-        try {
-            const target = { _ref: [{ _ref: this.ref }] };
-            const command = { _obj: "select", _target: target };
-
-            const result = await app.batchPlay([command], {});
-
-            if (!result || result.length === 0) {
-                throw new Error(`Tool activation failed for: ${this.name}`);
-            }
-        } catch (error) {
-            console.error(`Error activating tool "${this.name}":`, error);
-        }
+        const target = { _ref: [{ _ref: this.ref }] };
+        const command = { _obj: "select", _target: target };
+        return await app.batchPlay([command], {});
     }
 }
 
@@ -463,19 +454,12 @@ const tools = [
 
 /**
  * Load tool commands.
- * @returns {Promise.<Array.<Tool>>}
+ * @returns {Tool[]}
  */
 function loadTools() {
-    try {
-        const toolCommands = tools.map((obj) => {
-            return new Tool(obj._ref, obj.name, obj.note, obj.keyboardShortcut);
-        });
-        console.log(`Loaded ${toolCommands.length} tool commands.`);
-        return toolCommands;
-    } catch (error) {
-        console.error("Error loading tools:", error);
-        return [];
-    }
+    return tools.map((tool) => {
+        return new Tool(tool._ref, tool.name, tool.note, tool.keyboardShortcut);
+    });
 }
 
 module.exports = {

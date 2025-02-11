@@ -1,8 +1,6 @@
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 
-const { alertDialog } = require("../dialogs/alert.js");
-
 /**
  * Ps Command Palette User History.
  */
@@ -20,24 +18,23 @@ class History {
      * Load the user history file.
      */
     async load() {
-        const dataFolder = await fs.getDataFolder();
-        console.log("Loading user history:", dataFolder.nativePath);
-
+        console.log("Loading user history");
         try {
+            const dataFolder = await fs.getDataFolder();
             this.file = await dataFolder.getEntry(this.fileName);
             const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
         } catch (error) {
-            console.error("Error loading user history file:", error);
+            console.error(error);
             this.data = [];
 
+            if (!this.file) return;
+
             // create backup
-            // TODO: overwrite old file
-            const backupFilePath = await this.backup();
-            if (backupFilePath) {
-                await alertDialog(
-                    "User Data Error",
-                    `There was an error reading your user history file. A backup was created at: ${backupFilePath}`
+            const backupFile = await this.backup();
+            if (backupFile) {
+                app.showAlert(
+                    "User Data Error!\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
                 );
             }
         }
@@ -56,7 +53,7 @@ class History {
 
     /**
      * Write user history to disk.
-     * @returns {storage.<File>|void}
+     * @returns {storage.File|void}
      */
     async write() {
         console.log("Writing user history");
@@ -72,22 +69,19 @@ class History {
                     overwrite: true,
                 });
             }
-            console.log(this.file.nativePath);
-
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
         } catch (error) {
-            console.error("Error writing user history file:", error);
-            await alertDialog(
-                "User Data Error",
-                "There was an error writing your user history file."
+            console.error(error);
+            app.showAlert(
+                "User Data Error!\n\nThere was an error writing your user history file."
             );
         }
     }
 
     /**
      * Backup the user history file.
-     * @returns {string|void} File path of the backup file.
+     * @returns {storage.File|void}
      */
     async backup() {
         if (!this.file) return;
@@ -95,17 +89,17 @@ class History {
         try {
             const dataFolder = await fs.getDataFolder();
             const f = this.file;
+            const backupName = `${f.name}.bak`;
 
-            await dataFolder.renameEntry(f, f.name + ".bak");
+            await dataFolder.renameEntry(f, backupName, { overwrite: true });
             console.log("User history file backed up to:", f.nativePath);
-            return f.nativePath;
+
+            return f;
         } catch (error) {
-            console.error("Error creating user history backup file:", error);
-            await alertDialog(
-                "User Data Error",
-                "There was an error backing up your user history file."
+            console.error(error);
+            app.showAlert(
+                "User Data Error!\n\nAn error occurred while backing up your user history file."
             );
-            return;
         }
     }
 
@@ -114,7 +108,7 @@ class History {
      * @param {string} query Palette query string
      * @param {string} commandID Selected command id
      */
-    async add(query, commandID) {
+    add(query, commandID) {
         if (!query || !commandID) return;
 
         // TODO: limit history length
@@ -123,7 +117,7 @@ class History {
             commandID: commandID,
             timestamp: Date.now(),
         });
-        await this.write();
+        this.write();
     }
 }
 

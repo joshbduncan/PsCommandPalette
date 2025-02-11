@@ -36,7 +36,7 @@
     name: string,
     parent: {
         _id: number,
-        actions: Array.<object>,
+        actions: object[],
         id: number,
         index: number,
         name: string,

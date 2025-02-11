@@ -53,12 +53,21 @@ const cleanTitle = (title) => {
 };
 
 /**
+ * @typedef {Object} KeyboardShortcut
+ * @property {boolean} shiftKey
+ * @property {boolean} commandKey
+ * @property {boolean} optionKey
+ * @property {boolean} controlKey
+ * @property {string} keyChar
+ */
+
+/**
  * Generate a keyboard shortcut combination string.
- * @param { {"shiftKey": Boolean, "commandKey": Boolean, "optionKey": Boolean, "controlKey": Boolean, "keyChar": string} } obj Menu command keyboard shortcut object returned from the menuBarInfo property.
+ * @param {KeyboardShortcut} keyboardShortcut Menu command keyboard shortcut object returned from the menuBarInfo property.
  * @returns string
  */
-const generateKeyboardShortcut = (obj) => {
-    const { shiftKey, controlKey, optionKey, commandKey, keyChar } = obj;
+const generateKeyboardShortcut = (keyboardShortcut) => {
+    const { shiftKey, controlKey, optionKey, commandKey, keyChar } = keyboardShortcut;
     const modifiers = [
         shiftKey ? "⇧" : "",
         controlKey ? "⌃" : "",
@@ -70,7 +79,7 @@ const generateKeyboardShortcut = (obj) => {
 
 /**
  * Execute a PSJS script file.
- * @param {File} f UXP storage file entry
+ * @param {storage.File} f UXP storage file entry
  */
 const executePSJSScriptFile = async (f) => {
     try {
@@ -84,7 +93,7 @@ const executePSJSScriptFile = async (f) => {
 
 /**
  * Execute a JSX ExtendScript script file.
- * @param {File} f UXP storage file entry
+ * @param {storage.File} f UXP storage file entry
  */
 const executeJSXScriptFile = async (f) => {
     try {

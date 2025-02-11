@@ -4,8 +4,8 @@
 class CommandPalette {
     /**
      * Create a command palette.
-     * @param {Array.<Command>} commands Queryable command palette commands
-     * @param {Array.<string>} startupCommands Commands displayed when command palette launches
+     * @param {Command[]} commands Queryable command palette commands
+     * @param {string[]} startupCommands Commands displayed when command palette launches
      */
     constructor(commands = DATA.commands, startupCommands = DATA.startupCommands) {
         this.commands = commands;
@@ -17,7 +17,7 @@ class CommandPalette {
 
     /**
      * Open the command palette dialog modal.
-     * @returns {Promise.<object>}
+     * @returns {Promise<object>}
      */
     async open() {
         this.dialog = this.createModalDialog();

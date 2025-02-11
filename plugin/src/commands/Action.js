@@ -8,57 +8,45 @@ const { Command, CommandTypes } = require("./Command.js");
 class Action extends Command {
     /**
      * Crete a command palette action command.
-     * @param {object} obj Action object returned from `app.actionTree`
+     * @param {object} action Action object returned from `app.actionTree`
      */
-    constructor(obj) {
-        if (!obj || !obj.name || !obj.parent || !obj.id) {
+    constructor(action) {
+        if (!action || !action.name || !action.parent || !action.id) {
             throw new Error("Invalid action object");
         }
 
-        const id = "ps_action_" + obj.parent.name + "_" + obj.name + "_" + obj.id;
-        const note = "Action Set: " + obj.parent.name;
+        const id =
+            "ps_action_" + action.parent.name + "_" + action.name + "_" + action.id;
+        const note = "Action Set: " + action.parent.name;
 
         // TODO: not sure about using _id/id in command id since index can change
         // TODO: implement action shortcut key?
-        super(id, obj.name, CommandTypes.ACTION, true);
+        super(id, action.name, CommandTypes.ACTION, true);
 
-        this.obj = obj;
-        this._id = obj._id;
-        this.action_id = obj.id;
-        this.parent = obj.parent;
-        this.typename = obj.typename;
+        this.obj = action;
+        this._id = action._id;
+        this.action_id = action.id;
+        this.parent = action.parent;
+        this.typename = action.typename;
         this.note = note;
     }
 
     /**
-     * Execute the action command.
+     *
+     * @returns {Promise<void>}
      */
     async execute() {
-        try {
-            const result = await core.executeAsModal(() => this.obj.play());
-            console.log(`Executed action: ${this.id}`, result);
-        } catch (error) {
-            console.error(`Error executing action ${this.id}:`, error);
-        }
+        return core.executeAsModal(() => this.obj.play());
     }
 }
 
 /**
  * Load action commands.
- * @returns {Promise.<Array.<Tool>>}
+ * @returns {Promise<Action[]>}
  */
 async function loadActions() {
-    try {
-        const actionSets = await app.actionTree;
-        const actionCommands = actionSets.flatMap((set) =>
-            set.actions.map((obj) => new Action(obj))
-        );
-        console.log(`Loaded ${actionCommands.length} action commands`);
-        return actionCommands;
-    } catch (error) {
-        console.error("Error loading actions:", error);
-        return [];
-    }
+    const actionSets = await app.actionTree;
+    return actionSets.flatMap((set) => set.actions.map((action) => new Action(action)));
 }
 
 module.exports = {
