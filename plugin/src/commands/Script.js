@@ -14,9 +14,10 @@ class Script extends Command {
      * @param {string} name Command name
      * @param {string} note Note displayed below command
      */
-    constructor(file, name, note = "") {
+    constructor(file, name, note) {
         const id = "ps_script_" + file.nativePath;
         const _name = name === undefined ? file.name : name;
+        const _note = note === undefined ? file.nativePath : note;
         super(id, _name, CommandTypes.SCRIPT, note);
         this.file = file;
     }
