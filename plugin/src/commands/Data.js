@@ -124,7 +124,7 @@ class Data {
         // }
 
         // filter hidden commands
-        if (!hidden && USER.data.hasOwnProperty("hiddenCommands")) {
+        if (!hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
             matches = matches.filter((command) => {
                 return !USER.data.hiddenCommands.includes(command.id);
             });
@@ -187,16 +187,23 @@ class Data {
         const commands = [];
 
         const toLoad = {
-            actionCommands: loadActions,
-            builtinCommands: loadBuiltins,
-            menuCommands: loadMenus,
-            scriptCommands: loadScripts,
-            toolCommands: loadTools,
+            [CommandTypes.ACTION]: loadActions,
+            [CommandTypes.MENU]: loadMenus,
+            [CommandTypes.TOOL]: loadTools,
+            [CommandTypes.BUILTIN]: loadBuiltins,
+            [CommandTypes.SCRIPT]: loadScripts,
         };
 
         for (const [key, func] of Object.entries(toLoad)) {
+            if (
+                Object.hasOwn(USER.data, "disabledCommandTypes") &&
+                USER.data.disabledCommandTypes.includes(key)
+            ) {
+                console.log("Skipping command type:", key);
+                continue;
+            }
             try {
-                console.log(`Loading ${key}...`);
+                console.log(`Loading ${key} commands...`);
                 let loadedCommands = await func();
                 commands.push(...loadedCommands);
             } catch (error) {
@@ -211,7 +218,7 @@ class Data {
      * Reload all command data.
      */
     async reload() {
-        this.load();
+        await this.load();
     }
 }
 

@@ -2,6 +2,7 @@ const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
 
+const { CommandTypes } = require("../commands/Command.js");
 const { alertDialog } = require("../dialogs/alert.js");
 
 /**
@@ -33,9 +34,9 @@ class User {
                 locale: HOST_LOCALE,
                 os: HOST_OS,
             },
-            hiddenCommands: [],
-            // TODO: add default builtin startup commands with about, docs, etc.
-            startupCommands: ["ps_menu_1030", "ps_menu_15204", "ps_menu_101"],
+            hiddenCommands: [], // TODO: build out skips for hidden commands
+            disabledCommandTypes: [], // TODO: allow command types to be disabled all together
+            startupCommands: ["ps_builtin_about"], // TODO: add default builtin startup commands with about, docs, etc.
         };
     }
 

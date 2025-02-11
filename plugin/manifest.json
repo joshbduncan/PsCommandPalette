@@ -21,11 +21,6 @@
             "label": {
                 "default": "Ps Command Palette"
             }
-        },
-        {
-            "type": "command",
-            "id": "reloadPlugin",
-            "label": "Reload Plugin Data"
         }
     ],
     "requiredPermissions": {

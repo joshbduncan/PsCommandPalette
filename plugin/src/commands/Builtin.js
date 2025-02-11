@@ -16,8 +16,9 @@ class Builtin extends Command {
      * @param {string} name Command name
      * @param {string} note Note displayed below command
      */
-    constructor(id, name, note = "") {
+    constructor(id, name) {
         const _id = "ps_builtin_" + id;
+        const note = "Ps Command Palette > Builtin > " + name;
         super(_id, name, CommandTypes.BUILTIN, note);
     }
 }
@@ -58,6 +59,18 @@ builtinCommands.help = {
             "https://github.com/joshbduncan/PsCommandPalette/wiki",
             "Ps Command Palette Help Wiki"
         );
+    },
+};
+
+builtinCommands.reload = {
+    name: "Reload Plugin Data",
+    note: "Ps Command Palette > Reload Plugin Data",
+    callback: async () => {
+        console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
+        await USER.reload();
+        await HISTORY.reload();
+        await DATA.reload();
+        app.showAlert("Plugin reloaded.");
     },
 };
 
