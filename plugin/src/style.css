@@ -78,6 +78,10 @@
     max-width: 100%;
 }
 
+#commands-list #commands li.command .body span.title strong {
+    color: rgb(255, 100, 100);
+}
+
 #commands-list #commands li.command .body kbd.shortcut {
     margin-left: 8px;
     text-align: center;

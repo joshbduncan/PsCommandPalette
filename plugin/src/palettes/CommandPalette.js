@@ -114,9 +114,6 @@ class CommandPalette {
 
         const matches = DATA.filterByQuery(event.target.value, this.commands);
         matches.slice(0, 9).forEach((command) => {
-            if (!command.element) {
-                command.createElement();
-            }
             this.listbox.appendChild(command.element);
         });
 

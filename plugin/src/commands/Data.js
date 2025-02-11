@@ -130,10 +130,94 @@ class Data {
             });
         }
 
-        // filter by query
-        matches = matches.filter((command) => {
-            return command.name.toLowerCase().includes(query.toLowerCase());
-        });
+        /**
+         * Fuzzy match commands against a search `query`.
+         * @param {Command} command Command to match against
+         * @param {string} query Search query string
+         * @returns {boolean}
+         */
+        function fuzzyMatch(command, query) {
+            query = query.replace(/\s/g, "").toLowerCase();
+            const tokens = command.name.split("");
+            let pos = 0;
+
+            tokens.forEach((token, index) => {
+                if (token.toLowerCase() == query[pos]) {
+                    tokens[index] = `<strong>${token}</strong>`;
+                    pos++;
+                    if (pos >= query.length) {
+                        return false;
+                    }
+                }
+            });
+
+            if (pos != query.length) {
+                return false;
+            }
+
+            // create the element if not already
+            if (!command.element) {
+                command.createElement();
+            }
+
+            // update command name with fuzzy match highlighting
+            const name = tokens.join("");
+            command.element.querySelector(".title").innerHTML = name;
+
+            return true;
+        }
+
+        /**
+         * Creates a sorting function that sorts commands by the number of matching chunks in their name.
+         * Matches closer to the start of the name are given higher weight, with an extra boost for exact prefix matches.
+         * @param {string} query Search query used for comparison
+         * @returns {(a: { name: string }, b: { name: string }) => number} Sorting function
+         */
+        function scoreMatches(query) {
+            const queryChunks = query.toLowerCase().split(/\s+/); // Split query into an array
+
+            /**
+             * Counts matches between the query chunks and name chunks.
+             * Matches earlier in the name are given higher weight.
+             * @param {string} name Command name to check against
+             * @returns {number} Weighted match count
+             */
+            const countMatches = (name) => {
+                const nameChunks = name.toLowerCase().split(/\s+/);
+
+                return queryChunks.reduce((count, queryChunk) => {
+                    // TODO: implement query latching
+                    // TODO: implement recency bias
+
+                    return (
+                        count +
+                        nameChunks.reduce((total, nameChunk, index) => {
+                            if (nameChunk.includes(queryChunk)) {
+                                let weight = 1 / (index + 1); // Base weight: earlier chunks matter more
+                                if (nameChunk.startsWith(queryChunk)) {
+                                    weight += 1; // Extra boost for exact prefix matches
+                                }
+                                total += weight;
+                            }
+                            return total;
+                        }, 0)
+                    );
+                }, 0);
+            };
+
+            /**
+             * Comparison function for sorting command for the palette.
+             * @param {{ name: string }} a First command to compare
+             * @param {{ name: string }} b Second command to compare
+             * @returns {number} Negative if `a` should be before `b`, positive if `b` should be before `a`.
+             */
+            return (a, b) => countMatches(b.name) - countMatches(a.name); // sort descending
+        }
+
+        // fuzzy match by query and sort by chunk matches
+        matches = matches
+            .filter((command) => fuzzyMatch(command, query))
+            .sort(scoreMatches(query));
 
         return matches;
     }
@@ -205,13 +289,13 @@ class Data {
             try {
                 console.log(`Loading ${key} commands...`);
                 let loadedCommands = await func();
-                console.log(`Loaded ${loadedCommands.length} ${key} commands`);
                 commands.push(...loadedCommands);
             } catch (error) {
                 console.error(`Error loading ${key} commands:`, error);
             }
         }
 
+        console.log(`Loaded ${commands.length} commands`);
         this.commands = commands;
     }
 

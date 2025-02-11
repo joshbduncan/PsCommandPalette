@@ -42,7 +42,7 @@ class User {
      * Load the user data file.
      */
     async load() {
-        console.log("Loading user data:");
+        console.log("Loading user data...");
         try {
             const dataFolder = await fs.getDataFolder();
             this.file = await dataFolder.getEntry(this.fileName);
@@ -81,9 +81,9 @@ class User {
      * @returns {storage.File|void}
      */
     async write() {
-        console.log("Writing user data");
+        console.log("Writing user data...");
         if (this.data == {} || this.data === null) {
-            console.log("No user data to write...");
+            console.log("No user data to write");
             return;
         }
         try {
@@ -117,7 +117,7 @@ class User {
             const backupName = `${f.name}.bak`;
 
             await dataFolder.renameEntry(f, backupName, { overwrite: true });
-            console.log("User data file backed up to:", nativePath);
+            console.log("User data file backed up to:", f);
 
             return f;
         } catch (error) {

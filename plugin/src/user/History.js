@@ -18,7 +18,7 @@ class History {
      * Load the user history file.
      */
     async load() {
-        console.log("Loading user history");
+        console.log("Loading user history...");
         try {
             const dataFolder = await fs.getDataFolder();
             this.file = await dataFolder.getEntry(this.fileName);
@@ -56,9 +56,9 @@ class History {
      * @returns {storage.File|void}
      */
     async write() {
-        console.log("Writing user history");
+        console.log("Writing user history...");
         if (this.data == {} || this.data === null) {
-            console.log("No user data to write...");
+            console.log("No user data to write");
             return;
         }
         try {

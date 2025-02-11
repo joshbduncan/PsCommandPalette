@@ -29,7 +29,7 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [ ] bookmarked files and folders
     - [ ] custom pickers
 - [ ] improved results
-    - [ ] fuzzy filtering
+    - [x] fuzzy filtering
     - [ ] query latching
     - [ ] recency bias
 - [ ] plugin menu command recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
