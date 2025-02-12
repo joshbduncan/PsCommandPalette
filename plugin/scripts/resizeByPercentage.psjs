@@ -93,10 +93,10 @@ cancelButton.onclick = () => {
 dialog.appendChild(form);
 document.body.appendChild(dialog);
 
-dialog.querySelector("form").addEventListener("submit", (event) => {
+form.onsubmit = function (event) {
     event.preventDefault();
     okButton.click();
-});
+};
 
 // show dialog and process results
 try {
