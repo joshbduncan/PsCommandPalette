@@ -51,35 +51,24 @@ async function launchPalette() {
     const end = performance.now();
     console.log(`Data.load() execution time: ${(end - start).toFixed(3)} ms`);
 
-    try {
-        const palette = new CommandPalette();
-        const result = await palette.open();
-        console.log("Modal result:", result);
+    const palette = new CommandPalette();
+    const result = await palette.open();
+    console.log("Modal result:", result);
 
-        if (result === "reasonCanceled" || !result) return;
+    if (result === "reasonCanceled" || !result) return;
 
-        const { query, command } = result;
-        if (!command) {
-            console.error("No command selected.");
-            return;
-        }
-
-        // to allow for external user data file editing, don't write
-        // user data when "Reload Plugin Data" command is executed
-
-        if (command.id !== "ps_builtin_reload") {
-            HISTORY.add(query, command.id);
-            USER.write();
-        }
-
-        try {
-            await command.execute();
-        } catch (error) {
-            console.error(`Error executing command ${command.id}:`, error);
-        }
-    } catch (error) {
-        console.error(error);
-        // TODO: Add user alert - https://developer.adobe.com/photoshop/uxp/2022/design/ux-patterns/messaging/
-        app.showAlert(error);
+    const { query, command } = result;
+    if (!command) {
+        console.error("No command selected.");
+        return;
     }
+
+    // to allow for external user data file editing, don't write
+    // user data when "Reload Plugin Data" command is executed
+    if (command.id !== "ps_builtin_reload") {
+        HISTORY.add(query, command.id);
+        USER.write();
+    }
+
+    await command.execute();
 }

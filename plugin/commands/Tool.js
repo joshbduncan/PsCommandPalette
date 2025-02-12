@@ -25,13 +25,17 @@ class Tool extends Command {
     }
 
     /**
-     * Execute the tool command.
+     * Activate the tool.
      * @returns {Promise}
      */
     async execute() {
-        const target = { _ref: [{ _ref: this.ref }] };
-        const command = { _obj: "select", _target: target };
-        return await app.batchPlay([command], {});
+        try {
+            const target = { _ref: [{ _ref: this.ref }] };
+            const command = { _obj: "select", _target: target };
+            return await app.batchPlay([command], {});
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

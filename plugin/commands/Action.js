@@ -32,11 +32,15 @@ class Action extends Command {
     }
 
     /**
-     *
+     * Play the action.
      * @returns {Promise<void>}
      */
     async execute() {
-        return core.executeAsModal(() => this.obj.play());
+        try {
+            return core.executeAsModal(() => this.obj.play());
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
 

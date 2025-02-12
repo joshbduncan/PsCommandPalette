@@ -20,18 +20,21 @@ class CommandPalette {
      * @returns {Promise<object>}
      */
     async open() {
-        this.dialog = this.createModalDialog();
-        const result = await this.dialog.uxpShowModal({
-            title: "Ps Command Palette",
-            resize: "vertical",
-            size: {
-                width: 600,
-                height: 700,
-            },
-        });
-
-        this.cleanup();
-        return result;
+        try {
+            this.dialog = this.createModalDialog();
+            return await this.dialog.uxpShowModal({
+                title: "Ps Command Palette",
+                resize: "vertical",
+                size: {
+                    width: 600,
+                    height: 700,
+                },
+            });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            this.cleanup();
+        }
     }
 
     /**

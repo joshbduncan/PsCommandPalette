@@ -47,33 +47,37 @@ class Menu extends Command {
     }
 
     /**
-     * Execute the menu command using the `performMenu` method.
+     * Perform menu command.
      * @returns {Promise<void>}
      */
     async execute() {
-        // ensure a menu command is still available since
-        // sometimes after long periods between app operations
-        // ps will report the command is available (e.g. undo and redo)
+        try {
+            // ensure a menu command is still available since
+            // sometimes after long periods between app operations
+            // ps will report the command is available (e.g. undo and redo)
 
-        const commandState = await this.getState();
-        const isAvailable = commandState?.[0];
+            const commandState = await this.getState();
+            const isAvailable = commandState?.[0];
 
-        if (!isAvailable) {
-            app.showAlert(
-                "Command Not Available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
-            );
-            return;
+            if (!isAvailable) {
+                app.showAlert(
+                    "Command Not Available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
+                );
+                return;
+            }
+
+            const result = await core.performMenuCommand({ commandID: this.commandID });
+
+            if (!result?.available) {
+                app.showAlert(
+                    "Command Execution Error\n\nThere was an error executing your command."
+                );
+            }
+
+            return result;
+        } catch (error) {
+            console.error(error);
         }
-
-        const result = await core.performMenuCommand({ commandID: this.commandID });
-
-        if (!result?.available) {
-            app.showAlert(
-                "Command Execution Error\n\nThere was an error executing your command."
-            );
-        }
-
-        return result;
     }
 }
 

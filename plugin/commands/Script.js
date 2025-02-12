@@ -23,15 +23,19 @@ class Script extends Command {
     }
 
     /**
-     * Execute the script command.
+     * Execute the script.
      * @returns {Promise<void>}
      */
     async execute() {
-        // determine script type
-        const regex = /\.psjs$/i;
-        const type = regex.test(this.file.name) ? "psjs" : "jsx";
-        const func = type === "psjs" ? executePSJSScriptFile : executeJSXScriptFile;
-        return func(this.file);
+        try {
+            // determine script type
+            const regex = /\.psjs$/i;
+            const type = regex.test(this.file.name) ? "psjs" : "jsx";
+            const func = type === "psjs" ? executePSJSScriptFile : executeJSXScriptFile;
+            return func(this.file);
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
 
