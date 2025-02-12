@@ -97,24 +97,22 @@ const executePSJSScriptFile = async (f) => {
  */
 const executeJSXScriptFile = async (f) => {
     try {
-        await core.executeAsModal(async () => {
-            let fileToken = await fs.createSessionToken(f);
-            let command = [
-                {
-                    _obj: "AdobeScriptAutomation Scripts",
-                    javaScript: {
-                        _kind: "local",
-                        _path: fileToken,
-                    },
-                    javaScriptMessage: "undefined",
-                    _options: {
-                        dialogOptions: "dontDisplay",
-                    },
+        let fileToken = await fs.createSessionToken(f);
+        let command = [
+            {
+                _obj: "AdobeScriptAutomation Scripts",
+                javaScript: {
+                    _kind: "local",
+                    _path: fileToken,
                 },
-            ];
-            await app.batchPlay(command, {
-                commandName: "External JSX Script",
-            });
+                javaScriptMessage: "undefined",
+                _options: {
+                    dialogOptions: "dontDisplay",
+                },
+            },
+        ];
+        await core.executeAsModal(async () => {
+            app.batchPlay(command, { commandName: "External JSX Script" });
         });
     } catch (error) {
         console.error(`Error executing JSX script file ${f.nativePath}:`, error);
