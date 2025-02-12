@@ -44,7 +44,7 @@ async function loadScripts() {
         const scripts = [];
         // load included scripts
         const pluginFolder = await fs.getPluginFolder();
-        const scriptsFolder = await pluginFolder.getEntry("src/scripts/");
+        const scriptsFolder = await pluginFolder.getEntry("scripts/");
         if (!scriptsFolder) {
             throw new Error("Scripts folder not found.");
         }
