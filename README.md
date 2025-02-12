@@ -28,6 +28,7 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [ ] custom workflows
     - [ ] bookmarked files and folders
     - [ ] custom pickers
+- [ ] navigation query history with up and down arrow keys
 - [x] improved results
     - [x] fuzzy filtering
     - [x] query latching

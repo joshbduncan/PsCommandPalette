@@ -48,7 +48,6 @@ entrypoints.setup({
 async function launchPalette() {
     const start = performance.now();
     await DATA.reload();
-    await USER.reload();
     const end = performance.now();
     console.log(`Data.load() execution time: ${(end - start).toFixed(3)} ms`);
 
