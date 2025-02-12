@@ -194,14 +194,22 @@ class Data {
             };
 
             const scoreMatch = (command) => {
-                // TODO: boost for recency bias
+                // calculate base score for query chunk matches
                 let score = countMatches(command.name);
+
+                // boost for latched query
                 if (
                     HISTORY.latches.hasOwnProperty(query) &&
                     HISTORY.latches[query] == command.id
                 ) {
                     score += 10;
                 }
+
+                // boost for recent command
+                if (HISTORY.recent.hasOwnProperty(command.id)) {
+                    score += 5;
+                }
+
                 return score;
             };
 

@@ -10,7 +10,8 @@ class History {
      */
     constructor() {
         this.data = null;
-        this.latches = {};
+        this.latches = null;
+        this.recent = null;
         this.fileName = "history.json";
         this.file = null;
     }
@@ -40,7 +41,17 @@ class History {
             }
         }
         this.buildQueryLatches();
-        return this.data;
+        this.buildRecencyLUT();
+    }
+
+    /**
+     * Build a lookup table of total occurrences of each command in the history.
+     */
+    buildRecencyLUT() {
+        this.recent = this.data.reduce((obj, { commandID }) => {
+            obj[commandID] = (obj[commandID] || 0) + 1;
+            return obj;
+        }, {});
     }
 
     /**
@@ -109,6 +120,7 @@ class History {
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
             this.buildQueryLatches();
+            this.buildRecencyLUT();
         } catch (error) {
             console.error(error);
             app.showAlert(
