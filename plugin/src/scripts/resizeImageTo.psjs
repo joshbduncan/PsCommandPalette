@@ -10,6 +10,7 @@ if (!doc) {
 }
 
 // TODO: get input from user (% or unitValue)
+// https://developer.adobe.com/photoshop/uxp/2022/ps_reference/classes/photoshop/#convertunits
 
 const method = "percentage";
 let width = doc.width;

@@ -15,6 +15,8 @@ const CommandTypes = {
  * Create a command palette command.
  */
 class Command {
+    #element;
+
     /**
      * Create a command palette command.
      * @param {string} id Unique command id
@@ -33,7 +35,12 @@ class Command {
         this.type = type;
         this.note = note;
         this.enabled = enabled;
-        this.element = null;
+        this.#element = null;
+    }
+
+    get element() {
+        if (!this.#element) this.createElement();
+        return this.#element;
     }
 
     /**
@@ -41,8 +48,6 @@ class Command {
      * @returns {HTMLElement}
      */
     createElement() {
-        if (this.element) return this.element;
-
         // list item
         const listItem = document.createElement("li");
         listItem.setAttribute("id", this.id);
@@ -97,21 +102,15 @@ class Command {
         listItem.appendChild(body);
         listItem.appendChild(typeContainer);
 
-        this.element = listItem;
+        this.#element = listItem;
 
         this.addEventListeners();
-        return listItem;
     }
 
     /**
      * Add all command related event listeners.
      */
     addEventListeners() {
-        if (!this.element) {
-            console.error("Command element not created before adding event listeners.");
-            return;
-        }
-
         this.element.addEventListener("click", (event) => {
             document.dispatchEvent(
                 new CustomEvent("paletteCommandSelected", {
