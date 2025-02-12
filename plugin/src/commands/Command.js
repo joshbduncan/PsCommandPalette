@@ -124,6 +124,21 @@ class Command {
     }
 
     /**
+     * Add fuzzy query token match highlights to the command element title.
+     * @param {string} innerHTML HTML string with fuzzy query token matches using '<strong>' elements.
+     */
+    addQueryHighlights(innerHTML) {
+        this.element.querySelector(".title").innerHTML = innerHTML;
+    }
+
+    /**
+     * Remove any fuzzy query token match highlights from the command element title.
+     */
+    removeQueryHighlights() {
+        this.element.querySelector(".title").textContent = this.name;
+    }
+
+    /**
      * Execute the command.
      */
     execute() {

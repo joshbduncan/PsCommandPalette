@@ -137,33 +137,24 @@ class Data {
          * @returns {boolean}
          */
         function fuzzyMatch(command, query) {
-            query = query.replace(/\s/g, "").toLowerCase();
+            const cleanQuery = query.replace(/\s/g, "").toLowerCase();
             const tokens = command.name.split("");
             let pos = 0;
 
-            tokens.forEach((token, index) => {
-                if (token.toLowerCase() == query[pos]) {
-                    tokens[index] = `<strong>${token}</strong>`;
+            const highlightedTokens = tokens.map((token) => {
+                if (
+                    pos < cleanQuery.length &&
+                    token.toLowerCase() === cleanQuery[pos]
+                ) {
                     pos++;
-                    if (pos >= query.length) {
-                        return false;
-                    }
+                    return `<strong>${token}</strong>`;
                 }
+                return token;
             });
 
-            if (pos != query.length) {
-                return false;
-            }
+            if (pos < cleanQuery.length) return false; // No full match, exit early
 
-            // create the element if not already
-            if (!command.element) {
-                command.createElement();
-            }
-
-            // update command name with fuzzy match highlighting
-            const name = tokens.join("");
-            command.element.querySelector(".title").innerHTML = name;
-
+            command.addQueryHighlights(highlightedTokens.join(""));
             return true;
         }
 

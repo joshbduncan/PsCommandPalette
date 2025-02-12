@@ -109,13 +109,16 @@ class CommandPalette {
      * Query and update the command list based on user input.
      */
     queryCommands(event) {
-        const query = event.target.value;
+        const query = event.target.value.trim();
         this.listbox.innerHTML = "";
 
-        const matches = DATA.filterByQuery(event.target.value, this.commands);
-        matches.slice(0, 9).forEach((command) => {
-            this.listbox.appendChild(command.element);
-        });
+        const matches =
+            query === ""
+                ? (this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights()),
+                  this.startupCommands)
+                : DATA.filterByQuery(query, this.commands);
+
+        matches.slice(0, 9).forEach((cmd) => this.listbox.appendChild(cmd.element));
 
         this.resetCommandSelection();
     }
