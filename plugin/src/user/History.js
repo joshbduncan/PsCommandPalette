@@ -10,6 +10,7 @@ class History {
      */
     constructor() {
         this.data = null;
+        this.latches = {};
         this.fileName = "history.json";
         this.file = null;
     }
@@ -38,8 +39,43 @@ class History {
                 );
             }
         }
-
+        this.buildQueryLatches();
         return this.data;
+    }
+
+    /**
+     * Determines the most frequently associated commandID for each query in the history.
+     * If multiple commandIDs have the same frequency, the one that appears first (most recent) takes precedence.
+     */
+    buildQueryLatches() {
+        const queryMap = new Map();
+
+        console.log("Processing history data...");
+
+        for (const { query, commandID } of this.data) {
+            if (!queryMap.has(query)) {
+                queryMap.set(query, new Map());
+            }
+            const cmdMap = queryMap.get(query);
+            cmdMap.set(commandID, (cmdMap.get(commandID) || 0) + 1);
+        }
+
+        const latches = {};
+
+        for (const [query, cmdMap] of queryMap.entries()) {
+            let maxCount = -1;
+            let mostFrequentCommand = null;
+
+            for (const [commandID, count] of cmdMap.entries()) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostFrequentCommand = commandID;
+                }
+            }
+            latches[query] = mostFrequentCommand;
+        }
+
+        this.latches = latches;
     }
 
     /**
@@ -47,6 +83,7 @@ class History {
      */
     async reload() {
         this.data = null;
+        this.latches = {};
         this.file = null;
         await this.load();
     }
@@ -71,6 +108,7 @@ class History {
             }
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
+            this.buildQueryLatches();
         } catch (error) {
             console.error(error);
             app.showAlert(

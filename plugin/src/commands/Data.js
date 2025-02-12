@@ -177,9 +177,6 @@ class Data {
                 const nameChunks = name.toLowerCase().split(/\s+/);
 
                 return queryChunks.reduce((count, queryChunk) => {
-                    // TODO: implement query latching
-                    // TODO: implement recency bias
-
                     return (
                         count +
                         nameChunks.reduce((total, nameChunk, index) => {
@@ -196,13 +193,25 @@ class Data {
                 }, 0);
             };
 
+            const scoreMatch = (command) => {
+                // TODO: boost for recency bias
+                let score = countMatches(command.name);
+                if (
+                    HISTORY.latches.hasOwnProperty(query) &&
+                    HISTORY.latches[query] == command.id
+                ) {
+                    score += 10;
+                }
+                return score;
+            };
+
             /**
              * Comparison function for sorting command for the palette.
              * @param {{ name: string }} a First command to compare
              * @param {{ name: string }} b Second command to compare
              * @returns {number} Negative if `a` should be before `b`, positive if `b` should be before `a`.
              */
-            return (a, b) => countMatches(b.name) - countMatches(a.name); // sort descending
+            return (a, b) => scoreMatch(b) - scoreMatch(a); // sort descending
         }
 
         // fuzzy match by query and sort by chunk matches

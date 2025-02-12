@@ -28,9 +28,9 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [ ] custom workflows
     - [ ] bookmarked files and folders
     - [ ] custom pickers
-- [ ] improved results
+- [x] improved results
     - [x] fuzzy filtering
-    - [ ] query latching
+    - [x] query latching
     - [ ] recency bias
 - [ ] plugin menu command recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
 
@@ -51,4 +51,4 @@ General notes, issues, and things I don't want to forget.
 - [Menu: Spectrum Web Components](https://opensource.adobe.com/spectrum-web-components/components/menu/)
 - [Icons - Spectrum](https://spectrum.adobe.com/page/icons/)
 - [Bolt CEP | Build Extensions Faster — Blog | Hyper Brew](https://hyperbrew.co/blog/bolt-cep-build-extensions-faster/)
-- [hyperbrew/bolt-cep: A lightning-fast boilerplate for building Adobe CEP Extensions in React, Vue, or Svelte built on Vite + TypeScript + Sass](https://github.com/hyperbrew/bolt-cep)
+- [Bolt UXP](https://github.com/hyperbrew/bolt-uxp)

@@ -30,7 +30,6 @@ class Builtin extends Command {
 // TODO: help builtin
 // TODO: updates builtin
 // TODO: pluginSettings builtin
-// TODO: viewUserData builtin
 
 const builtinCommands = {};
 
