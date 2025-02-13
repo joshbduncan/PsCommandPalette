@@ -11,14 +11,11 @@ class Script extends Command {
     /**
      * Create a command palette script command.
      * @param {storage.File} file Script file entry
-     * @param {string} name Command name
      * @param {string} note Note displayed below command
      */
-    constructor(file, name, note) {
+    constructor(file, note) {
         const id = "ps_script_" + file.nativePath;
-        const _name = name === undefined ? file.name : name;
-        const _note = note === undefined ? file.nativePath : note;
-        super(id, _name, CommandTypes.SCRIPT, note);
+        super(id, file.name, CommandTypes.SCRIPT, note || file.nativePath);
         this.file = file;
     }
 
@@ -54,13 +51,12 @@ async function loadScripts() {
         }
 
         const entries = await scriptsFolder.getEntries();
-        const scriptFiles = entries.filter((entry) => entry.isFile);
+        const scriptFiles = entries.filter((file) => file.isFile);
 
-        const pluginScripts = scriptFiles.map((entry) => {
+        const pluginScripts = scriptFiles.map((file) => {
             const script = new Script(
-                entry,
-                undefined,
-                "Ps Command Palette > Scripts > " + entry.name
+                file,
+                "Ps Command Palette > Scripts > " + file.name
             );
             return script;
         });
