@@ -3,7 +3,7 @@ repos:
       hooks:
           - id: prettier
             name: run prettier
-            entry: bash -c 'prettier -w .'
+            entry: bash -c 'prettier -w src'
             language: system
             types: [bash]
             always_run: true
