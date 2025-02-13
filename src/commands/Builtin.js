@@ -33,21 +33,23 @@ class Builtin extends Command {
 
 const builtinCommands = {};
 
+const about = () => {
+    const year = new Date().getFullYear();
+    const aboutString = `${PLUGIN_NAME}
+Plugin for Photoshop
+
+Version: ${PLUGIN_VERSION}
+
+Developed by Josh Duncan
+
+© ${year} Josh Duncan`;
+    app.showAlert(aboutString);
+};
+
 builtinCommands.about = {
     name: "About Ps Command Palette",
     note: "Ps Command Palette > About...",
-    callback: () => {
-        const year = new Date().getFullYear();
-        const aboutString = `${PLUGIN_NAME}
-    Plugin for Photoshop
-    
-    Version: ${PLUGIN_VERSION}
-    
-    Developed by Josh Duncan
-    
-    © ${year} Josh Duncan`;
-        app.showAlert(aboutString);
-    },
+    callback: about,
 };
 
 builtinCommands.help = {
@@ -61,16 +63,17 @@ builtinCommands.help = {
     },
 };
 
+const reloadPlugin = async () => {
+    console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
+    await USER.reload();
+    await HISTORY.reload();
+    await DATA.reload();
+    app.showAlert("Plugin reloaded");
+};
 builtinCommands.reload = {
     name: "Reload Plugin Data",
     note: "Ps Command Palette > Reload Plugin Data",
-    callback: async () => {
-        console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
-        await USER.reload();
-        await HISTORY.reload();
-        await DATA.reload();
-        app.showAlert("Plugin reloaded.");
-    },
+    callback: reloadPlugin,
 };
 
 builtinCommands.openUserDataFolder = {
@@ -125,5 +128,8 @@ function loadBuiltins() {
 
 module.exports = {
     Builtin,
+    builtinCommands,
+    about,
+    reloadPlugin,
     loadBuiltins,
 };

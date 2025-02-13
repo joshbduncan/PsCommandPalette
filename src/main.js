@@ -8,6 +8,7 @@ const { CommandPalette } = require("./palettes/CommandPalette.js");
 const { User } = require("./user/User.js");
 const { History } = require("./user/History.js");
 const { Data } = require("./commands/Data.js");
+const { about, reloadPlugin } = require("./commands/Builtin.js");
 
 /////////////////////
 // get plugin info //
@@ -39,7 +40,46 @@ entrypoints.setup({
     commands: {
         launchPalette: () => launchPalette(),
     },
+    panels: {
+        ps_command_palette: {
+            show() {
+                // put any initialization code for your plugin here.
+            },
+            menuItems: [
+                { id: "about", label: "About" },
+                { id: "reloadPlugin", label: "Reload Plugin" },
+            ],
+            invokeMenu(id) {
+                switch (id) {
+                    case "about":
+                        about();
+                        break;
+                    case "reloadPlugin":
+                        reloadPlugin();
+                        break;
+                }
+            },
+        },
+    },
 });
+
+/////////////////////////
+// add main panel info //
+/////////////////////////
+const year = new Date().getFullYear();
+document.getElementById("main-copyright").textContent =
+    `Copyright ${year} ${PLUGIN_AUTHOR}`;
+
+document.getElementById("main-plugin-info").textContent =
+    `Plugin Version ${PLUGIN_VERSION}`;
+
+////////////////////////////////////
+// add main panel event listeners //
+////////////////////////////////////
+
+document
+    .getElementById("btnOpenCommandPalette")
+    .addEventListener("click", launchPalette);
 
 ///////////////////////
 // command functions //

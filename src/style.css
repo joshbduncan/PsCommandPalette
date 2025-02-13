@@ -7,6 +7,38 @@
   https://developer.adobe.com/photoshop/uxp/2022/guides/theme-awareness/
 */
 
+body {
+    color: var(--uxp-host-text-color);
+    padding: 0 16px;
+}
+
+sp-heading#main-panel-title {
+    width: 100%;
+    text-align: center;
+}
+
+sp-divider {
+    margin: 8px;
+}
+
+#main-action-buttons li {
+    padding: 8px;
+}
+
+#main-action-buttons sp-button {
+    width: 100%;
+}
+
+sp-detail#main-copyright {
+    width: 100%;
+    text-align: center;
+}
+
+sp-detail#main-plugin-info {
+    width: 100%;
+    text-align: center;
+}
+
 /* /////////////////// */
 /* // alert dialogs // */
 /* /////////////////// */
