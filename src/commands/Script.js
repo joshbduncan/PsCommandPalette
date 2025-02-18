@@ -9,8 +9,7 @@ const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
  */
 class Script extends Command {
     /**
-     * Create a command palette script command.
-     * @param {Object} script
+     * @param {object} script
      * @param {string} script.id Unique command id
      * @param {string} script.name Script name
      * @param {string} script.path Script path

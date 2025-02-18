@@ -19,7 +19,6 @@ class Command {
     #element;
 
     /**
-     * Create a command palette command.
      * @param {string} id Unique command id
      * @param {string} name Command name
      * @param {string} type Command type

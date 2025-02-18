@@ -7,7 +7,6 @@ const { Command, CommandTypes } = require("./Command.js");
  */
 class Action extends Command {
     /**
-     * Crete a command palette action command.
      * @param {object} action Action object returned from `app.actionTree`
      */
     constructor(action) {

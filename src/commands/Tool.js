@@ -5,7 +5,6 @@ const { Command, CommandTypes } = require("./Command.js");
  */
 class Tool extends Command {
     /**
-     * Create a command palette tool command.
      * @param {string} ref Tool batchPlay reference string
      * @param {string} name Tool name
      * @param {string} note Note displayed below tool

@@ -13,7 +13,6 @@ const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
  */
 class Builtin extends Command {
     /**
-     * Create a command palette builtin command.
      * @param {string} id Unique command id
      * @param {string} name Command name
      * @param {string} note Note displayed below command

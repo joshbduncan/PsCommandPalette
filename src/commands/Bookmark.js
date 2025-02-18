@@ -17,7 +17,6 @@ const BookmarkTypes = {
  */
 class Bookmark extends Command {
     /**
-     * Create a command palette bookmark command.
      * @param {string} id Unique command id
      * @param {string} name Bookmark name
      * @param {string} path Bookmark path
@@ -34,8 +33,7 @@ class Bookmark extends Command {
  */
 class FileBookmark extends Bookmark {
     /**
-     * Create a command palette file bookmark command.
-     * @param {Object} bookmark
+     * @param {object} bookmark
      * @param {string} bookmark.id Unique command id
      * @param {string} bookmark.name Bookmark name
      * @param {string} bookmark.path Bookmark path
@@ -103,8 +101,7 @@ class FileBookmark extends Bookmark {
  */
 class FolderBookmark extends Bookmark {
     /**
-     * Create a command palette folder bookmark command.
-     * @param {Object} bookmark
+     * @param {object} bookmark
      * @param {string} bookmark.id Unique command id
      * @param {string} bookmark.name Bookmark name
      * @param {string} bookmark.path Bookmark path

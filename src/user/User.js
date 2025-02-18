@@ -6,9 +6,6 @@ const fs = storage.localFileSystem;
  * Ps Command Palette User Data.
  */
 class User {
-    /**
-     * Create a User object.
-     */
     constructor() {
         this.data = null;
         this.fileName = "user.json";

@@ -53,7 +53,7 @@ const cleanTitle = (title) => {
 };
 
 /**
- * @typedef {Object} KeyboardShortcut
+ * @typedef {object} KeyboardShortcut
  * @property {boolean} shiftKey
  * @property {boolean} commandKey
  * @property {boolean} optionKey

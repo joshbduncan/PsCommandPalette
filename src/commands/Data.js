@@ -10,9 +10,6 @@ const { loadTools } = require("./Tool.js");
  * Ps Command Palette Commands Data.
  */
 class Data {
-    /**
-     * Create a CommandData object.
-     */
     constructor() {
         this.commands = [];
     }

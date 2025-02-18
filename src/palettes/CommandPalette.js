@@ -3,7 +3,6 @@
  */
 class CommandPalette {
     /**
-     * Create a command palette.
      * @param {Command[]} commands Queryable command palette commands
      * @param {string[]} startupCommands Commands displayed when command palette launches
      */

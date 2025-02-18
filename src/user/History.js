@@ -5,9 +5,6 @@ const fs = storage.localFileSystem;
  * Ps Command Palette User History.
  */
 class History {
-    /**
-     * Create a History object.
-     */
     constructor() {
         this.data = null;
         this.latches = null;

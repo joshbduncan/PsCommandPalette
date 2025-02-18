@@ -8,23 +8,35 @@ const { cleanTitle, generateKeyboardShortcut } = require("../utils.js");
  */
 class Menu extends Command {
     /**
-     * Create a command palette menu command.
      * @param {object} menuCommand Menu command object returned from the `menuBarInfo` property
+     * @param {string} menuCommand.name
+     * @param {string} menuCommand.title
+     * @param {number} menuCommand.command
+     * @param {string[]} menuCommand.path
+     * @param {boolean} menuCommand.enabled
+     * @param {boolean} menuCommand.visible
+     * @param {boolean} menuCommand.checked
+     * @param {object} menuCommand.menuShortcut
      */
-    constructor(menuCommand) {
-        const { name, title, command, path, enabled, visible, checked, menuShortcut } =
-            menuCommand;
-
+    constructor({
+        name,
+        title,
+        command,
+        path,
+        enabled,
+        visible,
+        checked,
+        menuShortcut,
+    }) {
         const id = `ps_menu_${command}`;
         const note = path.join(" > ");
         const commandName = name || cleanTitle(title.replace(/\.\.\.$/g, ""));
 
         super(id, commandName, CommandTypes.MENU, note, enabled);
 
-        this.obj = menuCommand;
-        this.commandID = menuCommand.command;
-        this.visible = menuCommand.visible;
-        this.checked = menuCommand.checked;
+        this.commandID = command;
+        this.visible = visible;
+        this.checked = checked;
         this.keyboardShortcut = menuShortcut?.keyChar
             ? generateKeyboardShortcut(menuShortcut)
             : "";
