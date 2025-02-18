@@ -9,7 +9,7 @@ const constants = require("photoshop").constants;
 // check for an active document
 const doc = app.activeDocument;
 if (!doc) {
-    app.showAlert("No active documents.");
+    app.showAlert("No active documents");
     return;
 }
 

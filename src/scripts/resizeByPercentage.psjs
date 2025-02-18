@@ -5,7 +5,7 @@ const { app, core } = require("photoshop");
 // check for an active document
 const doc = app.activeDocument;
 if (!doc) {
-    app.showAlert("No active documents.");
+    app.showAlert("No active documents");
     return;
 }
 
@@ -79,7 +79,7 @@ okButton.onclick = () => {
     // validate input
     const value = parseFloat(percentage.value);
     if (isNaN(value)) {
-        app.showAlert("Invalid numeric entry. Default value inserted.");
+        app.showAlert("Invalid numeric entry\n\nDefault value inserted.");
         percentage.value = "100%";
         return;
     }
@@ -115,7 +115,9 @@ try {
     let height = doc.height * (result / 100);
 
     // resize image
-    await core.executeAsModal(async () => await doc.resizeImage(width, height));
+    await core.executeAsModal(async () => await doc.resizeImage(width, height), {
+        commandName: "Resize Image",
+    });
 } catch (error) {
     app.showAlert(error);
     console.error(error);
