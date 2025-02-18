@@ -63,27 +63,6 @@ builtinCommands.help = {
     },
 };
 
-const reloadPlugin = async () => {
-    console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
-    await USER.reload();
-    await HISTORY.reload();
-    await DATA.reload();
-    app.showAlert("Plugin reloaded");
-};
-builtinCommands.reload = {
-    name: "Reload Plugin Data",
-    note: "Ps Command Palette > Reload Plugin Data",
-    callback: reloadPlugin,
-};
-
-builtinCommands.openUserDataFolder = {
-    name: "Open Plugin Data Folder",
-    note: "Ps Command Palette > Open Plugin Data Folder",
-    callback: async () => {
-        USER.reveal();
-    },
-};
-
 builtinCommands.runPSJSScript = {
     name: "Run PSJS Script File",
     note: "Ps Command Palette > Run PSJS Script File...",
@@ -130,6 +109,5 @@ module.exports = {
     Builtin,
     builtinCommands,
     about,
-    reloadPlugin,
     loadBuiltins,
 };

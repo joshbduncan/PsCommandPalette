@@ -2,14 +2,12 @@
 
 Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, **Actions**, and **more**.
 
-> [!NOTE]  
-> Currently only works with MENU commands, some TOOLS, and ACTIONS.
-
 ![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
 ## Installation
 
-> [!WARNING] This project is experimental and under active development.
+> [!WARNING]
+> This project is experimental and under active development.
 
 You can install easily the plugin via the included CCX file [ps.command.palette_PS.ccx](dist/ps-command-palette_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
 
