@@ -55,11 +55,13 @@ class FileBookmark extends Bookmark {
             entry = await fs.getEntryForPersistentToken(this.token);
 
             // try and read the file metadata to ensure it still exists
-            const metadata = await entry.getMetadata();
+            await entry.getMetadata();
         } catch (err) {
             await app.showAlert(
                 `File access token error\n\nThe access token for ${this.name} has expired. Please locate file or folder to create a new access token.`
             );
+
+            // TODO: prompt user to remove or re-link?
 
             // prompt the user to reselect the bookmark and create a new entry
             const newBookmark = await createBookmarkEntry(BookmarkTypes.FILE);
@@ -82,9 +84,8 @@ class FileBookmark extends Bookmark {
                 entry = undefined;
             }
 
-            // write and reload user data
+            // write user data
             await USER.write();
-            await USER.reload();
         }
 
         // return in case user cancels relocation
@@ -123,11 +124,13 @@ class FolderBookmark extends Bookmark {
             entry = await fs.getEntryForPersistentToken(this.token);
 
             // try and read the file metadata to ensure it still exists
-            const metadata = await entry.getMetadata();
+            await entry.getMetadata();
         } catch (err) {
             await app.showAlert(
                 `File access token error\n\nThe access token for ${this.name} has expired. Please locate file or folder to create a new access token.`
             );
+
+            // TODO: prompt user to remove or re-link?
 
             // prompt the user to reselect the bookmark and create a new entry
             const newBookmark = await createBookmarkEntry(BookmarkTypes.FOLDER);
@@ -150,9 +153,8 @@ class FolderBookmark extends Bookmark {
                 entry = undefined;
             }
 
-            // write and reload user data
+            // write user data
             await USER.write();
-            await USER.reload();
         }
 
         // return in case user cancels relocation

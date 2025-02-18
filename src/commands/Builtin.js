@@ -5,6 +5,7 @@ const shell = require("uxp").shell;
 
 const { Command, CommandTypes } = require("./Command.js");
 const { BookmarkTypes, createBookmarkEntry } = require("./Bookmark.js");
+const { createScriptEntry } = require("./Script.js");
 const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
 
 /**
@@ -91,6 +92,17 @@ builtinCommands.runJSXScript = {
             return;
         }
         await executeJSXScriptFile(f);
+    },
+};
+
+// TODO: allow multiple selection
+builtinCommands.loadScript = {
+    name: "Add Script Command",
+    note: "Ps Command Palette > Add Script Command",
+    callback: async () => {
+        const script = await createScriptEntry();
+        USER.data.scripts.push(script);
+        USER.write();
     },
 };
 
