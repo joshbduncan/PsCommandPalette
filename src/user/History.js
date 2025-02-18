@@ -36,7 +36,7 @@ class History {
             const backupFile = await this.backup();
             if (backupFile) {
                 app.showAlert(
-                    "User Data Error!\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
+                    "User history error\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
                 );
             }
         }
@@ -60,9 +60,6 @@ class History {
      */
     buildQueryLatches() {
         const queryMap = new Map();
-
-        console.log("Processing history data...");
-
         for (const { query, commandID } of this.data) {
             if (!queryMap.has(query)) {
                 queryMap.set(query, new Map());
@@ -124,7 +121,7 @@ class History {
         } catch (error) {
             console.error(error);
             app.showAlert(
-                "User Data Error!\n\nThere was an error writing your user history file."
+                "User history error\n\nThere was an error writing your user history file."
             );
         }
     }
@@ -148,7 +145,7 @@ class History {
         } catch (error) {
             console.error(error);
             app.showAlert(
-                "User Data Error!\n\nAn error occurred while backing up your user history file."
+                "User history error\n\nAn error occurred while backing up your user history file."
             );
         }
     }
@@ -168,6 +165,13 @@ class History {
             timestamp: Date.now(),
         });
         this.write();
+    }
+
+    async clear() {
+        this.data = [];
+        await this.write();
+        await this.reload();
+        app.showAlert("History cleared");
     }
 }
 

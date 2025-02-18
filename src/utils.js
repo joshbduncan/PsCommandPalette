@@ -83,8 +83,8 @@ const generateKeyboardShortcut = (keyboardShortcut) => {
  */
 const executePSJSScriptFile = async (f) => {
     try {
-        await core.executeAsModal(async () => {
-            app.open(f);
+        await core.executeAsModal(app.open(f), {
+            commandName: "Executing External PSJS Script File",
         });
     } catch (error) {
         console.error(`Error executing PSJS script file ${f.nativePath}:`, error);
@@ -111,9 +111,11 @@ const executeJSXScriptFile = async (f) => {
                 },
             },
         ];
-        await core.executeAsModal(async () => {
-            app.batchPlay(command, { commandName: "External JSX Script" });
-        });
+        await core.executeAsModal(
+            app.batchPlay(command, {
+                commandName: "Executing External JSX Script File",
+            })
+        );
     } catch (error) {
         console.error(`Error executing JSX script file ${f.nativePath}:`, error);
     }

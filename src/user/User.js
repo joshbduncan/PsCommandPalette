@@ -1,7 +1,6 @@
 const { app } = require("photoshop");
-const { storage } = require("uxp");
+const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
-const shell = require("uxp").shell;
 
 /**
  * Ps Command Palette User Data.
@@ -59,7 +58,7 @@ class User {
             const backupFile = this.backup();
             if (backupFile) {
                 app.showAlert(
-                    "User Data Error!\n\nThere was an error reading your user data file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
+                    "User data error\n\nThere was an error reading your user data file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
                 );
             }
         }
@@ -99,7 +98,7 @@ class User {
         } catch (error) {
             console.error(error);
             app.showAlert(
-                "User Data Error!\n\nThere was an error writing your user data file."
+                "User data error\n\nThere was an error writing your user data file."
             );
         }
     }
@@ -123,7 +122,7 @@ class User {
         } catch (error) {
             console.error(error);
             app.showAlert(
-                "User Data Error!\n\nAn error occurred while backing up your user data file."
+                "User data error\n\nAn error occurred while backing up your user data file."
             );
         }
     }

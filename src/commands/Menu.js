@@ -61,7 +61,7 @@ class Menu extends Command {
 
             if (!isAvailable) {
                 app.showAlert(
-                    "Command Not Available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
+                    "Command not available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
                 );
                 return;
             }
@@ -70,7 +70,7 @@ class Menu extends Command {
 
             if (!result?.available) {
                 app.showAlert(
-                    "Command Execution Error\n\nThere was an error executing your command."
+                    "Command execution error\n\nThere was an error executing your command."
                 );
             }
 
