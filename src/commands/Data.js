@@ -1,5 +1,6 @@
 const { Command, CommandTypes } = require("./Command.js");
 const { loadActions } = require("./Action.js");
+const { loadBookmarks } = require("./Bookmark.js");
 const { loadBuiltins } = require("./Builtin.js");
 const { loadMenus } = require("./Menu.js");
 const { loadScripts } = require("./Script.js");
@@ -35,16 +36,7 @@ class Data {
     }
 
     /**
-     * User Selected Startup commands.
-     */
-    get startupCommands() {
-        return this.commands.filter((command) => {
-            return USER.data.startupCommands.includes(command.id);
-        });
-    }
-
-    /**
-     * Action Commands.
+     * User Action Commands.
      */
     get actionCommands() {
         return this.commands.filter((command) => {
@@ -53,7 +45,16 @@ class Data {
     }
 
     /**
-     * User Selected Startup commands.
+     * User Bookmark commands.
+     */
+    get builtinCommands() {
+        return this.commands.filter((command) => {
+            return command.type === CommandTypes.BUILTIN;
+        });
+    }
+
+    /**
+     * Builtin Plugin commands.
      */
     get builtinCommands() {
         return this.commands.filter((command) => {
@@ -76,6 +77,15 @@ class Data {
     get scriptCommands() {
         return this.commands.filter((command) => {
             return command.type === CommandTypes.SCRIPT;
+        });
+    }
+
+    /**
+     * User Startup commands.
+     */
+    get startupCommands() {
+        return this.commands.filter((command) => {
+            return USER.data.startupCommands.includes(command.id);
         });
     }
 
@@ -280,10 +290,11 @@ class Data {
 
         const toLoad = {
             [CommandTypes.ACTION]: loadActions,
-            [CommandTypes.MENU]: loadMenus,
-            [CommandTypes.TOOL]: loadTools,
+            [CommandTypes.BOOKMARK]: loadBookmarks,
             [CommandTypes.BUILTIN]: loadBuiltins,
+            [CommandTypes.MENU]: loadMenus,
             [CommandTypes.SCRIPT]: loadScripts,
+            [CommandTypes.TOOL]: loadTools,
         };
 
         for (const [key, func] of Object.entries(toLoad)) {

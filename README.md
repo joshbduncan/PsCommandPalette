@@ -24,7 +24,7 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [x] actions
     - [ ] scripts - ℹ️ already works with scripts loaded into Ps (e.g. File > Scripts > script.jsx)
     - [ ] custom workflows
-    - [ ] bookmarked files and folders
+    - [x] bookmarked files and folders
     - [ ] custom pickers
 - [ ] navigation query history with up and down arrow keys
 - [x] improved results

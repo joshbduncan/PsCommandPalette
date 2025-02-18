@@ -3,6 +3,7 @@
  */
 const CommandTypes = {
     ACTION: "action",
+    BOOKMARK: "bookmark",
     BUILTIN: "builtin",
     CUSTOM: "custom",
     MENU: "menu",

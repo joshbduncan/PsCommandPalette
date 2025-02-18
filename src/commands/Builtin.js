@@ -4,6 +4,7 @@ const fs = storage.localFileSystem;
 const shell = require("uxp").shell;
 
 const { Command, CommandTypes } = require("./Command.js");
+const { BookmarkTypes, createBookmarkEntry } = require("./Bookmark.js");
 const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
 
 /**
@@ -90,6 +91,27 @@ builtinCommands.runJSXScript = {
             return;
         }
         await executeJSXScriptFile(f);
+    },
+};
+
+// TODO: allow multiple selection
+builtinCommands.createFileBookmark = {
+    name: "Add File Bookmark",
+    note: "Ps Command Palette > Add File Bookmark",
+    callback: async () => {
+        const bookmark = await createBookmarkEntry(BookmarkTypes.FILE);
+        USER.data.bookmarks.push(bookmark);
+        USER.write();
+    },
+};
+
+builtinCommands.createFolderBookmark = {
+    name: "Add Folder Bookmark",
+    note: "Ps Command Palette > Add Folder Bookmark",
+    callback: async () => {
+        const bookmark = await createBookmarkEntry(BookmarkTypes.FOLDER);
+        USER.data.bookmarks.push(bookmark);
+        USER.write();
     },
 };
 
