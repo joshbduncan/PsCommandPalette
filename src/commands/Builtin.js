@@ -100,6 +100,9 @@ builtinCommands.loadScript = {
     note: "Ps Command Palette > Add Script Command",
     callback: async () => {
         const script = await createScriptEntry();
+
+        if (!script) return;
+
         USER.data.scripts.push(script);
         USER.write();
     },
@@ -111,6 +114,9 @@ builtinCommands.createFileBookmark = {
     note: "Ps Command Palette > Add File Bookmark",
     callback: async () => {
         const bookmark = await createBookmarkEntry(BookmarkTypes.FILE);
+
+        if (!bookmark) return;
+
         USER.data.bookmarks.push(bookmark);
         USER.write();
     },
@@ -121,6 +127,9 @@ builtinCommands.createFolderBookmark = {
     note: "Ps Command Palette > Add Folder Bookmark",
     callback: async () => {
         const bookmark = await createBookmarkEntry(BookmarkTypes.FOLDER);
+
+        if (!bookmark) return;
+
         USER.data.bookmarks.push(bookmark);
         USER.write();
     },

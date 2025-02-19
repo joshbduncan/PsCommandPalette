@@ -49,7 +49,8 @@ class Script extends Command {
             // delete the old script
             USER.data.scripts = USER.data.scripts.filter((item) => item.id !== this.id);
 
-            if (newScript !== undefined) {
+            // TODO: quit pushing null objects into scripts
+            if (newScript !== undefined || newScript !== null) {
                 // update new script with new id
                 newScript.id = this.id;
 

@@ -206,6 +206,7 @@ class Data {
 
                 // boost for latched query
                 if (
+                    HISTORY.latches &&
                     HISTORY.latches.hasOwnProperty(query) &&
                     HISTORY.latches[query] == command.id
                 ) {
@@ -213,7 +214,7 @@ class Data {
                 }
 
                 // boost for recent command
-                if (HISTORY.recent.hasOwnProperty(command.id)) {
+                if (HISTORY.recent && HISTORY.recent.hasOwnProperty(command.id)) {
                     score += 5;
                 }
 

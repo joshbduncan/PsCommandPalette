@@ -28,6 +28,8 @@ class User {
                 locale: HOST_LOCALE,
                 os: HOST_OS,
             },
+            scripts: [],
+            bookmarks: [],
             hiddenCommands: [], // TODO: build out skips for hidden commands
             disabledCommandTypes: [], // TODO: allow command types to be disabled all together
             startupCommands: ["ps_builtin_about"], // TODO: add default builtin startup commands with about, docs, etc.
@@ -59,8 +61,6 @@ class User {
                 );
             }
         }
-
-        return this.data;
     }
 
     /**

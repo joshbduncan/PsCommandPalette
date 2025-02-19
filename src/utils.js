@@ -82,8 +82,9 @@ const generateKeyboardShortcut = (keyboardShortcut) => {
  * @param {storage.File} f UXP storage file entry
  */
 const executePSJSScriptFile = async (f) => {
+    // FIXME: Error executing PSJS script file /Users/jbd/Desktop/s.psjs: Error: invalid argument
     try {
-        await core.executeAsModal(app.open(f), {
+        await core.executeAsModal(async () => await app.open(f), {
             commandName: "Executing External PSJS Script File",
         });
     } catch (error) {

@@ -69,7 +69,7 @@ class FileBookmark extends Bookmark {
                 (item) => item.id !== this.id
             );
 
-            if (newBookmark !== undefined) {
+            if (newBookmark !== undefined || newBookmark !== null) {
                 // update new bookmark with new id
                 newBookmark.id = this.id;
 
@@ -137,7 +137,7 @@ class FolderBookmark extends Bookmark {
                 (item) => item.id !== this.id
             );
 
-            if (newBookmark !== undefined) {
+            if (newBookmark !== undefined || newBookmark !== null) {
                 // update new bookmark with new id
                 newBookmark.id = this.id;
 
