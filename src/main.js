@@ -63,16 +63,46 @@ entrypoints.setup({
                     .getElementById("btnOpenCommandPalette")
                     .addEventListener("click", launchPalette);
             },
+            // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
             menuItems: [
                 { id: "about", label: "About" },
+                {
+                    id: "settings",
+                    label: "Settings",
+                    submenu: [
+                        { id: "customizeStartup", label: "Custom Startup..." },
+                        {
+                            id: "fuzzyMatch",
+                            label: "Fuzzy Query Matching",
+                            checked: true,
+                        },
+                        { id: "queryLatching", label: "Query Latching", checked: true },
+                    ],
+                },
+                {
+                    id: "data",
+                    label: "Data",
+                    submenu: [
+                        { id: "clearHistory", label: "Clear History" },
+                        { id: "pluginData", label: "View User Data" },
+                    ],
+                },
                 { id: "reloadPlugin", label: "Reload Plugin" },
-                { id: "pluginData", label: "Plugin Data" },
-                { id: "clearHistory", label: "Clear History" },
             ],
             invokeMenu(id) {
+                const { menuItems } = entrypoints.getPanel("ps_command_palette");
+
                 switch (id) {
                     case "about":
                         about();
+                        break;
+                    case "customizeStartup":
+                        app.showAlert("Not yet implemented");
+                        break;
+                    case "fuzzyMatch":
+                    case "queryLatching":
+                        menuItems.getItem(id).checked = !menuItems.getItem(id).checked;
+                        app.showAlert("Not yet implemented");
                         break;
                     case "reloadPlugin":
                         reloadPlugin();
