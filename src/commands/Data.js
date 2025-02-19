@@ -96,21 +96,20 @@ class Data {
     }
 
     /**
-     *
+     * @typedef {Object} CommandFilter
+     * @property {string[]} types Command types to filter for
+     * @property {boolean} disabled Should disabled commands be included (defaults to false)
+     * @property {boolean} hidden Should user hidden commands be included (defaults to false)
+     */
+
+    /**
+     * Filter commands by query.
      * @param {string} query Query string
      * @param {Command[]} commands Commands to filer (defaults to all commands `this.commands`)
-     * @param {CommandTypes[]} types Command types to filter for
-     * @param {boolean} disabled Should disabled commands be included (defaults to false)
-     * @param {boolean} hidden Should user hidden commands be included (defaults to false)
+     * @param {CommandFilter} filter Command filter options
      * @returns {Command[]}
      */
-    filterByQuery(
-        query,
-        commands = this.commands,
-        types = [],
-        disabled = false,
-        hidden = false
-    ) {
+    filterByQuery(query, commands = this.commands, filter = {}) {
         if (query == "") {
             return [];
         }
@@ -118,20 +117,20 @@ class Data {
         let matches = commands != undefined ? commands : this.commands;
 
         // filter by types first
-        if (types.length > 0) {
-            matches = this.commandsByTypes(types);
+        if (filter.types && filter.types.length > 0) {
+            matches = this.commandsByTypes(filter.types);
         }
 
         //  TODO: determine how to handle disabled commands
         // filter disabled commands
-        // if (!disabled) {
-        //   matches = matches.filter((command) => {
-        //     return command.enabled;
-        //   });
+        // if (!filter.disabled) {
+        //     matches = matches.filter((command) => {
+        //         return command.enabled;
+        //     });
         // }
 
         // filter hidden commands
-        if (!hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
+        if (!filter.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
             matches = matches.filter((command) => {
                 return !USER.data.hiddenCommands.includes(command.id);
             });

@@ -8,3 +8,12 @@ repos:
             types: [bash]
             always_run: true
             verbose: true
+    - repo: local
+      hooks:
+          - id: npm-update
+            name: npm update
+            entry: bash -c 'npm update'
+            language: system
+            types: [bash]
+            always_run: true
+            verbose: true

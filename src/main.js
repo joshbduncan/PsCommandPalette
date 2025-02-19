@@ -44,7 +44,7 @@ entrypoints.setup({
     },
     panels: {
         ps_command_palette: {
-            show() {
+            create() {
                 /////////////////////////
                 // add main panel info //
                 /////////////////////////
