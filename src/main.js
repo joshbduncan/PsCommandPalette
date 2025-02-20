@@ -67,6 +67,14 @@ entrypoints.setup({
             menuItems: [
                 { id: "about", label: "About" },
                 {
+                    id: "data",
+                    label: "Data",
+                    submenu: [
+                        { id: "clearHistory", label: "Clear History" },
+                        { id: "pluginData", label: "View User Data" },
+                    ],
+                },
+                {
                     id: "settings",
                     label: "Settings",
                     submenu: [
@@ -77,14 +85,6 @@ entrypoints.setup({
                             checked: true,
                         },
                         { id: "queryLatching", label: "Query Latching", checked: true },
-                    ],
-                },
-                {
-                    id: "data",
-                    label: "Data",
-                    submenu: [
-                        { id: "clearHistory", label: "Clear History" },
-                        { id: "pluginData", label: "View User Data" },
                     ],
                 },
                 { id: "reloadPlugin", label: "Reload Plugin" },
