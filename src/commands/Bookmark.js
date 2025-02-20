@@ -65,33 +65,32 @@ class FileBookmark extends Bookmark {
 
             // TODO: prompt user to remove or re-link?
 
-            // prompt the user to reselect the bookmark and create a new entry
-            const newBookmark = await createBookmarkEntry(BookmarkTypes.FILE);
+            // prompt the user to reselect the script
+            entry = await fs.getFileForOpening({
+                allowMultiple: false,
+                types: storage.fileTypes.all,
+            });
+
+            // return in case user cancels relocation
+            if (!entry) return;
+
+            // create a new bookmark object
+            const newBookmark = await createBookmarkEntry(entry);
 
             // delete the old bookmark
             USER.data.bookmarks = USER.data.bookmarks.filter(
                 (item) => item.id !== this.id
             );
 
-            if (newBookmark !== undefined || newBookmark !== null) {
-                // update new bookmark with new id
-                newBookmark.id = this.id;
+            // update new bookmark with new id
+            newBookmark.id = this.id;
 
-                // add the new updated bookmark
-                USER.data.bookmarks.push(newBookmark);
-
-                // grab the new entry
-                entry = await fs.getEntryForPersistentToken(newBookmark.token);
-            } else {
-                entry = undefined;
-            }
+            // add the new updated bookmark
+            USER.data.bookmarks.push(newBookmark);
 
             // write user data
             await USER.write();
         }
-
-        // return in case user cancels relocation
-        if (!entry) return;
 
         // TODO: ensure file/folder is available
         return await core.executeAsModal(await app.open(entry), {
@@ -133,26 +132,28 @@ class FolderBookmark extends Bookmark {
 
             // TODO: prompt user to remove or re-link?
 
-            // prompt the user to reselect the bookmark and create a new entry
-            const newBookmark = await createBookmarkEntry(BookmarkTypes.FOLDER);
+            // prompt the user to reselect the script
+            entry = await fs.getFileForOpening({
+                allowMultiple: false,
+                types: storage.fileTypes.all,
+            });
+
+            // return in case user cancels relocation
+            if (!entry) return;
+
+            // create a new bookmark object
+            const newBookmark = await createBookmarkEntry(entry);
 
             // delete the old bookmark
             USER.data.bookmarks = USER.data.bookmarks.filter(
                 (item) => item.id !== this.id
             );
 
-            if (newBookmark !== undefined || newBookmark !== null) {
-                // update new bookmark with new id
-                newBookmark.id = this.id;
+            // update new bookmark with new id
+            newBookmark.id = this.id;
 
-                // add the new updated bookmark
-                USER.data.bookmarks.push(newBookmark);
-
-                // grab the new entry
-                entry = await fs.getEntryForPersistentToken(newBookmark.token);
-            } else {
-                entry = undefined;
-            }
+            // add the new updated bookmark
+            USER.data.bookmarks.push(newBookmark);
 
             // write user data
             await USER.write();
@@ -167,56 +168,38 @@ class FolderBookmark extends Bookmark {
 }
 
 /**
- * Choose, tokenize, and store a bookmark in persistent local storage for later reference.
- * @param {"file" | "folder"} type The type of bookmark to create
+ * Check if a bookmark is already loaded
+ * @param {string} path Bookmark path
+ * @returns {boolean}
+ */
+const duplicateBookmark = (path) =>
+    USER.data.bookmarks.some((item) => item.path === path);
+
+/**
+ * Store a bookmark in persistent local storage.
+ * @param {storage.File | storage.Folder} entry File or folder to bookmark
  * @returns {{ id: string, path: string, name: string, type: string, token: string }}
  */
-async function createBookmarkEntry(type) {
-    /**
-     * Allow the user to choose a bookmark with a system open dialog.
-     * @param {"file" | "folder"} type The type of bookmark to choose
-     * @returns {storage.Entry}
-     */
-    async function chooseBookmark(type) {
-        const actions = {
-            [BookmarkTypes.FOLDER]: async () => await fs.getFolder(),
-            [BookmarkTypes.FILE]: async () =>
-                await fs.getFileForOpening({
-                    allowMultiple: false,
-                    types: storage.fileTypes.all,
-                }),
-        };
-        return actions[type]();
-    }
-
-    /**
-     * Check if a bookmark is already loaded
-     * @param {string} path Bookmark path
-     * @returns {boolean}
-     */
-    const duplicateBookmark = (path) =>
-        USER.data.bookmarks.some((item) => item.path === path);
-
-    const f = await chooseBookmark(type);
-
-    if (!f) return;
-
+async function createBookmarkEntry(entry) {
     // ensure bookmark isn't already loaded
-    if (duplicateBookmark(f.nativePath)) {
+    if (duplicateBookmark(entry.nativePath)) {
         app.showAlert("Bookmark already exists");
         return;
     }
 
     // create id
-    const id = "ps_bookmark_" + btoa(f.nativePath);
+    const id = "ps_bookmark_" + btoa(entry.nativePath);
+
+    // determine type
+    const type = entry.isFile ? BookmarkTypes.FILE : BookmarkTypes.FOLDER;
 
     // create a persistent token
-    const token = await fs.createPersistentToken(f);
+    const token = await fs.createPersistentToken(entry);
 
     return {
         id: id,
-        name: f.name,
-        path: f.nativePath,
+        name: entry.name,
+        path: entry.nativePath,
         type: type,
         token: token,
     };
@@ -227,16 +210,11 @@ async function createBookmarkEntry(type) {
  * @returns {Bookmark[]}
  */
 async function loadBookmarks() {
-    try {
-        return USER.data.bookmarks.map((bookmark) =>
-            bookmark.type === BookmarkTypes.FILE
-                ? new FileBookmark({ ...bookmark })
-                : new FolderBookmark({ ...bookmark })
-        );
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return USER.data.bookmarks.map((bookmark) =>
+        bookmark.type === BookmarkTypes.FILE
+            ? new FileBookmark({ ...bookmark })
+            : new FolderBookmark({ ...bookmark })
+    );
 }
 
 module.exports = {

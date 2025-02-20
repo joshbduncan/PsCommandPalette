@@ -6,7 +6,6 @@ const shell = require("uxp").shell;
 const { Command, CommandTypes } = require("./Command.js");
 const { BookmarkTypes, createBookmarkEntry } = require("./Bookmark.js");
 const { createScriptEntry } = require("./Script.js");
-const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
 
 /**
  * Create a command palette builtin command.
@@ -64,8 +63,7 @@ builtinCommands.help = {
     },
 };
 
-// TODO: allow multiple selection
-builtinCommands.loadScript = {
+builtinCommands.loadScripts = {
     name: "Load Script(s)...",
     note: "Ps Command Palette > Load Script(s)...",
     callback: async () => {
@@ -79,6 +77,7 @@ builtinCommands.loadScript = {
         const scripts = [];
 
         for (const entry of entries) {
+            // TODO: limit filetypes to know script extensions
             const script = await createScriptEntry(entry);
 
             if (script) {
@@ -91,25 +90,40 @@ builtinCommands.loadScript = {
     },
 };
 
-// TODO: allow multiple selection
-builtinCommands.createFileBookmark = {
-    name: "Add File Bookmark",
-    note: "Ps Command Palette > Add File Bookmark",
+builtinCommands.loadFileBookmarks = {
+    name: "Load File Bookmark(s)...",
+    note: "Ps Command Palette > Load File Bookmark(s)...",
     callback: async () => {
-        const bookmark = await createBookmarkEntry(BookmarkTypes.FILE);
+        const entries = await fs.getFileForOpening({
+            allowMultiple: true,
+            types: storage.fileTypes.all,
+        });
 
-        if (!bookmark) return;
+        if (!entries || entries.length === 0) return;
 
-        USER.data.bookmarks.push(bookmark);
+        const bookmarks = [];
+
+        for (const entry of entries) {
+            // TODO: limit filetypes to know ps file extensions
+            const bookmark = await createBookmarkEntry(entry);
+
+            if (bookmark) {
+                bookmarks.push(bookmark);
+            }
+        }
+
+        USER.data.bookmarks.push(...bookmarks);
         USER.write();
     },
 };
 
-builtinCommands.createFolderBookmark = {
-    name: "Add Folder Bookmark",
-    note: "Ps Command Palette > Add Folder Bookmark",
+builtinCommands.loadFolderBookmark = {
+    name: "Load Folder Bookmark",
+    note: "Ps Command Palette > Load Folder Bookmark",
     callback: async () => {
-        const bookmark = await createBookmarkEntry(BookmarkTypes.FOLDER);
+        const entry = await fs.getFolder();
+
+        const bookmark = await createBookmarkEntry(entry);
 
         if (!bookmark) return;
 
