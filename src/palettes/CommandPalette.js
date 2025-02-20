@@ -9,9 +9,6 @@ class CommandPalette {
     constructor(commands = DATA.commands, startupCommands = DATA.startupCommands) {
         this.commands = commands;
         this.startupCommands = startupCommands;
-        this.dialog = null;
-        this.querybox = null;
-        this.listbox = null;
     }
 
     /**
@@ -19,9 +16,9 @@ class CommandPalette {
      * @returns {Promise<object>}
      */
     async show() {
+        const dialog = this.createModalDialog();
         try {
-            this.dialog = this.createModalDialog();
-            return await this.dialog.uxpShowModal({
+            return await dialog.uxpShowModal({
                 title: "Ps Command Palette",
                 resize: "vertical",
                 size: {
@@ -32,7 +29,7 @@ class CommandPalette {
         } catch (error) {
             console.error(error);
         } finally {
-            this.cleanup();
+            dialog.remove();
         }
     }
 
@@ -50,13 +47,14 @@ class CommandPalette {
 
         // form
         const form = document.createElement("form");
+        form.setAttribute("id", "command-palette-form");
 
         // querybox
-        this.querybox = document.createElement("sp-textfield");
-        this.querybox.setAttribute("id", "query");
-        this.querybox.setAttribute("type", "search");
-        this.querybox.setAttribute("placeholder", "Search for commands...");
-        form.appendChild(this.querybox);
+        const querybox = document.createElement("sp-textfield");
+        querybox.setAttribute("id", "query");
+        querybox.setAttribute("type", "search");
+        querybox.setAttribute("placeholder", "Search for commands...");
+        form.appendChild(querybox);
 
         // divider
         const divider = document.createElement("sp-divider");
@@ -70,9 +68,9 @@ class CommandPalette {
         form.appendChild(commandsList);
 
         // listbox
-        this.listbox = document.createElement("ul");
-        this.listbox.setAttribute("id", "commands");
-        commandsList.appendChild(this.listbox);
+        const listbox = document.createElement("ul");
+        listbox.setAttribute("id", "commands");
+        commandsList.appendChild(listbox);
 
         // add the form to the dialog
         dialog.appendChild(form);
@@ -80,29 +78,38 @@ class CommandPalette {
         // add dialog to the document
         document.body.appendChild(dialog);
 
-        this.addEventListeners(dialog);
-        this.loadStartupCommands();
+        /////////////////////////
+        // add event listeners //
+        /////////////////////////
 
-        return dialog;
-    }
+        dialog.addEventListener("keydown", (event) => this.keyboardNavigation(event));
+        dialog.addEventListener("load", () => querybox.focus());
 
-    /**
-     * Add event listeners to the modal.
-     */
-    addEventListeners(dialog) {
-        const queryCommands = (event) => this.queryCommands(event);
-        const keyboardNavigation = (event) => this.keyboardNavigation(event);
+        querybox.addEventListener("input", (event) => this.queryCommands(event));
 
-        dialog.addEventListener("load", () => this.querybox.focus());
-        this.querybox.addEventListener("input", queryCommands);
-        document.addEventListener("paletteCommandSelected", (event) =>
-            this.handleCommandSelection(event, dialog)
+        document.addEventListener("commandSelected", (event) =>
+            this.commandSelection(event)
         );
-        dialog.addEventListener("keydown", keyboardNavigation);
-        dialog.querySelector("form").addEventListener("submit", (event) => {
+
+        form.addEventListener("submit", (event) => {
             event.preventDefault();
             this.submitCommand();
         });
+
+        ///////////////////////////
+        // load startup commands //
+        ///////////////////////////
+
+        // TODO: filter out unavailable commands or make them disabled
+        this.startupCommands.slice(0, 9).forEach((command) => {
+            if (command.element === null) {
+                command.createElement();
+            }
+            listbox.appendChild(command.element);
+        });
+        this.resetCommandSelection();
+
+        return dialog;
     }
 
     /**
@@ -110,7 +117,9 @@ class CommandPalette {
      */
     queryCommands(event) {
         const query = event.target.value.trim();
-        this.listbox.innerHTML = "";
+        const listbox = document.getElementById("commands");
+
+        listbox.innerHTML = "";
 
         const matches =
             query === ""
@@ -118,7 +127,7 @@ class CommandPalette {
                   this.startupCommands)
                 : DATA.filterByQuery(query, this.commands);
 
-        matches.slice(0, 9).forEach((cmd) => this.listbox.appendChild(cmd.element));
+        matches.slice(0, 9).forEach((cmd) => listbox.appendChild(cmd.element));
 
         this.resetCommandSelection();
     }
@@ -127,10 +136,12 @@ class CommandPalette {
      * Handle keyboard navigation for command selection.
      */
     keyboardNavigation(event) {
+        const listbox = document.getElementById("commands");
+
         if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
         event.preventDefault();
 
-        const items = this.listbox.children.length;
+        const items = listbox.children.length;
         if (items === 0) return;
 
         const previousIndex = this.getSelectedCommand();
@@ -149,8 +160,10 @@ class CommandPalette {
      * Reset the selected command to the first item if available.
      */
     resetCommandSelection() {
-        if (this.listbox.children.length > 0) {
-            [...this.listbox.children].forEach((command) =>
+        const listbox = document.getElementById("commands");
+
+        if (listbox.children.length > 0) {
+            [...listbox.children].forEach((command) =>
                 command.removeAttribute("selected")
             );
             this.moveCommandSelection(null, 0);
@@ -162,7 +175,9 @@ class CommandPalette {
      * @returns {number}
      */
     getSelectedCommand() {
-        return [...this.listbox.children].findIndex((command) =>
+        const listbox = document.getElementById("commands");
+
+        return [...listbox.children].findIndex((command) =>
             command.hasAttribute("selected")
         );
     }
@@ -173,20 +188,24 @@ class CommandPalette {
      * @param {number} newIndex
      */
     moveCommandSelection(previousIndex, newIndex) {
-        if (typeof previousIndex === "number" && this.listbox.children[previousIndex]) {
-            this.listbox.children[previousIndex].removeAttribute("selected");
+        const listbox = document.getElementById("commands");
+
+        if (typeof previousIndex === "number" && listbox.children[previousIndex]) {
+            listbox.children[previousIndex].removeAttribute("selected");
         }
-        if (this.listbox.children[newIndex]) {
-            this.listbox.children[newIndex].setAttribute("selected", "");
+        if (listbox.children[newIndex]) {
+            listbox.children[newIndex].setAttribute("selected", "");
         }
     }
 
     /**
      * Handle command selection from event.
      */
-    handleCommandSelection(event, dialog) {
+    commandSelection(event) {
+        const dialog = document.getElementById("ps-command-palette");
+        const querybox = document.getElementById("query");
         dialog.close({
-            query: this.querybox.value,
+            query: querybox.value,
             command: event.detail.command,
         });
     }
@@ -195,43 +214,15 @@ class CommandPalette {
      * Submit the selected command on form submission.
      */
     submitCommand() {
+        const listbox = document.getElementById("commands");
         const selectedIndex = this.getSelectedCommand();
+
         try {
             if (selectedIndex !== -1) {
-                this.listbox.children[selectedIndex].click();
+                listbox.children[selectedIndex].click();
             }
         } catch (error) {
             console.error(error);
-        }
-    }
-
-    /**
-     * Load startup commands.
-     */
-    loadStartupCommands() {
-        // TODO: filter out unavailable commands or make them disabled
-        this.startupCommands.slice(0, 9).forEach((command) => {
-            if (command.element === null) {
-                command.createElement();
-            }
-            this.listbox.appendChild(command.element);
-        });
-        this.resetCommandSelection();
-    }
-
-    /**
-     * Cleanup event listeners and remove the modal.
-     */
-    cleanup() {
-        document.removeEventListener(
-            "paletteCommandSelected",
-            this.handleCommandSelection
-        );
-        this.querybox.removeEventListener("input", this.queryCommands);
-        this.dialog.removeEventListener("keydown", this.keyboardNavigation);
-        if (this.dialog) {
-            this.dialog.remove();
-            this.dialog = null;
         }
     }
 }

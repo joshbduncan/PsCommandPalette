@@ -113,7 +113,7 @@ class Command {
     addEventListeners() {
         this.element.addEventListener("click", (event) => {
             document.dispatchEvent(
-                new CustomEvent("paletteCommandSelected", {
+                new CustomEvent("commandSelected", {
                     detail: {
                         originalEvent: event,
                         command: this,
