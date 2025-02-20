@@ -40,6 +40,7 @@ General notes, issues, and things I don't want to forget.
 ### Known Issues
 
 - After an unknown amount of Ps inactivity menu commands that are considered "available" can't be executed via the api even thought they can still be executed in the ui.
+- Sometimes loaded scripts just don't execute. I can't determine why and the issue is intermittent, but usually just running the command again works.
 
 ### Project Links
 

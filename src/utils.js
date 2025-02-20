@@ -79,32 +79,27 @@ const generateKeyboardShortcut = (keyboardShortcut) => {
 
 /**
  * Execute a PSJS script file.
- * @param {storage.File} f UXP storage file entry
+ * @param {storage.File} entry UXP storage file entry
  */
-const executePSJSScriptFile = async (f) => {
+async function executePSJSScriptFile(entry) {
     // FIXME: Error executing PSJS script file /Users/jbd/Desktop/s.psjs: Error: invalid argument
-    try {
-        await core.executeAsModal(async () => await app.open(f), {
-            commandName: "Executing External PSJS Script File",
-        });
-    } catch (error) {
-        console.error(`Error executing PSJS script file ${f.nativePath}:`, error);
-    }
-};
+    await core.executeAsModal(await app.open(entry), {
+        commandName: "Executing External PSJS Script File",
+    });
+}
 
 /**
  * Execute a JSX ExtendScript script file.
- * @param {storage.File} f UXP storage file entry
+ * @param {storage.File} entry UXP storage file entry
  */
-const executeJSXScriptFile = async (f) => {
+async function executeJSXScriptFile(entry) {
     try {
-        let fileToken = await fs.createSessionToken(f);
         let command = [
             {
                 _obj: "AdobeScriptAutomation Scripts",
                 javaScript: {
                     _kind: "local",
-                    _path: fileToken,
+                    _path: await fs.createSessionToken(entry),
                 },
                 javaScriptMessage: "undefined",
                 _options: {
@@ -118,9 +113,9 @@ const executeJSXScriptFile = async (f) => {
             })
         );
     } catch (error) {
-        console.error(`Error executing JSX script file ${f.nativePath}:`, error);
+        console.error(`Error executing JSX script file ${entry.nativePath}:`, error);
     }
-};
+}
 
 module.exports = {
     getIcon,

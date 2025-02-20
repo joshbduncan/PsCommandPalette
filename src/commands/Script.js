@@ -27,8 +27,9 @@ class Script extends Command {
     async execute() {
         // determine script type
         const regex = /\.psjs$/i;
-        const type = regex.test(this.name) ? "psjs" : "jsx";
-        const func = type === "psjs" ? executePSJSScriptFile : executeJSXScriptFile;
+        const func = regex.test(this.name)
+            ? executePSJSScriptFile
+            : executeJSXScriptFile;
 
         let entry;
         try {
@@ -43,43 +44,42 @@ class Script extends Command {
 
             // TODO: prompt user to remove or re-link?
 
-            // prompt the user to reselect the script and create a new entry
-            const newScript = await createScriptEntry();
+            // prompt the user to reselect the script
+            const entry = await fs.getFileForOpening({
+                allowMultiple: false,
+                types: storage.fileTypes.all,
+            });
+
+            // return in case user cancels relocation
+            if (!entry) return;
+
+            // create a new script object
+            const newScript = await createScriptEntry(entry);
 
             // delete the old script
             USER.data.scripts = USER.data.scripts.filter((item) => item.id !== this.id);
 
-            // TODO: quit pushing null objects into scripts
-            if (newScript !== undefined || newScript !== null) {
-                // update new script with new id
-                newScript.id = this.id;
+            // update new script with new id
+            newScript.id = this.id;
 
-                // add the new updated script
-                USER.data.scripts.push(newScript);
-
-                // grab the new entry
-                entry = await fs.getEntryForPersistentToken(newScript.token);
-            } else {
-                entry = undefined;
-            }
+            // add the new updated script
+            USER.data.scripts.push(newScript);
 
             // write user data
             await USER.write();
         }
 
-        // return in case user cancels relocation
-        if (!entry) return;
-
         // TODO: ensure file is available
-        return func(entry);
+        return await func(entry);
     }
 }
 
 /**
  * Choose, tokenize, and store a script in persistent local storage for later reference.
+ * @param {storage.File} path Script file entry object
  * @returns {{ id: string, path: string, name: string, token: string }}
  */
-async function createScriptEntry(type) {
+async function createScriptEntry(entry) {
     /**
      * Check if a script is already loaded
      * @param {string} path Script path
@@ -88,29 +88,22 @@ async function createScriptEntry(type) {
     const duplicateScript = (path) =>
         USER.data.scripts.some((item) => item.path === path);
 
-    const f = await fs.getFileForOpening({
-        allowMultiple: false,
-        types: storage.fileTypes.all,
-    });
-
-    if (!f) return;
-
     // ensure script isn't already loaded
-    if (duplicateScript(f.nativePath)) {
+    if (duplicateScript(entry.nativePath)) {
         app.showAlert("Script already exists");
         return;
     }
 
     // create id
-    const id = "ps_script_" + btoa(f.nativePath);
+    const id = "ps_script_" + btoa(entry.nativePath);
 
     // create a persistent token
-    const token = await fs.createPersistentToken(f);
+    const token = await fs.createPersistentToken(entry);
 
     return {
         id: id,
-        name: f.name,
-        path: f.nativePath,
+        name: entry.name,
+        path: entry.nativePath,
         token: token,
     };
 }
@@ -120,12 +113,7 @@ async function createScriptEntry(type) {
  * @returns {Script[]}
  */
 async function loadScripts() {
-    try {
-        return USER.data.scripts.map((script) => new Script({ ...script }));
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return USER.data.scripts.map((script) => new Script({ ...script }));
 }
 
 module.exports = {

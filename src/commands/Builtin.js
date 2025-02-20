@@ -64,46 +64,29 @@ builtinCommands.help = {
     },
 };
 
-builtinCommands.runPSJSScript = {
-    name: "Run PSJS Script File",
-    note: "Ps Command Palette > Run PSJS Script File...",
-    callback: async () => {
-        const f = await fs.getFileForOpening({
-            allowMultiple: false,
-            types: storage.fileTypes.all,
-        });
-        if (!f) {
-            return;
-        }
-        await executePSJSScriptFile(f);
-    },
-};
-
-builtinCommands.runJSXScript = {
-    name: "Run JSX (ExtendScript) Script File",
-    note: "Ps Command Palette > Run JSX (ExtendScript) Script File...",
-    callback: async () => {
-        const f = await fs.getFileForOpening({
-            allowMultiple: false,
-            types: storage.fileTypes.all,
-        });
-        if (!f) {
-            return;
-        }
-        await executeJSXScriptFile(f);
-    },
-};
-
 // TODO: allow multiple selection
 builtinCommands.loadScript = {
-    name: "Add Script Command",
-    note: "Ps Command Palette > Add Script Command",
+    name: "Load Script(s)...",
+    note: "Ps Command Palette > Load Script(s)...",
     callback: async () => {
-        const script = await createScriptEntry();
+        const entries = await fs.getFileForOpening({
+            allowMultiple: true,
+            types: storage.fileTypes.all,
+        });
 
-        if (!script) return;
+        if (!entries || entries.length === 0) return;
 
-        USER.data.scripts.push(script);
+        const scripts = [];
+
+        for (const entry of entries) {
+            const script = await createScriptEntry(entry);
+
+            if (script) {
+                scripts.push(script);
+            }
+        }
+
+        USER.data.scripts.push(...scripts);
         USER.write();
     },
 };

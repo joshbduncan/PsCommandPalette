@@ -94,7 +94,7 @@ class FileBookmark extends Bookmark {
         if (!entry) return;
 
         // TODO: ensure file/folder is available
-        return await core.executeAsModal(async () => await app.open(entry), {
+        return await core.executeAsModal(await app.open(entry), {
             commandName: "Opening Bookmark",
         });
     }
