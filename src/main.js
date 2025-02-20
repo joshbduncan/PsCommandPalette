@@ -33,7 +33,7 @@ const DATA = new Data();
 entrypoints.setup({
     plugin: {
         create() {
-            console.log(`Loading plugin: ${PLUGIN_NAME} v${PLUGIN_VERSION}`);
+            console.log(`loading plugin ${PLUGIN_NAME} v${PLUGIN_VERSION}`);
 
             ////////////////////
             // load user data //
@@ -128,7 +128,7 @@ entrypoints.setup({
 
 async function reloadPlugin() {
     try {
-        console.log("Reloading plugin:", PLUGIN_NAME, `v${PLUGIN_VERSION}`);
+        console.log("reloading plugin");
         await USER.reload();
         await HISTORY.reload();
         await DATA.reload();
@@ -148,23 +148,21 @@ async function pluginData() {
 }
 
 async function clearHistory() {
-    try {
-        console.log("Clearing user history");
-        await HISTORY.clear();
-    } catch (error) {
-        console.log(error);
-    }
+    console.log("clearing user history");
+    await HISTORY.clear();
 }
 
 async function launchPalette() {
     const start = performance.now();
     await DATA.reload();
     const end = performance.now();
-    console.log(`Data.load() execution time: ${(end - start).toFixed(3)} ms`);
+    console.log(
+        `${DATA.commands.length} commands loaded in ${(end - start).toFixed(3)} ms`
+    );
 
     const palette = new CommandPalette();
-    const result = await palette.open();
-    console.log("Modal result:", result);
+    const result = await palette.show();
+    console.log(`modal result ${result}`);
 
     if (result === "reasonCanceled" || !result) return;
 

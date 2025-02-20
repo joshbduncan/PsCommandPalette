@@ -203,9 +203,7 @@ async function loadMenus() {
         return [];
     }
 
-    const menuCommands = buildMenus(menuBarItems[0].menuBarInfo);
-    console.log(`Loaded ${menuCommands.length} menu commands`);
-    return menuCommands;
+    return buildMenus(menuBarItems[0].menuBarInfo);
 }
 
 module.exports = {

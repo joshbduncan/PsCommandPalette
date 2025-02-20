@@ -282,7 +282,6 @@ class Data {
      * Load all commands types into the commands set.
      */
     async load() {
-        console.log("Loading commands...");
         const commands = [];
 
         const toLoad = {
@@ -299,19 +298,18 @@ class Data {
                 Object.hasOwn(USER.data, "disabledCommandTypes") &&
                 USER.data.disabledCommandTypes.includes(key)
             ) {
-                console.log("Skipping command type:", key);
+                console.log(`skipping command type ${key}`);
                 continue;
             }
             try {
-                console.log(`Loading ${key} commands...`);
+                console.log(`loading ${key} commands`);
                 let loadedCommands = await func();
                 commands.push(...loadedCommands);
             } catch (error) {
-                console.error(`Error loading ${key} commands:`, error);
+                console.error(error);
             }
         }
 
-        console.log(`Loaded ${commands.length} commands`);
         this.commands = commands;
     }
 

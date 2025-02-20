@@ -15,10 +15,10 @@ class CommandPalette {
     }
 
     /**
-     * Open the command palette dialog modal.
+     * Show the command palette dialog modal.
      * @returns {Promise<object>}
      */
-    async open() {
+    async show() {
         try {
             this.dialog = this.createModalDialog();
             return await this.dialog.uxpShowModal({
@@ -41,8 +41,6 @@ class CommandPalette {
      * @returns {HTMLElement}
      */
     createModalDialog() {
-        console.log("Creating command palette modal");
-
         /////////////////////////
         // create modal dialog //
         /////////////////////////
@@ -212,8 +210,6 @@ class CommandPalette {
      */
     loadStartupCommands() {
         // TODO: filter out unavailable commands or make them disabled
-        console.log("Loading startup commands");
-
         this.startupCommands.slice(0, 9).forEach((command) => {
             if (command.element === null) {
                 command.createElement();
