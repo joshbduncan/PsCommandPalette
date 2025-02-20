@@ -45,7 +45,7 @@ class Script extends Command {
             // TODO: prompt user to remove or re-link?
 
             // prompt the user to reselect the script
-            const entry = await fs.getFileForOpening({
+            entry = await fs.getFileForOpening({
                 allowMultiple: false,
                 types: storage.fileTypes.all,
             });
@@ -69,7 +69,6 @@ class Script extends Command {
             await USER.write();
         }
 
-        // TODO: ensure file is available
         return await func(entry);
     }
 }
