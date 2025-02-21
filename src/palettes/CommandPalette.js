@@ -136,9 +136,10 @@ class CommandPalette {
      * Handle keyboard navigation for command selection.
      */
     keyboardNavigation(event) {
+        const querybox = document.getElementById("query");
         const listbox = document.getElementById("commands");
 
-        if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
+        if (!["ArrowDown", "ArrowUp", "Tab"].includes(event.key)) return;
         event.preventDefault();
 
         const items = listbox.children.length;
@@ -147,9 +148,9 @@ class CommandPalette {
         const previousIndex = this.getSelectedCommand();
         let newIndex = previousIndex;
 
-        if (event.key === "ArrowDown") {
+        if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
             newIndex = previousIndex >= items - 1 ? 0 : previousIndex + 1;
-        } else if (event.key === "ArrowUp") {
+        } else if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
             newIndex = previousIndex <= 0 ? items - 1 : previousIndex - 1;
         }
 
