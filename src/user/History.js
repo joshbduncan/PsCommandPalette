@@ -8,9 +8,14 @@ class History {
     constructor() {
         this.data = null;
         this.latches = null;
-        this.recent = null;
+        this.occurrencesLUT = null;
+        this.recencyLUT = null;
         this.fileName = "history.json";
         this.file = null;
+    }
+
+    get commandIDs() {
+        return [...new Set(this.data.map((entry) => entry.commandID))];
     }
 
     /**
@@ -39,13 +44,25 @@ class History {
         }
         this.buildQueryLatches();
         this.buildRecencyLUT();
+        this.buildOccurrencesLUT();
+    }
+
+    /**
+     * Build a lookup table assigning scores based on history position (most recent = highest).
+     */
+    buildRecencyLUT() {
+        const lut = new Map();
+        for (let i = 0; i < this.data.length; i++) {
+            lut.set(this.data[i].commandID, this.data.length - i);
+        }
+        this.recencyLUT = lut;
     }
 
     /**
      * Build a lookup table of total occurrences of each command in the history.
      */
-    buildRecencyLUT() {
-        this.recent = this.data.reduce((obj, { commandID }) => {
+    buildOccurrencesLUT() {
+        this.occurrencesLUT = this.data.reduce((obj, { commandID }) => {
             obj[commandID] = (obj[commandID] || 0) + 1;
             return obj;
         }, {});
@@ -114,6 +131,7 @@ class History {
             await this.file.write(JSON.stringify(this.data), { append: false });
             this.buildQueryLatches();
             this.buildRecencyLUT();
+            this.buildOccurrencesLUT();
         } catch (error) {
             console.error(error);
             app.showAlert(

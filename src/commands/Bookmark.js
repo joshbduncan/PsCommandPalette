@@ -85,10 +85,14 @@ class FileBookmark extends Bookmark {
             await USER.write();
         }
 
-        // TODO: ensure file/folder is available
-        return await core.executeAsModal(await app.open(entry), {
-            commandName: "Opening Bookmark",
-        });
+        return core.executeAsModal(
+            async () => {
+                await app.open(entry);
+            },
+            {
+                commandName: "Opening Bookmark",
+            }
+        );
     }
 }
 

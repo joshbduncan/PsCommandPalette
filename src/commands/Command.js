@@ -90,13 +90,7 @@ class Command {
 
         this.#element = listItem;
 
-        this.addEventListeners();
-    }
-
-    /**
-     * Add all command related event listeners.
-     */
-    addEventListeners() {
+        // add command element event listeners
         this.element.addEventListener("click", (event) => {
             document.dispatchEvent(
                 new CustomEvent("commandSelected", {

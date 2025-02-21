@@ -1,3 +1,5 @@
+const { sortCommandsByOccurrence } = require("./commands");
+
 /**
  * @typedef {Object} CommandFilter
  * @property {string[]} types Command types to filter for
@@ -13,28 +15,6 @@
  * @returns {Command[]}
  */
 function filterCommandsByQuery(query, commands, filters = {}) {
-    let matches = commands;
-
-    // filter by types first
-    if (filters.types && filters.types.length > 0) {
-        matches = commandsByTypes(commands, filters.types);
-    }
-
-    //  TODO: determine how to handle disabled commands
-    // filter disabled commands
-    // if (!filters.disabled) {
-    //     matches = matches.filter((command) => {
-    //         return command.enabled;
-    //     });
-    // }
-
-    // filter hidden commands
-    if (!filters.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
-        matches = matches.filter((command) => {
-            return !USER.data.hiddenCommands.includes(command.id);
-        });
-    }
-
     /**
      * Fuzzy match commands against a search `query`.
      * @param {Command} command Command to match against
@@ -100,35 +80,61 @@ function filterCommandsByQuery(query, commands, filters = {}) {
             let score = countMatches(command.name);
 
             // boost for latched query
-            if (
-                HISTORY.latches &&
-                HISTORY.latches.hasOwnProperty(query) &&
-                HISTORY.latches[query] == command.id
-            ) {
-                score += 10;
-            }
+            score += HISTORY.latches?.[query] === command.id ? 10 : 0;
 
             // boost for recent command
-            if (HISTORY.recent && HISTORY.recent.hasOwnProperty(command.id)) {
-                score += 5;
-            }
+            score +=
+                (HISTORY.recencyLUT?.get(command.id) ?? 0) /
+                (HISTORY.recencyLUT?.size || 1);
+
+            // boost for often used command
+            // TODO: maybe calculate boost based on the frequency
+            score += HISTORY.occurrencesLUT?.[command.id] ? 2.5 : 0;
 
             return score;
         };
 
         /**
-         * Comparison function for sorting command for the palette.
+         * Comparison function for sorting commands for the palette.
          * @param {{ name: string }} a First command to compare
          * @param {{ name: string }} b Second command to compare
          * @returns {number} Negative if `a` should be before `b`, positive if `b` should be before `a`.
          */
+
         return (a, b) => scoreMatch(b) - scoreMatch(a); // sort descending
     }
 
+    let matches = commands;
+
+    // filter by types first
+    if (filters.types && filters.types.length > 0) {
+        matches = commandsByTypes(commands, filters.types);
+    }
+
+    //  TODO: determine how to handle disabled commands
+    // filter disabled commands
+    // if (!filters.disabled) {
+    //     matches = matches.filter((command) => {
+    //         return command.enabled;
+    //     });
+    // }
+
+    // filter hidden commands
+    if (!filters.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
+        matches = matches.filter((command) => {
+            return !USER.data.hiddenCommands.includes(command.id);
+        });
+    }
+
     // fuzzy match by query and sort by chunk matches
-    matches = matches
-        .filter((command) => fuzzyMatch(command, query))
-        .sort(scoreMatches(query));
+    if (query != "") {
+        matches = matches
+            .filter((command) => fuzzyMatch(command, query))
+            .sort(scoreMatches(query));
+    } else {
+        // TODO: sort by most used or most recent
+        matches = sortCommandsByOccurrence(matches);
+    }
 
     return matches;
 }

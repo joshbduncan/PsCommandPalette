@@ -13,6 +13,7 @@ const { User } = require("./user/User.js");
 const { about } = require("./commands/Builtin.js");
 const { filterByIds } = require("./utils/query.js");
 const { loadCommands } = require("./utils/load.js");
+const { sortCommandsByOccurrence } = require("./utils/commands");
 
 /////////////////////
 // get plugin info //
@@ -70,63 +71,45 @@ entrypoints.setup({
             menuItems: [
                 {
                     id: "about",
-                    label: {
-                        default: "Export Top Layers...",
-                    },
+                    label: "About",
                 },
                 {
                     id: "data",
-                    label: {
-                        default: "Data",
-                    },
+                    label: "Data",
                     submenu: [
                         {
                             id: "clearHistory",
-                            label: {
-                                default: "Clear History",
-                            },
+                            label: "Clear History",
                         },
                         {
                             id: "pluginData",
-                            label: {
-                                default: "View User Data",
-                            },
+                            label: "View User Data",
                         },
                     ],
                 },
                 {
                     id: "settings",
-                    label: {
-                        default: "Settings",
-                    },
+                    label: "Settings",
                     submenu: [
                         {
                             id: "customizeStartup",
-                            label: {
-                                default: "Custom Startup...",
-                            },
+                            label: "Custom Startup...",
                         },
                         {
                             id: "fuzzyMatch",
-                            label: {
-                                default: "Fuzzy Query Matching",
-                            },
+                            label: "Fuzzy Query Matching",
                             checked: true,
                         },
                         {
                             id: "queryLatching",
-                            label: {
-                                default: "Query Latching",
-                            },
+                            label: "Query Latching",
                             checked: true,
                         },
                     ],
                 },
                 {
                     id: "reloadPlugin",
-                    label: {
-                        default: "Reload Plugin",
-                    },
+                    label: "Reload Plugin",
                 },
             ],
             invokeMenu(id) {
@@ -195,13 +178,22 @@ async function clearHistory() {
 async function launchPalette() {
     const start = performance.now();
     COMMANDS = await loadCommands();
+
+    // TODO: let user specify custom commands, or use most used or most recent
+    const startupCommandIDs =
+        USER.data.startupCommands.length > 0
+            ? USER.data.startupCommands
+            : HISTORY.commandIDs;
+    const startupCommands = sortCommandsByOccurrence(
+        filterByIds(COMMANDS, startupCommandIDs)
+    );
+
     const end = performance.now();
     console.log(`${COMMANDS.length} commands loaded in ${(end - start).toFixed(3)} ms`);
 
-    const startupCommands = filterByIds(COMMANDS, USER.data.startupCommands);
     const palette = new CommandPalette(COMMANDS, startupCommands);
     const result = await palette.show();
-    console.log(`modal result ${result}`);
+    console.log(`modal result ${JSON.stringify(result, null, 2)}`);
 
     if (result === "reasonCanceled" || !result) return;
 

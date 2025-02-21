@@ -149,9 +149,6 @@ class CommandPalette {
                 }
             }
 
-            console.log("filters:", filters);
-            console.log("query:", query);
-
             matches = filterCommandsByQuery(query, this.commands, filters);
         }
 
