@@ -106,31 +106,27 @@ class Data {
      * Filter commands by query.
      * @param {string} query Query string
      * @param {Command[]} commands Commands to filer (defaults to all commands `this.commands`)
-     * @param {CommandFilter} filter Command filter options
+     * @param {CommandFilter} filters Command filter options
      * @returns {Command[]}
      */
-    filterByQuery(query, commands = this.commands, filter = {}) {
-        if (query == "") {
-            return [];
-        }
-
+    filterByQuery(query, commands = this.commands, filters = {}) {
         let matches = commands != undefined ? commands : this.commands;
 
         // filter by types first
-        if (filter.types && filter.types.length > 0) {
-            matches = this.commandsByTypes(filter.types);
+        if (filters.types && filters.types.length > 0) {
+            matches = this.commandsByTypes(filters.types);
         }
 
         //  TODO: determine how to handle disabled commands
         // filter disabled commands
-        // if (!filter.disabled) {
+        // if (!filters.disabled) {
         //     matches = matches.filter((command) => {
         //         return command.enabled;
         //     });
         // }
 
         // filter hidden commands
-        if (!filter.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
+        if (!filters.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
             matches = matches.filter((command) => {
                 return !USER.data.hiddenCommands.includes(command.id);
             });
@@ -256,9 +252,7 @@ class Data {
      * @returns {Command[]}
      */
     commandsByTypes(types) {
-        return this.command.filter((command) => {
-            return types.includes(command.types);
-        });
+        return types.flatMap((type) => this.commandsByType(type));
     }
 
     /**

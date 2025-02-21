@@ -1,3 +1,5 @@
+const { CommandTypes } = require("../commands/Command.js");
+
 /**
  * Create a command palette.
  */
@@ -116,16 +118,40 @@ class CommandPalette {
      * Query and update the command list based on user input.
      */
     queryCommands(event) {
-        const query = event.target.value.trim();
+        let query = event.target.value.trim();
         const listbox = document.getElementById("commands");
 
         listbox.innerHTML = "";
 
-        const matches =
-            query === ""
-                ? (this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights()),
-                  this.startupCommands)
-                : DATA.filterByQuery(query, this.commands);
+        let matches = [];
+        if (query === "") {
+            matches =
+                (this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights()),
+                this.startupCommands);
+        } else {
+            const filters = {};
+
+            // extract **FIRST** command type hashtag
+
+            const hashtagTypeRegex = /#(\w+)/;
+            const match = query.match(hashtagTypeRegex);
+
+            if (match) {
+                const type =
+                    Object.values(CommandTypes).find((value) => value === match[1]) ||
+                    null;
+
+                if (type) {
+                    filters.types = [type];
+                    query = query.replace(hashtagTypeRegex, "").trim();
+                }
+            }
+
+            console.log("filters:", filters);
+            console.log("query:", query);
+
+            matches = DATA.filterByQuery(query, this.commands, filters);
+        }
 
         matches.slice(0, 9).forEach((cmd) => listbox.appendChild(cmd.element));
 
