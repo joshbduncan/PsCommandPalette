@@ -1,4 +1,4 @@
-const { app, core } = require("photoshop");
+const { app } = require("photoshop");
 const os = require("os");
 const uxp = require("uxp");
 const { entrypoints, shell, storage } = uxp;
@@ -29,7 +29,7 @@ const USER = new User();
 const HISTORY = new History();
 const DATA = new Data();
 
-// TODO: localize menus here and in manifest - https://developer.adobe.com/photoshop/uxp/2021/guides/uxp_guide/uxp-misc/manifest-v4/#menu-localization
+// TODO: localize menus here and in manifest - https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/#menu-localization
 entrypoints.setup({
     plugin: {
         create() {
@@ -65,29 +65,66 @@ entrypoints.setup({
             },
             // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
             menuItems: [
-                { id: "about", label: "About" },
+                {
+                    id: "about",
+                    label: {
+                        default: "Export Top Layers...",
+                    },
+                },
                 {
                     id: "data",
-                    label: "Data",
+                    label: {
+                        default: "Data",
+                    },
                     submenu: [
-                        { id: "clearHistory", label: "Clear History" },
-                        { id: "pluginData", label: "View User Data" },
+                        {
+                            id: "clearHistory",
+                            label: {
+                                default: "Clear History",
+                            },
+                        },
+                        {
+                            id: "pluginData",
+                            label: {
+                                default: "View User Data",
+                            },
+                        },
                     ],
                 },
                 {
                     id: "settings",
-                    label: "Settings",
+                    label: {
+                        default: "Settings",
+                    },
                     submenu: [
-                        { id: "customizeStartup", label: "Custom Startup..." },
+                        {
+                            id: "customizeStartup",
+                            label: {
+                                default: "Custom Startup...",
+                            },
+                        },
                         {
                             id: "fuzzyMatch",
-                            label: "Fuzzy Query Matching",
+                            label: {
+                                default: "Fuzzy Query Matching",
+                            },
                             checked: true,
                         },
-                        { id: "queryLatching", label: "Query Latching", checked: true },
+                        {
+                            id: "queryLatching",
+                            label: {
+                                default: "Query Latching",
+                            },
+                            checked: true,
+                        },
                     ],
                 },
-                { id: "reloadPlugin", label: "Reload Plugin" },
+                {
+                    id: "reloadPlugin",
+                    label: {
+                        default: "Reload Plugin",
+                    },
+                },
             ],
             invokeMenu(id) {
                 const { menuItems } = entrypoints.getPanel("ps_command_palette");
