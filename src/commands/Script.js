@@ -1,8 +1,10 @@
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 
-const { Command, CommandTypes } = require("./Command.js");
-const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils.js");
+const { Command } = require("./Command.js");
+const { CommandTypes } = require("../types.js");
+
+const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils/commands.js");
 
 /**
  * Create a command palette script command.
@@ -107,16 +109,7 @@ async function createScriptEntry(entry) {
     };
 }
 
-/**
- * Load plugin script commands.
- * @returns {Script[]}
- */
-async function loadScripts() {
-    return USER.data.scripts.map((script) => new Script({ ...script }));
-}
-
 module.exports = {
     Script,
     createScriptEntry,
-    loadScripts,
 };

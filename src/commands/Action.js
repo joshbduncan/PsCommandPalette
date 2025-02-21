@@ -1,6 +1,7 @@
-const { app, core } = require("photoshop");
+const { core } = require("photoshop");
 
-const { Command, CommandTypes } = require("./Command.js");
+const { Command } = require("./Command.js");
+const { CommandTypes } = require("../types.js");
 
 /**
  * Create a command palette action command.
@@ -41,16 +42,6 @@ class Action extends Command {
     }
 }
 
-/**
- * Load action commands.
- * @returns {Promise<Action[]>}
- */
-async function loadActions() {
-    const actionSets = await app.actionTree;
-    return actionSets.flatMap((set) => set.actions.map((action) => new Action(action)));
-}
-
 module.exports = {
     Action,
-    loadActions,
 };

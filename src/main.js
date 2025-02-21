@@ -1,15 +1,18 @@
-const { app } = require("photoshop");
 const os = require("os");
+
+const { app } = require("photoshop");
 const uxp = require("uxp");
+
 const { entrypoints, shell, storage } = uxp;
 const fs = storage.localFileSystem;
 
 const manifest = require("./manifest.json");
 const { CommandPalette } = require("./palettes/CommandPalette.js");
-const { User } = require("./user/User.js");
 const { History } = require("./user/History.js");
-const { Data } = require("./commands/Data.js");
+const { User } = require("./user/User.js");
 const { about } = require("./commands/Builtin.js");
+const { filterByIds } = require("./utils/query.js");
+const { loadCommands } = require("./utils/load.js");
 
 /////////////////////
 // get plugin info //
@@ -27,7 +30,7 @@ const HOST_OS = os.platform();
 /////////////////////////
 const USER = new User();
 const HISTORY = new History();
-const DATA = new Data();
+let COMMANDS = [];
 
 // TODO: localize menus here and in manifest - https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/#menu-localization
 entrypoints.setup({
@@ -168,7 +171,7 @@ async function reloadPlugin() {
         console.log("reloading plugin");
         await USER.reload();
         await HISTORY.reload();
-        await DATA.reload();
+        COMMANDS = await loadCommands();
         app.showAlert("Plugin reloaded");
     } catch (error) {
         console.error(error);
@@ -191,13 +194,12 @@ async function clearHistory() {
 
 async function launchPalette() {
     const start = performance.now();
-    await DATA.reload();
+    COMMANDS = await loadCommands();
     const end = performance.now();
-    console.log(
-        `${DATA.commands.length} commands loaded in ${(end - start).toFixed(3)} ms`
-    );
+    console.log(`${COMMANDS.length} commands loaded in ${(end - start).toFixed(3)} ms`);
 
-    const palette = new CommandPalette();
+    const startupCommands = filterByIds(COMMANDS, USER.data.startupCommands);
+    const palette = new CommandPalette(COMMANDS, startupCommands);
     const result = await palette.show();
     console.log(`modal result ${result}`);
 

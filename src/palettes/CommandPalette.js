@@ -1,4 +1,6 @@
-const { CommandTypes } = require("../commands/Command.js");
+const { CommandTypes } = require("../types.js");
+
+const { filterCommandsByQuery } = require("../utils/query.js");
 
 /**
  * Create a command palette.
@@ -6,9 +8,9 @@ const { CommandTypes } = require("../commands/Command.js");
 class CommandPalette {
     /**
      * @param {Command[]} commands Queryable command palette commands
-     * @param {string[]} startupCommands Commands displayed when command palette launches
+     * @param {Command[]} startupCommands Commands displayed at palette launch
      */
-    constructor(commands = DATA.commands, startupCommands = DATA.startupCommands) {
+    constructor(commands, startupCommands) {
         this.commands = commands;
         this.startupCommands = startupCommands;
     }
@@ -150,7 +152,7 @@ class CommandPalette {
             console.log("filters:", filters);
             console.log("query:", query);
 
-            matches = DATA.filterByQuery(query, this.commands, filters);
+            matches = filterCommandsByQuery(query, this.commands, filters);
         }
 
         matches.slice(0, 9).forEach((cmd) => listbox.appendChild(cmd.element));

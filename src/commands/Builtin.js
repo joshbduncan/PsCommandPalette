@@ -1,10 +1,10 @@
 const { app } = require("photoshop");
-const { storage } = require("uxp");
+const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
-const shell = require("uxp").shell;
 
-const { Command, CommandTypes } = require("./Command.js");
-const { BookmarkTypes, createBookmarkEntry } = require("./Bookmark.js");
+const { Command } = require("./Command.js");
+const { CommandTypes } = require("../types.js");
+const { createBookmarkEntry } = require("./Bookmark.js");
 const { createScriptEntry } = require("./Script.js");
 
 /**
@@ -132,21 +132,8 @@ builtinCommands.loadFolderBookmark = {
     },
 };
 
-/**
- * Load builtin commands.
- * @returns {Builtin[]}
- */
-function loadBuiltins() {
-    return Object.entries(builtinCommands).map(([key, obj]) =>
-        Object.assign(new Builtin(key, obj.name, obj.note), {
-            execute: obj.callback,
-        })
-    );
-}
-
 module.exports = {
     Builtin,
     builtinCommands,
     about,
-    loadBuiltins,
 };

@@ -2,15 +2,8 @@ const { app, core } = require("photoshop");
 const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
 
-const { Command, CommandTypes } = require("./Command.js");
-
-/**
- * Bookmark type enum.
- */
-const BookmarkTypes = {
-    FILE: "file",
-    FOLDER: "folder",
-};
+const { Command } = require("./Command.js");
+const { BookmarkTypes, CommandTypes } = require("../types.js");
 
 /**
  * Create a command palette bookmark command.
@@ -205,21 +198,9 @@ async function createBookmarkEntry(entry) {
     };
 }
 
-/**
- * Load user bookmark commands.
- * @returns {Bookmark[]}
- */
-async function loadBookmarks() {
-    return USER.data.bookmarks.map((bookmark) =>
-        bookmark.type === BookmarkTypes.FILE
-            ? new FileBookmark({ ...bookmark })
-            : new FolderBookmark({ ...bookmark })
-    );
-}
-
 module.exports = {
     Bookmark,
-    BookmarkTypes,
+    FileBookmark,
+    FolderBookmark,
     createBookmarkEntry,
-    loadBookmarks,
 };
