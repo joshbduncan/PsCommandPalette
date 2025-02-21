@@ -80,8 +80,8 @@ const menuCommandsPatchShortcutKeyLUT = {
  */
 function sortCommandsByOccurrence(commands) {
     return commands.slice().sort((a, b) => {
-        const scoreA = HISTORY.occurrencesLUT[a.id] || 0;
-        const scoreB = HISTORY.occurrencesLUT[b.id] || 0;
+        scoreA = HISTORY.occurrencesLUT?.[a.id] || 0;
+        scoreB = HISTORY.occurrencesLUT?.[b.id] || 0;
 
         // sort by recency score (higher first), then by name (alphabetically)
         return scoreB - scoreA || a.name.localeCompare(b.name);
@@ -95,8 +95,8 @@ function sortCommandsByOccurrence(commands) {
  */
 function sortCommandsByRecency(commands) {
     return commands.slice().sort((a, b) => {
-        const scoreA = HISTORY.recencyLUT[a.id] || 0;
-        const scoreB = HISTORY.recencyLUT[b.id] || 0;
+        const scoreA = HISTORY.recencyLUT?.[a.id] || 0;
+        const scoreB = HISTORY.recencyLUT?.[b.id] || 0;
 
         // sort by recency score (higher first), then by name (alphabetically)
         return scoreB - scoreA || a.name.localeCompare(b.name);
