@@ -47,7 +47,7 @@ class User {
             const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
         } catch (error) {
-            console.error(error);
+            console.warn(error);
             this.data = this.defaultData;
             console.log("using default user data");
 

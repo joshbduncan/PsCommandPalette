@@ -38,12 +38,6 @@ entrypoints.setup({
     plugin: {
         create() {
             console.log(`loading plugin ${PLUGIN_NAME} v${PLUGIN_VERSION}`);
-
-            ////////////////////
-            // load user data //
-            ////////////////////
-            USER.load();
-            HISTORY.load();
         },
     },
     panels: {
@@ -177,6 +171,8 @@ async function clearHistory() {
 
 async function launchPalette() {
     const start = performance.now();
+    await USER.reload();
+    await HISTORY.reload();
     COMMANDS = await loadCommands();
 
     // TODO: let user specify custom commands, or use most used or most recent

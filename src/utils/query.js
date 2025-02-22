@@ -180,7 +180,11 @@ function commandsByType(commands, type) {
  * @returns {Command[]}
  */
 function commandsByTypes(commands, types) {
-    return types.flatMap((type) => commandsByType(commands, type));
+    const result = [];
+    for (const type of types) {
+        result.push(...commandsByType(commands, type));
+    }
+    return result;
 }
 
 /**

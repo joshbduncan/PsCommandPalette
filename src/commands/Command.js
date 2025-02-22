@@ -21,7 +21,6 @@ class Command {
         this.type = type;
         this.note = note;
         this.enabled = enabled;
-        this.#element = null;
     }
 
     get element() {

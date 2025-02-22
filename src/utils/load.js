@@ -62,8 +62,24 @@ async function loadCommands(excludedTypes = []) {
  * @returns {Promise<Action[]>}
  */
 async function loadActions() {
-    const actionSets = await app.actionTree;
-    return actionSets.flatMap((set) => set.actions.map((action) => new Action(action)));
+    const actionTree = await app.actionTree;
+    const actions = new Array(
+        actionTree.reduce((count, set) => count + set.actions.length, 0)
+    ); // preallocate array
+
+    let index = 0;
+    for (const set of actionTree) {
+        const parentName = set.name; // cache repeated property access
+        for (const action of set.actions) {
+            actions[index++] = new Action(
+                `ps_action_${parentName}_${action.name}_${action.id}`,
+                action.name,
+                `Action Set: ${parentName}`,
+                action.play
+            );
+        }
+    }
+    return actions;
 }
 
 /**
@@ -104,63 +120,73 @@ async function loadMenus() {
      */
     const getMenuBarItems = async () => {
         try {
-            const target = {
-                _ref: [{ _property: "menuBarInfo" }, { _ref: "application" }],
-            };
-            const command = { _obj: "get", _target: target };
-            return await app.batchPlay([command], {});
+            return await app.batchPlay(
+                [
+                    {
+                        _obj: "get",
+                        _target: [
+                            { _property: "menuBarInfo" },
+                            { _ref: "application" },
+                        ],
+                    },
+                ],
+                {}
+            );
         } catch (error) {
             console.error("Error fetching menuBarInfo:", error);
+            return null;
         }
     };
 
     /**
      * Build `Menu` objects for each Photoshop menu command.
-     * @param {object} obj Menu bar info object
-     * @param {string[]} path Current menu directory path to `obj`
+     * Uses an iterative approach instead of recursion.
+     * @param {object} root Menu bar info object
      * @returns {Menu[]}
      */
-    const buildMenus = (obj, path = []) => {
-        if (!obj) return [];
+    const buildMenus = (root) => {
+        if (!root?.submenu) return [];
 
-        let results = [];
+        const results = [];
+        const stack = [{ node: root, path: [] }]; // Use stack to eliminate deep recursion
 
-        if (Array.isArray(obj.submenu)) {
-            for (const submenu of obj.submenu) {
-                const cleanedTitle = cleanTitle(submenu.title);
+        while (stack.length) {
+            const { node, path } = stack.pop();
 
-                if (
-                    !menusToIgnore.has(cleanedTitle) &&
-                    !menuItemsToIgnore.has(cleanedTitle)
-                ) {
-                    results.push(...buildMenus(submenu, [...path, cleanedTitle]));
+            if (!node) continue;
+
+            if (Array.isArray(node.submenu)) {
+                for (const submenu of node.submenu) {
+                    const cleanedTitle = cleanTitle(submenu.title);
+
+                    if (
+                        !menusToIgnore.has(cleanedTitle) &&
+                        !menuItemsToIgnore.has(cleanedTitle)
+                    ) {
+                        stack.push({ node: submenu, path: [...path, cleanedTitle] });
+                    }
                 }
             }
+
+            if (node.kind === "item") {
+                const cleanedTitle = cleanTitle(node.title);
+                results.push(
+                    new Menu({
+                        ...node,
+                        title: cleanedTitle,
+                        path: [...path],
+                        menuShortcut:
+                            menuCommandsPatchShortcutKeyLUT[node.command] ||
+                            node.menuShortcut,
+                    })
+                );
+            }
         }
-
-        if (obj.kind === "item") {
-            const cleanedTitle = cleanTitle(obj.title);
-            const menuPath = [...path];
-
-            const menuObj = {
-                ...obj,
-                title: cleanedTitle,
-                path: menuPath,
-                menuShortcut:
-                    menuCommandsPatchShortcutKeyLUT[obj.command] || obj.menuShortcut,
-            };
-
-            // TODO: edit enabled key for Filter Gallery Commands
-            // Artistic, Brush Strokes, Distort, Sketch, Stylize, Texture
-
-            results.push(new Menu(menuObj));
-        }
-
         return results;
     };
 
     const menuBarItems = await getMenuBarItems();
-    if (!menuBarItems || !menuBarItems[0]?.menuBarInfo) {
+    if (!menuBarItems?.[0]?.menuBarInfo) {
         console.warn("No menu items found.");
         return [];
     }

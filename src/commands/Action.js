@@ -8,27 +8,16 @@ const { CommandTypes } = require("../types.js");
  */
 class Action extends Command {
     /**
-     * @param {object} action Action object returned from `app.actionTree`
+     * @param {string} id Action command id
+     * @param {string} name Action name
+     * @param {string} note Action note
+     * @param {function} playFunc Action play function
      */
-    constructor(action) {
-        if (!action || !action.name || !action.parent || !action.id) {
-            throw new Error("Invalid action object");
-        }
-
-        const id =
-            "ps_action_" + action.parent.name + "_" + action.name + "_" + action.id;
-        const note = "Action Set: " + action.parent.name;
-
+    constructor(id, name, note, playFunction) {
         // TODO: not sure about using _id/id in command id since index can change
         // TODO: implement action shortcut key?
-        super(id, action.name, CommandTypes.ACTION, true);
-
-        this.obj = action;
-        this._id = action._id;
-        this.action_id = action.id;
-        this.parent = action.parent;
-        this.typename = action.typename;
-        this.note = note;
+        super(id, name, CommandTypes.ACTION, note);
+        this.play = playFunction;
     }
 
     /**
@@ -36,7 +25,7 @@ class Action extends Command {
      * @returns {Promise<void>}
      */
     async execute() {
-        return core.executeAsModal(() => this.obj.play(), {
+        return core.executeAsModal(() => this.play(), {
             commandName: "Executing Action",
         });
     }

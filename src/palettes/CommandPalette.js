@@ -57,7 +57,10 @@ class CommandPalette {
         const querybox = document.createElement("sp-textfield");
         querybox.setAttribute("id", "query");
         querybox.setAttribute("type", "search");
-        querybox.setAttribute("placeholder", "Search for commands...");
+        querybox.setAttribute(
+            "placeholder",
+            "Search for menu commands, tools, actions, and more..."
+        );
         form.appendChild(querybox);
 
         // divider

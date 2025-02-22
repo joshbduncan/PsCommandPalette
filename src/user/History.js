@@ -6,7 +6,7 @@ const fs = storage.localFileSystem;
  */
 class History {
     constructor() {
-        this.data = null;
+        this.data = [];
         this.latches = null;
         this.occurrencesLUT = null;
         this.recencyLUT = null;
@@ -29,7 +29,7 @@ class History {
             const fileData = await this.file.read({ format: storage.formats.utf8 });
             this.data = JSON.parse(fileData);
         } catch (error) {
-            console.error(error);
+            console.warn(error);
             this.data = [];
 
             if (!this.file) return;
@@ -75,6 +75,8 @@ class History {
     buildQueryLatches() {
         const queryMap = new Map();
         for (const { query, commandID } of this.data) {
+            // skip commands ran from startupCommands (empty query)
+            if (query === "") continue;
             if (!queryMap.has(query)) {
                 queryMap.set(query, new Map());
             }
@@ -104,8 +106,10 @@ class History {
      * Reload all user history from disk.
      */
     async reload() {
-        this.data = null;
-        this.latches = {};
+        this.data = [];
+        this.latches = null;
+        this.occurrencesLUT = null;
+        this.recencyLUT = null;
         this.file = null;
         await this.load();
     }
@@ -170,14 +174,13 @@ class History {
      * @param {string} commandID Selected command id
      */
     add(query, commandID) {
-        if (!query || !commandID) return;
-
         // TODO: limit history length
         this.data.unshift({
             query: query,
             commandID: commandID,
             timestamp: Date.now(),
         });
+
         this.write();
     }
 
