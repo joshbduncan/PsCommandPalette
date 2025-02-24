@@ -3,7 +3,7 @@
  */
 const CommandTypes = {
     ACTION: "action",
-    API: "extension",
+    API: "photoshop",
     BOOKMARK: "bookmark",
     MENU: "menu",
     PLUGIN: "plugin",

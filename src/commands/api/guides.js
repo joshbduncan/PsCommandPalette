@@ -78,7 +78,7 @@ _guides.horizontalCenterGuide = {
 _guides.centerGuides = {
     name: "Add Center Crosshair Guides",
     description:
-        "Add two guides centered horizontally and vertically on the document or active pixel selection.",
+        "Add crosshair guides centered on the active pixel selection (or document).",
     callback: async () => {
         // check for an active document
         const doc = app.activeDocument;
