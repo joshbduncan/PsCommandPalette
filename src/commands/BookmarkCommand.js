@@ -188,7 +188,7 @@ async function createBookmarkEntry(entry) {
     const id = "ps_bookmark_" + btoa(entry.nativePath);
 
     // determine type
-    const type = entry.isFile ? BookmarkTypes.FILE : BookmarkTypes.FOLDER;
+    const type = entry.isFile ? BookmarkCommandTypes.FILE : BookmarkCommandTypes.FOLDER;
 
     // create a persistent token
     const token = await fs.createPersistentToken(entry);
