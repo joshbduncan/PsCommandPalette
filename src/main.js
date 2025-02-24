@@ -10,7 +10,7 @@ const manifest = require("./manifest.json");
 const { CommandPalette } = require("./palettes/CommandPalette.js");
 const { History } = require("./user/History.js");
 const { User } = require("./user/User.js");
-const { about } = require("./commands/Builtin.js");
+const { about, _help, intro } = require("./commands/plugin/commands.js");
 const { filterByIds } = require("./utils/query.js");
 const { loadCommands } = require("./utils/load.js");
 const { sortCommandsByOccurrence } = require("./utils/commands");
@@ -62,10 +62,20 @@ entrypoints.setup({
                     .addEventListener("click", launchPalette);
             },
             // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
+            // TODO: updates builtin
+            // TODO: pluginSettings builtin
             menuItems: [
                 {
                     id: "about",
                     label: "About",
+                },
+                {
+                    id: "intro",
+                    label: "Introduction",
+                },
+                {
+                    id: "help",
+                    label: "Help",
                 },
                 {
                     id: "data",
@@ -106,12 +116,18 @@ entrypoints.setup({
                     label: "Reload Plugin",
                 },
             ],
-            invokeMenu(id) {
+            async invokeMenu(id) {
                 const { menuItems } = entrypoints.getPanel("ps_command_palette");
 
                 switch (id) {
                     case "about":
                         about();
+                        break;
+                    case "intro":
+                        intro();
+                        break;
+                    case "help":
+                        _help();
                         break;
                     case "customizeStartup":
                         app.showAlert("Not yet implemented");
@@ -201,7 +217,7 @@ async function launchPalette() {
 
     // to allow for external user data file editing, don't write
     // user data when "Reload Plugin Data" command is executed
-    if (command.id !== "ps_builtin_reload") {
+    if (command.id !== "ps_plugin_reload") {
         HISTORY.add(query, command.id);
         USER.write();
     }

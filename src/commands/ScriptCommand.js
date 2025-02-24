@@ -9,7 +9,7 @@ const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils/comman
 /**
  * Create a command palette script command.
  */
-class Script extends Command {
+class ScriptCommand extends Command {
     /**
      * @param {object} script
      * @param {string} script.id Unique command id
@@ -110,6 +110,6 @@ async function createScriptEntry(entry) {
 }
 
 module.exports = {
-    Script,
+    ScriptCommand,
     createScriptEntry,
 };

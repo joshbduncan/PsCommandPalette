@@ -2,36 +2,13 @@ const { app } = require("photoshop");
 const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
 
-const { Command } = require("./Command.js");
-const { CommandTypes } = require("../types.js");
-const { createBookmarkEntry } = require("./Bookmark.js");
-const { createScriptEntry } = require("./Script.js");
+const { createBookmarkEntry } = require("../BookmarkCommand.js");
+const { createScriptEntry } = require("../ScriptCommand.js");
 
-/**
- * Create a command palette builtin command.
- */
-class Builtin extends Command {
-    /**
-     * @param {string} id Unique command id
-     * @param {string} name Command name
-     * @param {string} note Note displayed below command
-     */
-    constructor(id, name) {
-        const _id = "ps_builtin_" + id;
-        const note = "Ps Command Palette > Builtin > " + name;
-        super(_id, name, CommandTypes.BUILTIN, note);
-    }
-}
-
-//////////////////////
-// builtin commands //
-//////////////////////
-
-// TODO: help builtin
 // TODO: updates builtin
 // TODO: pluginSettings builtin
 
-const builtinCommands = {};
+const pluginCommands = {};
 
 const about = () => {
     const year = new Date().getFullYear();
@@ -46,26 +23,42 @@ Developed by Josh Duncan
     app.showAlert(aboutString);
 };
 
-builtinCommands.about = {
+pluginCommands.about = {
     name: "About Ps Command Palette",
-    note: "Ps Command Palette > About...",
+    description: "Learn about Ps Command Palette",
     callback: about,
 };
 
-builtinCommands.help = {
-    name: "Plugin Help",
-    note: "Ps Command Palette > Plugin Help...",
-    callback: async () => {
-        await shell.openExternal(
-            "https://github.com/joshbduncan/PsCommandPalette/wiki",
-            "Ps Command Palette Help Wiki"
-        );
-    },
+const intro = () => {
+    const aboutString = `${PLUGIN_NAME}
+Plugin for Photoshop
+
+Introduction not yet implemented.`;
+    app.showAlert(aboutString);
 };
 
-builtinCommands.loadScripts = {
+pluginCommands.intro = {
+    name: "Ps Command Palette Plugin Introduction...",
+    description: "How to use the Ps Command Plugin",
+    callback: intro,
+};
+
+const _help = async () => {
+    await shell.openExternal(
+        "https://github.com/joshbduncan/PsCommandPalette/wiki",
+        "Ps Command Palette Help Wiki"
+    );
+};
+
+pluginCommands.help = {
+    name: "Plugin Help",
+    description: "Ps Command Palette Help Documentation",
+    callback: _help,
+};
+
+pluginCommands.loadScripts = {
     name: "Load Script(s)...",
-    note: "Ps Command Palette > Load Script(s)...",
+    description: "Load external script files for easy access as custom commands",
     callback: async () => {
         const entries = await fs.getFileForOpening({
             allowMultiple: true,
@@ -90,9 +83,9 @@ builtinCommands.loadScripts = {
     },
 };
 
-builtinCommands.loadFileBookmarks = {
+pluginCommands.loadFileBookmarks = {
     name: "Load File Bookmark(s)...",
-    note: "Ps Command Palette > Load File Bookmark(s)...",
+    description: "Load files for easy access as custom commands",
     callback: async () => {
         const entries = await fs.getFileForOpening({
             allowMultiple: true,
@@ -117,9 +110,9 @@ builtinCommands.loadFileBookmarks = {
     },
 };
 
-builtinCommands.loadFolderBookmark = {
+pluginCommands.loadFolderBookmark = {
     name: "Load Folder Bookmark",
-    note: "Ps Command Palette > Load Folder Bookmark",
+    description: "Load folder for easy access as a custom command",
     callback: async () => {
         const entry = await fs.getFolder();
 
@@ -133,7 +126,8 @@ builtinCommands.loadFolderBookmark = {
 };
 
 module.exports = {
-    Builtin,
-    builtinCommands,
+    pluginCommands,
     about,
+    _help,
+    intro,
 };

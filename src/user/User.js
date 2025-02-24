@@ -32,7 +32,7 @@ class User {
             bookmarks: [],
             hiddenCommands: [], // TODO: build out skips for hidden commands
             disabledCommandTypes: [], // TODO: allow command types to be disabled all together
-            startupCommands: ["ps_builtin_about"], // TODO: add default builtin startup commands with about, docs, etc.
+            startupCommands: ["ps_plugin_about"], // TODO: add default plugin startup commands with about, docs, etc.
         };
     }
 

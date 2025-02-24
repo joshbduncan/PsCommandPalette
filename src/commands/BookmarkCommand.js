@@ -3,12 +3,12 @@ const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
 
 const { Command } = require("./Command.js");
-const { BookmarkTypes, CommandTypes } = require("../types.js");
+const { BookmarkCommandTypes, CommandTypes } = require("../types.js");
 
 /**
  * Create a command palette bookmark command.
  */
-class Bookmark extends Command {
+class BookmarkCommand extends Command {
     /**
      * @param {string} id Unique command id
      * @param {string} name Bookmark name
@@ -28,7 +28,7 @@ class Bookmark extends Command {
 /**
  * Create a command palette file bookmark command.
  */
-class FileBookmark extends Bookmark {
+class FileBookmarkCommand extends BookmarkCommand {
     /**
      * @param {object} bookmark
      * @param {string} bookmark.id Unique command id
@@ -99,7 +99,7 @@ class FileBookmark extends Bookmark {
 /**
  * Create a command palette Folder bookmark command.
  */
-class FolderBookmark extends Bookmark {
+class FolderBookmarkCommand extends BookmarkCommand {
     /**
      * @param {object} bookmark
      * @param {string} bookmark.id Unique command id
@@ -203,8 +203,8 @@ async function createBookmarkEntry(entry) {
 }
 
 module.exports = {
-    Bookmark,
-    FileBookmark,
-    FolderBookmark,
+    BookmarkCommand,
+    FileBookmarkCommand,
+    FolderBookmarkCommand,
     createBookmarkEntry,
 };

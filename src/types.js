@@ -4,23 +4,22 @@
 const CommandTypes = {
     ACTION: "action",
     BOOKMARK: "bookmark",
-    BUILTIN: "builtin",
-    CUSTOM: "custom",
+    EXTENSION: "extension",
     MENU: "menu",
+    PLUGIN: "plugin",
     SCRIPT: "script",
-    STARTUP: "startup",
     TOOL: "tool",
 };
 
 /**
  * Bookmark type enum.
  */
-const BookmarkTypes = {
+const BookmarkCommandTypes = {
     FILE: "file",
     FOLDER: "folder",
 };
 
 module.exports = {
-    BookmarkTypes,
+    BookmarkCommandTypes,
     CommandTypes,
 };

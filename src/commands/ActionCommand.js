@@ -6,17 +6,17 @@ const { CommandTypes } = require("../types.js");
 /**
  * Create a command palette action command.
  */
-class Action extends Command {
+class ActionCommand extends Command {
     /**
      * @param {string} id Action command id
      * @param {string} name Action name
-     * @param {string} note Action note
+     * @param {string} description Action description
      * @param {function} playFunc Action play function
      */
-    constructor(id, name, note, playFunction) {
+    constructor(id, name, description, playFunction) {
         // TODO: not sure about using _id/id in command id since index can change
         // TODO: implement action shortcut key?
-        super(id, name, CommandTypes.ACTION, note);
+        super(id, name, CommandTypes.ACTION, description);
         this.play = playFunction;
     }
 
@@ -32,5 +32,5 @@ class Action extends Command {
 }
 
 module.exports = {
-    Action,
+    ActionCommand,
 };

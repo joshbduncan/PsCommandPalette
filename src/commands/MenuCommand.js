@@ -8,7 +8,7 @@ const { cleanTitle, generateKeyboardShortcut } = require("../utils/commands.js")
 /**
  * Create a command palette menu command.
  */
-class Menu extends Command {
+class MenuCommand extends Command {
     /**
      * @param {object} menuCommand Menu command object returned from the `menuBarInfo` property
      * @param {string} menuCommand.name
@@ -31,10 +31,10 @@ class Menu extends Command {
         menuShortcut,
     }) {
         const id = `ps_menu_${command}`;
-        const note = path.join(" > ");
+        const description = path.join(" > ");
         const commandName = name || cleanTitle(title.replace(/\.\.\.$/g, ""));
 
-        super(id, commandName, CommandTypes.MENU, note, enabled);
+        super(id, commandName, CommandTypes.MENU, description, enabled);
 
         this.commandID = command;
         this.visible = visible;
@@ -73,6 +73,7 @@ class Menu extends Command {
             const commandState = await this.getState();
             const isAvailable = commandState?.[0];
 
+            // TODO: determine always unavailable menu command that can be ignored or patched
             if (!isAvailable) {
                 app.showAlert(
                     "Command not available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
@@ -96,5 +97,5 @@ class Menu extends Command {
 }
 
 module.exports = {
-    Menu,
+    MenuCommand,
 };

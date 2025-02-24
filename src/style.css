@@ -129,7 +129,7 @@ sp-detail#main-plugin-info {
     }
 }
 
-#commands-list #commands li.command span.note {
+#commands-list #commands li.command span.description {
     display: block;
     font-size: 10px;
     white-space: nowrap;

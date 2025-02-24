@@ -8,10 +8,10 @@ class Command {
      * @param {string} id Unique command id
      * @param {string} name Command name
      * @param {string} type Command type
-     * @param {string} note Note displayed below command
+     * @param {string} description Command description displayed below command
      * @param {boolean} enabled Is command enabled for use (defaults to true)
      */
-    constructor(id, name, type, note = "", enabled = true) {
+    constructor(id, name, type, description = "", enabled = true) {
         if (!id || !name || !type) {
             throw new Error("Command requires a valid ID, name, and type.");
         }
@@ -19,7 +19,7 @@ class Command {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.note = note;
+        this.description = description;
         this.enabled = enabled;
     }
 
@@ -66,12 +66,12 @@ class Command {
             header.appendChild(shortcut);
         }
 
-        // note
-        if (this.note) {
-            const note = document.createElement("span");
-            note.classList.add("note");
-            note.textContent = this.note;
-            body.appendChild(note);
+        // description
+        if (this.description) {
+            const description = document.createElement("span");
+            description.classList.add("description");
+            description.textContent = this.description;
+            body.appendChild(description);
         }
 
         // type container
