@@ -47,7 +47,7 @@ function filterCommandsByQuery(query, commands, filters = {}) {
      * @returns {(a: { name: string }, b: { name: string }) => number} Sorting function
      */
     function scoreMatches(query) {
-        const queryChunks = query.toLowerCase().split(/\s+/); // Split query into an array
+        const queryChunks = query.toLowerCase().split(/\s+/); // split query into an array
 
         /**
          * Counts matches between the query chunks and name chunks.
@@ -63,9 +63,12 @@ function filterCommandsByQuery(query, commands, filters = {}) {
                     count +
                     nameChunks.reduce((total, nameChunk, index) => {
                         if (nameChunk.includes(queryChunk)) {
-                            let weight = 1 / (index + 1); // Base weight: earlier chunks matter more
+                            let weight = 1 / (index + 1); // base weight: earlier chunks matter more
                             if (nameChunk.startsWith(queryChunk)) {
-                                weight += 1; // Extra boost for exact prefix matches
+                                weight += 1; // extra boost for exact prefix matches
+                            }
+                            if (nameChunk == queryChunk) {
+                                weight += 2; // extra boost for exact chunk/word matches
                             }
                             total += weight;
                         }
@@ -78,6 +81,9 @@ function filterCommandsByQuery(query, commands, filters = {}) {
         const scoreMatch = (command) => {
             // calculate base score for query chunk matches
             let score = countMatches(command.name);
+
+            // boost for exact match
+            score += command.name.toLowerCase() == query.toLowerCase() ? 5 : 0;
 
             // boost for latched query
             score += HISTORY.latches?.[query] === command.id ? 10 : 0;
