@@ -25,7 +25,7 @@ Developed by Josh Duncan
 
 pluginCommands.about = {
     name: "About Ps Command Palette",
-    description: "Learn about Ps Command Palette",
+    description: "Learn about Ps Command Palette.",
     callback: about,
 };
 
@@ -39,7 +39,7 @@ Introduction not yet implemented.`;
 
 pluginCommands.intro = {
     name: "Ps Command Palette Plugin Introduction...",
-    description: "How to use the Ps Command Plugin",
+    description: "How to use the Ps Command Plugin.",
     callback: intro,
 };
 
@@ -52,13 +52,13 @@ const _help = async () => {
 
 pluginCommands.help = {
     name: "Plugin Help",
-    description: "Ps Command Palette Help Documentation",
+    description: "Ps Command Palette online help documentation.",
     callback: _help,
 };
 
 pluginCommands.loadScripts = {
     name: "Load Script(s)...",
-    description: "Load external script files for easy access as custom commands",
+    description: "Load external script files for easy access as custom commands.",
     callback: async () => {
         const entries = await fs.getFileForOpening({
             allowMultiple: true,
@@ -85,7 +85,7 @@ pluginCommands.loadScripts = {
 
 pluginCommands.loadFileBookmarks = {
     name: "Load File Bookmark(s)...",
-    description: "Load files for easy access as custom commands",
+    description: "Load files for easy access as custom commands.",
     callback: async () => {
         const entries = await fs.getFileForOpening({
             allowMultiple: true,
@@ -112,7 +112,7 @@ pluginCommands.loadFileBookmarks = {
 
 pluginCommands.loadFolderBookmark = {
     name: "Load Folder Bookmark",
-    description: "Load folder for easy access as a custom command",
+    description: "Load folder for easy access as a custom command.",
     callback: async () => {
         const entry = await fs.getFolder();
 

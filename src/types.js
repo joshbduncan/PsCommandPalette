@@ -3,8 +3,8 @@
  */
 const CommandTypes = {
     ACTION: "action",
+    API: "extension",
     BOOKMARK: "bookmark",
-    EXTENSION: "extension",
     MENU: "menu",
     PLUGIN: "plugin",
     SCRIPT: "script",

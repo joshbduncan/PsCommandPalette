@@ -1,4 +1,5 @@
 const { ActionCommand } = require("../commands/ActionCommand.js");
+const { APICommand } = require("../commands/APICommand.js");
 const {
     FileBookmarkCommand,
     FolderBookmarkCommand,
@@ -8,6 +9,7 @@ const { PluginCommand } = require("../commands/PluginCommand.js");
 const { ScriptCommand } = require("../commands/ScriptCommand.js");
 const { ToolCommand } = require("../commands/ToolCommand.js");
 
+const { apiCommands } = require("../commands/api/commands.js");
 const { BookmarkCommandTypes, CommandTypes } = require("../types.js");
 const { pluginCommands } = require("../commands/plugin/commands.js");
 
@@ -23,6 +25,7 @@ async function loadCommands(excludedTypes = []) {
 
     const loadFunctionsLUT = {
         [CommandTypes.ACTION]: loadActionCommands,
+        [CommandTypes.API]: loadAPICommands,
         [CommandTypes.BOOKMARK]: loadBookmarkCommands,
         [CommandTypes.MENU]: loadMenuCommands,
         [CommandTypes.PLUGIN]: loadPluginCommands,
@@ -83,6 +86,18 @@ async function loadActionCommands() {
         }
     }
     return actions;
+}
+
+/**
+ * Load api commands.
+ * @returns {ApiCommand[]}
+ */
+function loadAPICommands() {
+    return Object.entries(apiCommands).map(([key, obj]) =>
+        Object.assign(new APICommand(key, obj.name, obj.description), {
+            execute: obj.callback,
+        })
+    );
 }
 
 /**
@@ -190,7 +205,6 @@ async function loadMenuCommands() {
  * @returns {PluginCommand[]}
  */
 function loadPluginCommands() {
-    console.log(pluginCommands);
     return Object.entries(pluginCommands).map(([key, obj]) =>
         Object.assign(new PluginCommand(key, obj.name, obj.description), {
             execute: obj.callback,
