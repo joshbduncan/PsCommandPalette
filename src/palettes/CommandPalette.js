@@ -3,6 +3,20 @@ const { CommandTypes } = require("../types.js");
 const { filterCommandsByQuery } = require("../utils/query.js");
 
 /**
+ * Debounce function to delay execution of a function
+ * @param {Function} func - The function to debounce
+ * @param {number} delay - Delay in milliseconds
+ * @returns {Function}
+ */
+function debounce(func, delay = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func(...args), delay);
+    };
+}
+
+/**
  * Create a command palette.
  */
 class CommandPalette {
@@ -13,6 +27,7 @@ class CommandPalette {
     constructor(commands, startupCommands) {
         this.commands = commands;
         this.startupCommands = startupCommands;
+        this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 150);
     }
 
     /**
@@ -92,7 +107,7 @@ class CommandPalette {
         dialog.addEventListener("keydown", (event) => this.keyboardNavigation(event));
         dialog.addEventListener("load", () => querybox.focus());
 
-        querybox.addEventListener("input", (event) => this.queryCommands(event));
+        querybox.addEventListener("input", this.debouncedQueryCommands);
 
         document.addEventListener("commandSelected", (event) =>
             this.commandSelection(event)
@@ -108,7 +123,7 @@ class CommandPalette {
         ///////////////////////////
 
         // TODO: filter out unavailable commands or make them disabled
-        this.startupCommands.slice(0, 9).forEach((command) => {
+        this.startupCommands.forEach((command) => {
             if (command.element === null) {
                 command.createElement();
             }
@@ -140,6 +155,7 @@ class CommandPalette {
 
             const hashtagTypeRegex = /#(\w+)/;
             const match = query.match(hashtagTypeRegex);
+            let _query = query;
 
             if (match) {
                 const type =
@@ -148,14 +164,14 @@ class CommandPalette {
 
                 if (type) {
                     filters.types = [type];
-                    query = query.replace(hashtagTypeRegex, "").trim();
+                    _query = _query.replace(hashtagTypeRegex, "").trim();
                 }
             }
 
-            matches = filterCommandsByQuery(query, this.commands, filters);
+            matches = filterCommandsByQuery(_query, this.commands, filters);
         }
 
-        matches.slice(0, 9).forEach((cmd) => listbox.appendChild(cmd.element));
+        matches.forEach((cmd) => listbox.appendChild(cmd.element));
 
         this.resetCommandSelection();
     }
@@ -212,7 +228,7 @@ class CommandPalette {
     }
 
     /**
-     * Change the currently selected command.
+     * Change the currently selected command and ensure visibility.
      * @param {number|null} previousIndex
      * @param {number} newIndex
      */
@@ -223,7 +239,14 @@ class CommandPalette {
             listbox.children[previousIndex].removeAttribute("selected");
         }
         if (listbox.children[newIndex]) {
-            listbox.children[newIndex].setAttribute("selected", "");
+            const selectedCommand = listbox.children[newIndex];
+            selectedCommand.setAttribute("selected", "");
+
+            // Ensure selected command is in view
+            selectedCommand.scrollIntoView({
+                block: "nearest", // Ensures minimal scrolling
+                behavior: "smooth", // Smooth scrolling for a better UX
+            });
         }
     }
 

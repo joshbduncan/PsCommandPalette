@@ -62,18 +62,23 @@ sp-detail#main-plugin-info {
 
 #commands-list {
     width: 100%;
+    max-height: 585px;
+    overflow-y: auto;
 }
 
 #commands-list #commands li.command {
     display: flex;
+    align-items: center;
+    justify-content: flex-start;
     padding: 14px 12px;
+    height: 65px;
     color: var(--uxp-host-text-color);
 }
 
-/* #commands-list #commands li.command[disabled] {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: black !important;
-} */
+#commands-list #commands li.command[disabled] {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: black !important;
+}
 
 #commands-list #commands li.command:hover {
     background-color: var(--uxp-host-widget-hover-background-color);

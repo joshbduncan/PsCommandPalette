@@ -120,6 +120,23 @@ async function loadMenuCommands() {
     const menusToIgnore = new Set(["Open Recent"]);
     const menuItemsToIgnore = new Set();
 
+    // some nested menu items have command names like...
+    // 'Layer > New > Layer' and 'Layer > Delete > Layer' which each
+    // have the command name 'Layer' making querying hard so I plan
+    // to patch commands these commands
+    const menuItemsToPatchName = {
+        7802: () => "Define Variables",
+        1099: () => "New Layer",
+        1942: () => "New Layer from Background",
+        2976: () => "New Group",
+        2956: () => "New Group from Layers",
+        9220: () => "New Artboard",
+        9221: () => "New Artboard from Group",
+        9222: () => "New Artboard from Layers",
+        1100: (str) => `Delete ${str}`,
+        2951: () => "Delete Hidden Layers",
+    };
+
     /**
      * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
      * @returns {Promise<object>}
@@ -175,15 +192,22 @@ async function loadMenuCommands() {
             }
 
             if (node.kind === "item") {
-                const cleanedTitle = cleanTitle(node.title);
+                // patch name if needed
+                if (node.command in menuItemsToPatchName) {
+                    node.name = menuItemsToPatchName[node.command](node.name);
+                }
+
+                // clean title for display
+                node.title = cleanTitle(node.title);
+
+                // stringify menu shortcut
+                node.menuShortcut =
+                    menuCommandsPatchShortcutKeyLUT[node.command] || node.menuShortcut;
+
                 results.push(
                     new MenuCommand({
                         ...node,
-                        title: cleanedTitle,
                         path: [...path],
-                        menuShortcut:
-                            menuCommandsPatchShortcutKeyLUT[node.command] ||
-                            node.menuShortcut,
                     })
                 );
             }
