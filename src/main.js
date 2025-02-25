@@ -182,6 +182,7 @@ async function pluginData() {
 
 async function clearHistory() {
     console.log("clearing user history");
+    // TODO: prompt to ensure
     await HISTORY.clear();
 }
 

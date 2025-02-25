@@ -5,6 +5,7 @@ const {
     FolderBookmarkCommand,
 } = require("../commands/BookmarkCommand.js");
 const { MenuCommand } = require("../commands/MenuCommand.js");
+const { PickerCommand } = require("../commands/PickerCommand.js");
 const { PluginCommand } = require("../commands/PluginCommand.js");
 const { ScriptCommand } = require("../commands/ScriptCommand.js");
 const { ToolCommand } = require("../commands/ToolCommand.js");
@@ -28,6 +29,7 @@ async function loadCommands(excludedTypes = []) {
         [CommandTypes.API]: loadAPICommands,
         [CommandTypes.BOOKMARK]: loadBookmarkCommands,
         [CommandTypes.MENU]: loadMenuCommands,
+        [CommandTypes.PICKER]: loadPickerCommands,
         [CommandTypes.PLUGIN]: loadPluginCommands,
         [CommandTypes.SCRIPT]: loadScriptCommands,
         [CommandTypes.TOOL]: loadToolCommands,
@@ -105,6 +107,7 @@ function loadAPICommands() {
  * @returns {BookmarkCommand[]}
  */
 async function loadBookmarkCommands() {
+    if (!USER.data?.bookmarks) return [];
     return USER.data.bookmarks.map((bookmark) =>
         bookmark.type === BookmarkCommandTypes.FILE
             ? new FileBookmarkCommand({ ...bookmark })
@@ -225,6 +228,15 @@ async function loadMenuCommands() {
 }
 
 /**
+ * Load custom picker commands.
+ * @returns {PickerCommand[]}
+ */
+async function loadPickerCommands() {
+    if (!USER.data?.pickers) return [];
+    return USER.data.pickers.map((picker) => new PickerCommand({ ...picker }));
+}
+
+/**
  * Load plugin commands.
  * @returns {PluginCommand[]}
  */
@@ -241,6 +253,7 @@ function loadPluginCommands() {
  * @returns {ScriptCommand[]}
  */
 async function loadScriptCommands() {
+    if (!USER.data?.scripts) return [];
     return USER.data.scripts.map((script) => new ScriptCommand({ ...script }));
 }
 

@@ -22,10 +22,11 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [x] tools
         - [ ] localize tool names
     - [x] actions
-    - [ ] scripts - ℹ️ already works with scripts loaded into Ps (e.g. File > Scripts > script.jsx)
+    - [x] scripts (not perfect but works)
     - [ ] custom workflows
     - [x] bookmarked files and folders
-    - [ ] custom pickers
+    - [x] custom pickers
+        - [ ] create custom picker builder dialog
 - [ ] navigation query history with up and down arrow keys
 - [x] improved results
     - [x] fuzzy filtering

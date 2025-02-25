@@ -19,10 +19,6 @@ class BookmarkCommand extends Command {
         super(id, name, CommandTypes.BOOKMARK, path);
         this.token = token;
     }
-
-    async handleTokenError(newBookmarkCreator) {
-        // Shared token error handling logic
-    }
 }
 
 /**

@@ -28,10 +28,11 @@ class User {
                 locale: HOST_LOCALE,
                 os: HOST_OS,
             },
-            scripts: [],
             bookmarks: [],
-            hiddenCommands: [], // TODO: build out skips for hidden commands
             disabledCommandTypes: [], // TODO: allow command types to be disabled all together
+            hiddenCommands: [], // TODO: build out skips for hidden commands
+            pickers: [],
+            scripts: [],
             startupCommands: ["ps_plugin_about"], // TODO: add default plugin startup commands with about, docs, etc.
         };
     }

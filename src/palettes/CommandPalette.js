@@ -26,7 +26,7 @@ class CommandPalette {
      */
     constructor(commands, startupCommands) {
         this.commands = commands;
-        this.startupCommands = startupCommands;
+        this.startupCommands = startupCommands || commands;
         this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 150);
     }
 

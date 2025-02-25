@@ -2,6 +2,7 @@ const { app } = require("photoshop");
 const { shell, storage } = require("uxp");
 const fs = storage.localFileSystem;
 
+const { PickerCommand } = require("../PickerCommand.js");
 const { createBookmarkEntry } = require("../BookmarkCommand.js");
 const { createScriptEntry } = require("../ScriptCommand.js");
 
@@ -54,6 +55,21 @@ pluginCommands.help = {
     name: "Plugin Help",
     description: "Ps Command Palette online help documentation.",
     callback: _help,
+};
+
+pluginCommands.customPicker = {
+    name: "Create a Custom Picker Palette",
+    description: "Create your own custom command palette picker.",
+    callback: async () => {
+        // const picker = new PickerCommand(
+        //     "boogy_woogy",
+        //     "Boggy Woogy Picker",
+        //     "Yes and no",
+        //     []
+        // );
+        // await picker.execute();
+        app.showAlert("Not yet implemented.");
+    },
 };
 
 pluginCommands.loadScripts = {
