@@ -10,10 +10,10 @@ const { BookmarkCommandTypes, CommandTypes } = require("../types.js");
  */
 class BookmarkCommand extends Command {
     /**
-     * @param {string} id Unique command id
-     * @param {string} name Bookmark name
-     * @param {string} path Bookmark path
-     * @param {string} token Local persistent storage token
+     * @param {string} id - Unique command id
+     * @param {string} name - Bookmark name
+     * @param {string} path - Bookmark path
+     * @param {string} token - Local persistent storage token
      */
     constructor(id, name, path, token) {
         super(id, name, CommandTypes.BOOKMARK, path);
@@ -31,10 +31,10 @@ class BookmarkCommand extends Command {
 class FileBookmarkCommand extends BookmarkCommand {
     /**
      * @param {object} bookmark
-     * @param {string} bookmark.id Unique command id
-     * @param {string} bookmark.name Bookmark name
-     * @param {string} bookmark.path Bookmark path
-     * @param {string} bookmark.token Local persistent storage token
+     * @param {string} bookmark.id - Unique command id
+     * @param {string} bookmark.name - Bookmark name
+     * @param {string} bookmark.path - Bookmark path
+     * @param {string} bookmark.token - Local persistent storage token
      */
     constructor({ id, name, path, token }) {
         super(id, name, path, token);
@@ -102,10 +102,10 @@ class FileBookmarkCommand extends BookmarkCommand {
 class FolderBookmarkCommand extends BookmarkCommand {
     /**
      * @param {object} bookmark
-     * @param {string} bookmark.id Unique command id
-     * @param {string} bookmark.name Bookmark name
-     * @param {string} bookmark.path Bookmark path
-     * @param {string} bookmark.token Local persistent storage token
+     * @param {string} bookmark.id - Unique command id
+     * @param {string} bookmark.name - Bookmark name
+     * @param {string} bookmark.path - Bookmark path
+     * @param {string} bookmark.token - Local persistent storage token
      */
     constructor({ id, name, path, token }) {
         super(id, name, path, token);
@@ -166,7 +166,7 @@ class FolderBookmarkCommand extends BookmarkCommand {
 
 /**
  * Check if a bookmark is already loaded
- * @param {string} path Bookmark path
+ * @param {string} path - Bookmark path
  * @returns {boolean}
  */
 const duplicateBookmark = (path) =>
@@ -174,7 +174,7 @@ const duplicateBookmark = (path) =>
 
 /**
  * Store a bookmark in persistent local storage.
- * @param {storage.File | storage.Folder} entry File or folder to bookmark
+ * @param {storage.File | - storage.Folder} entry File or folder to bookmark
  * @returns {{ id: string, path: string, name: string, type: string, token: string }}
  */
 async function createBookmarkEntry(entry) {

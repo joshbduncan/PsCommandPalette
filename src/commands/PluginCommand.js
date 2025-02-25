@@ -6,9 +6,9 @@ const { CommandTypes } = require("../types.js");
  */
 class PluginCommand extends Command {
     /**
-     * @param {string} id Unique command id
-     * @param {string} name Command name
-     * @param {string} description Command description displayed below command
+     * @param {string} id - Unique command id
+     * @param {string} name - Command name
+     * @param {string} description - Command description displayed below command
      */
     constructor(id, name, description = "") {
         const _id = "ps_plugin_" + id;

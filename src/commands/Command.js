@@ -5,11 +5,11 @@ class Command {
     #element;
 
     /**
-     * @param {string} id Unique command id
-     * @param {string} name Command name
-     * @param {string} type Command type
-     * @param {string} description Command description displayed below command
-     * @param {boolean} enabled Is command enabled for use (defaults to true)
+     * @param {string} id - Unique command id
+     * @param {string} name - Command name
+     * @param {string} type - Command type
+     * @param {string} description - Command description displayed below command
+     * @param {boolean} enabled - Is command enabled for use (defaults to true)
      */
     constructor(id, name, type, description = "", enabled = true) {
         if (!id || !name || !type) {
@@ -104,7 +104,7 @@ class Command {
 
     /**
      * Add fuzzy query token match highlights to the command element title.
-     * @param {string} innerHTML HTML string with fuzzy query token matches using '<strong>' elements.
+     * @param {string} innerHTML - HTML string with fuzzy query token matches using '<strong>' elements.
      */
     addQueryHighlights(innerHTML) {
         this.element.querySelector(".title").innerHTML = innerHTML;

@@ -170,8 +170,8 @@ class History {
 
     /**
      * Add an item to the user command history.
-     * @param {string} query Palette query string
-     * @param {string} commandID Selected command id
+     * @param {string} query - Palette query string
+     * @param {string} commandID - Selected command id
      */
     add(query, commandID) {
         // TODO: limit history length

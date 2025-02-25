@@ -1,6 +1,6 @@
 /**
  * Return an svg icon matching `name`.
- * @param {string} name Icon to return
+ * @param {string} name - Icon to return
  * @returns SVG icon html content
  */
 const getIcon = (name) => {

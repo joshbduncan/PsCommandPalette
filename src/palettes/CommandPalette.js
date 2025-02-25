@@ -21,8 +21,8 @@ function debounce(func, delay = 300) {
  */
 class CommandPalette {
     /**
-     * @param {Command[]} commands Queryable command palette commands
-     * @param {Command[]} startupCommands Commands displayed at palette launch
+     * @param {Command[]} commands - Queryable command palette commands
+     * @param {Command[]} startupCommands - Commands displayed at palette launch
      */
     constructor(commands, startupCommands) {
         this.commands = commands;

@@ -1,6 +1,6 @@
 {
     "manifestVersion": 5,
-    "id": "ps-command-palette",
+    "id": "ps.command.palette.plugin",
     "name": "Ps Command Palette",
     "version": "0.1.0",
     "author": "Josh Duncan",

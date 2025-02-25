@@ -10,7 +10,7 @@ const AlertTypes = {
 
 /**
  * Return an svg icon for an alert dialog.
- * @param {string} type Icon to return
+ * @param {string} type - Icon to return
  * @returns SVG icon html content
  */
 const alertIcon = (type) => {
@@ -30,9 +30,9 @@ const alertIcon = (type) => {
 
 /**
  * Display an alert dialog.
- * @param {string} title Alert dialog title
- * @param {string} message Dialog message
- * @param {string} icon Dialog icon
+ * @param {string} title - Alert dialog title
+ * @param {string} message - Dialog message
+ * @param {string} icon - Dialog icon
  */
 const alertDialog = async (title, message, icon) => {
     const dialog = document.createElement("dialog");

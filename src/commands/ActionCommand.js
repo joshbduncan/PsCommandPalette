@@ -8,8 +8,8 @@ const { CommandTypes } = require("../types.js");
  */
 class ActionCommand extends Command {
     /**
-     * @param {string} id Action command id
-     * @param {string} name Action name
+     * @param {string} id - Action command id
+     * @param {string} name - Action name
      * @param {string} description Action description
      * @param {function} playFunc Action play function
      */

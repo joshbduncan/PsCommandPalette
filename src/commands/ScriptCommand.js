@@ -12,10 +12,10 @@ const { executePSJSScriptFile, executeJSXScriptFile } = require("../utils/comman
 class ScriptCommand extends Command {
     /**
      * @param {object} script
-     * @param {string} script.id Unique command id
-     * @param {string} script.name Script name
-     * @param {string} script.path Script path
-     * @param {string} script.token Local persistent storage token
+     * @param {string} script.id - Unique command id
+     * @param {string} script.name - Script name
+     * @param {string} script.path - Script path
+     * @param {string} script.token - Local persistent storage token
      */
     constructor({ id, name, path, token }) {
         super(id, name, CommandTypes.SCRIPT, path);
@@ -77,13 +77,13 @@ class ScriptCommand extends Command {
 
 /**
  * Choose, tokenize, and store a script in persistent local storage for later reference.
- * @param {storage.File} path Script file entry object
+ * @param {storage.File} path - Script file entry object
  * @returns {{ id: string, path: string, name: string, token: string }}
  */
 async function createScriptEntry(entry) {
     /**
      * Check if a script is already loaded
-     * @param {string} path Script path
+     * @param {string} path - Script path
      * @returns {boolean}
      */
     const duplicateScript = (path) =>

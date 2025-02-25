@@ -6,7 +6,7 @@ const { Command } = require("../commands/Command.js");
 
 /**
  * Remove nagging "&" characters that are returned from the `menuBarInfo` property.
- * @param {string} title Command title returned from the api
+ * @param {string} title - Command title returned from the api
  * @returns {string}
  */
 const cleanTitle = (title) => {
@@ -24,7 +24,7 @@ const cleanTitle = (title) => {
 
 /**
  * Generate a keyboard shortcut combination string.
- * @param {KeyboardShortcut} keyboardShortcut Menu command keyboard shortcut object returned from the menuBarInfo property.
+ * @param {KeyboardShortcut} keyboardShortcut - Menu command keyboard shortcut object returned from the menuBarInfo property.
  * @returns string
  */
 const generateKeyboardShortcut = (keyboardShortcut) => {
@@ -75,7 +75,7 @@ const menuCommandsPatchShortcutKeyLUT = {
 
 /**
  * Sort commands by total usage score, then by name.
- * @param {Command[]} commands - Array of command objects
+ * @param {Command[]} commands - - Array of command objects
  * @returns {Command[]}
  */
 function sortCommandsByOccurrence(commands) {
@@ -90,7 +90,7 @@ function sortCommandsByOccurrence(commands) {
 
 /**
  * Sort commands by HISTORY recency score, then by name.
- * @param {Command[]} commands - Array of command objects
+ * @param {Command[]} commands - - Array of command objects
  * @returns {Command[]}
  */
 function sortCommandsByRecency(commands) {
@@ -105,7 +105,7 @@ function sortCommandsByRecency(commands) {
 
 /**
  * Execute a PSJS script file.
- * @param {storage.File} entry UXP storage file entry
+ * @param {storage.File} entry - UXP storage file entry
  * @returns {Promise<void>}
  */
 async function executePSJSScriptFile(entry) {
@@ -133,7 +133,7 @@ async function executePSJSScriptFile(entry) {
 
 /**
  * Execute a JSX ExtendScript script file.
- * @param {storage.File} entry UXP storage file entry
+ * @param {storage.File} entry - UXP storage file entry
  * @returns {Promise<void>}
  */
 async function executeJSXScriptFile(entry) {

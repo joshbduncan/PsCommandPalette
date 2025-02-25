@@ -9,16 +9,16 @@ const { sortCommandsByOccurrence } = require("./commands");
 
 /**
  * Filter commands by query.
- * @param {string} query Query string
- * @param {Command[]} commands Commands to filter
- * @param {CommandFilter} filters Command filter options
+ * @param {string} query - Query string
+ * @param {Command[]} commands - Commands to filter
+ * @param {CommandFilter} filters - Command filter options
  * @returns {Command[]}
  */
 function filterCommandsByQuery(query, commands, filters = {}) {
     /**
      * Fuzzy match commands against a search `query`.
-     * @param {Command} command Command to match against
-     * @param {string} query Search query string
+     * @param {Command} command - Command to match against
+     * @param {string} query - Search query string
      * @returns {boolean}
      */
     function fuzzyMatch(command, query) {
@@ -43,7 +43,7 @@ function filterCommandsByQuery(query, commands, filters = {}) {
     /**
      * Creates a sorting function that sorts commands by the number of matching chunks in their name.
      * Matches closer to the start of the name are given higher weight, with an extra boost for exact prefix matches.
-     * @param {string} query Search query used for comparison
+     * @param {string} query - Search query used for comparison
      * @returns {(a: { name: string }, b: { name: string }) => number} Sorting function
      */
     function scoreMatches(query) {
@@ -52,7 +52,7 @@ function filterCommandsByQuery(query, commands, filters = {}) {
         /**
          * Counts matches between the query chunks and name chunks.
          * Matches earlier in the name are given higher weight.
-         * @param {string} name Command name to check against
+         * @param {string} name - Command name to check against
          * @returns {number} Weighted match count
          */
         const countMatches = (name) => {
@@ -102,8 +102,8 @@ function filterCommandsByQuery(query, commands, filters = {}) {
 
         /**
          * Comparison function for sorting commands for the palette.
-         * @param {{ name: string }} a First command to compare
-         * @param {{ name: string }} b Second command to compare
+         * @param {{ name: - string }} a First command to compare
+         * @param {{ name: - string }} b Second command to compare
          * @returns {number} Negative if `a` should be before `b`, positive if `b` should be before `a`.
          */
 
@@ -147,7 +147,7 @@ function filterCommandsByQuery(query, commands, filters = {}) {
 
 /**
  * Get enabled commands.
- * @param {Command[]} commands Commands to filter
+ * @param {Command[]} commands - Commands to filter
  * @returns {Command[]}
  */
 function enabledCommands(commands) {
@@ -158,7 +158,7 @@ function enabledCommands(commands) {
 
 /**
  * Get disabled commands.
- * @param {Command[]} commands Commands to filter
+ * @param {Command[]} commands - Commands to filter
  * @returns {Command[]}
  */
 function disabledCommands(commands) {
@@ -169,8 +169,8 @@ function disabledCommands(commands) {
 
 /**
  * Commands with the type of `type`
- * @param {Command[]} commands Commands to filter
- * @param {string} type Command type to match
+ * @param {Command[]} commands - Commands to filter
+ * @param {string} type - Command type to match
  * @returns {Command[]}
  */
 function commandsByType(commands, type) {
@@ -181,8 +181,8 @@ function commandsByType(commands, type) {
 
 /**
  * Command with a type included in `types`.
- * @param {Command[]} commands Commands to filter
- * @param {string[]} types Command types to match
+ * @param {Command[]} commands - Commands to filter
+ * @param {string[]} types - Command types to match
  * @returns {Command[]}
  */
 function commandsByTypes(commands, types) {
@@ -195,8 +195,8 @@ function commandsByTypes(commands, types) {
 
 /**
  * Lookup a command by id.
- * @param {Command[]} commands Commands to filter
- * @param {string|number} id ID of the command to lookup
+ * @param {Command[]} commands - Commands to filter
+ * @param {string|number} id - ID of the command to lookup
  * @returns {Command}
  */
 function filterById(commands, id) {
@@ -205,8 +205,8 @@ function filterById(commands, id) {
 
 /**
  * Lookup a command by id.
- * @param {Command[]} commands Commands to filter
- * @param {string|number} commandID IDs of the commands to lookup
+ * @param {Command[]} commands - Commands to filter
+ * @param {string|number} commandID - IDs of the commands to lookup
  * @returns {Command}
  */
 function filterByIds(commands, ids) {

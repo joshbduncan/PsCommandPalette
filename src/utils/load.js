@@ -17,7 +17,7 @@ const { cleanTitle, menuCommandsPatchShortcutKeyLUT } = require("./commands.js")
 
 /**
  * Load all commands types into the commands set.
- * @param {string[]} excludedTypes Command types to exclude during load
+ * @param {string[]} excludedTypes - Command types to exclude during load
  * @returns
  */
 async function loadCommands(excludedTypes = []) {
@@ -164,7 +164,7 @@ async function loadMenuCommands() {
     /**
      * Build `Menu` objects for each Photoshop menu command.
      * Uses an iterative approach instead of recursion.
-     * @param {object} root Menu bar info object
+     * @param {object} root - Menu bar info object
      * @returns {MenuCommand[]}
      */
     const buildMenus = (root) => {

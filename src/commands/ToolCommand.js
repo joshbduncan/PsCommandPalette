@@ -6,10 +6,10 @@ const { CommandTypes } = require("../types.js");
  */
 class ToolCommand extends Command {
     /**
-     * @param {string} ref Tool batchPlay reference string
-     * @param {string} name Tool name
-     * @param {string} description Tool description displayed below tool
-     * @param {string} keyboardShortcut Tool keyboard shortcut
+     * @param {string} ref - Tool batchPlay reference string
+     * @param {string} name - Tool name
+     * @param {string} description - Tool description displayed below tool
+     * @param {string} keyboardShortcut - Tool keyboard shortcut
      */
     constructor(ref, name, description, keyboardShortcut) {
         if (!ref || !name) {

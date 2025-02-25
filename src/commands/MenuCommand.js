@@ -10,7 +10,7 @@ const { cleanTitle, generateKeyboardShortcut } = require("../utils/commands.js")
  */
 class MenuCommand extends Command {
     /**
-     * @param {object} menuCommand Menu command object returned from the `menuBarInfo` property
+     * @param {object} menuCommand - Menu command object returned from the `menuBarInfo` property
      * @param {string} menuCommand.name
      * @param {string} menuCommand.title
      * @param {number} menuCommand.command
