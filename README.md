@@ -9,7 +9,7 @@ Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands*
 > [!WARNING]
 > This project is experimental and under active development.
 
-You can install easily the plugin via the included CCX file [ps.command.palette_PS.ccx](dist/ps-command-palette_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
+You can install easily the plugin via the included CCX file [ps.command.palette.plugin_PS.ccx](dist/ps.command.palette.plugin_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
 
 You can also install the plugin via [UXP Developer Tools](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/installation/) by [adding an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin). This allows you the ability to poke around the code and access the debug console.
 
