@@ -1,16 +1,17 @@
-const { _channel } = require("./channel.js");
-const { _channels } = require("./channels.js");
-const { _document } = require("./document.js");
-const { _guides } = require("./guides.js");
-const { _layer } = require("./layer.js");
+const commandGroups = {
+    channel: require("./channel.js"),
+    channels: require("./channels.js"),
+    document: require("./document.js"),
+    layer: require("./layer.js"),
+    guides: require("./guides.js"),
+};
 
-const apiCommands = {};
-
-Object.assign(apiCommands, _channel);
-Object.assign(apiCommands, _channels);
-Object.assign(apiCommands, _document);
-Object.assign(apiCommands, _guides);
-Object.assign(apiCommands, _layer);
+const apiCommands = Object.values(commandGroups).reduce((acc, groupCommands) => {
+    Object.values(groupCommands).forEach((command) => {
+        Object.assign(acc, command);
+    });
+    return acc;
+}, {});
 
 module.exports = {
     apiCommands,

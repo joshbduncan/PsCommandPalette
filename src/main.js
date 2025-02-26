@@ -187,7 +187,6 @@ async function clearHistory() {
 }
 
 async function launchPalette() {
-    const start = performance.now();
     await USER.reload();
     await HISTORY.reload();
     COMMANDS = await loadCommands();
@@ -200,9 +199,6 @@ async function launchPalette() {
     const startupCommands = sortCommandsByOccurrence(
         filterByIds(COMMANDS, startupCommandIDs)
     );
-
-    const end = performance.now();
-    console.log(`${COMMANDS.length} commands loaded in ${(end - start).toFixed(3)} ms`);
 
     const palette = new CommandPalette(COMMANDS, startupCommands);
     const result = await palette.show();

@@ -27,7 +27,7 @@ class CommandPalette {
     constructor(commands, startupCommands) {
         this.commands = commands;
         this.startupCommands = startupCommands || commands;
-        this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 150);
+        this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 100);
     }
 
     /**
@@ -145,14 +145,12 @@ class CommandPalette {
 
         let matches = [];
         if (query === "") {
-            matches =
-                (this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights()),
-                this.startupCommands);
+            this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights());
+            matches = this.startupCommands;
         } else {
             const filters = {};
 
             // extract **FIRST** command type hashtag
-
             const hashtagTypeRegex = /#(\w+)/;
             const match = query.match(hashtagTypeRegex);
             let _query = query;

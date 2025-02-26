@@ -39,6 +39,9 @@ async function loadCommands(excludedTypes = []) {
         (type) => !excludedTypes.includes(type)
     );
 
+    console.group("loadCommands");
+    const start = performance.now();
+
     for (const type of commandTypesToLoad) {
         // TODO: exclusions from user data should be passed into function as arg
         // if (
@@ -57,6 +60,10 @@ async function loadCommands(excludedTypes = []) {
             console.error(error);
         }
     }
+
+    const end = performance.now();
+    console.groupEnd();
+    console.log(`${commands.length} commands loaded in ${(end - start).toFixed(3)} ms`);
 
     return commands;
 }

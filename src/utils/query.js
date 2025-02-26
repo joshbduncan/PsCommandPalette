@@ -2,9 +2,9 @@ const { sortCommandsByOccurrence } = require("./commands");
 
 /**
  * @typedef {Object} CommandFilter
- * @property {string[]} types Command types to filter for
- * @property {boolean} disabled Should disabled commands be included (defaults to false)
- * @property {boolean} hidden Should user hidden commands be included (defaults to false)
+ * @property {string[]} types - Command types to filter for
+ * @property {boolean} disabled - Should disabled commands be included (defaults to false)
+ * @property {boolean} hidden - Should user hidden commands be included (defaults to false)
  */
 
 /**
@@ -140,6 +140,7 @@ function filterCommandsByQuery(query, commands, filters = {}) {
     } else {
         // TODO: sort by most used or most recent
         matches = sortCommandsByOccurrence(matches);
+        matches.forEach((cmd) => cmd.removeQueryHighlights());
     }
 
     return matches;

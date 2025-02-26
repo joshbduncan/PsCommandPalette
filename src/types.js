@@ -1,7 +1,7 @@
 /**
  * Command type enum.
  */
-const CommandTypes = {
+const CommandTypes = Object.freeze({
     ACTION: "action",
     API: "photoshop",
     BOOKMARK: "bookmark",
@@ -11,15 +11,15 @@ const CommandTypes = {
     PLUGIN: "plugin",
     SCRIPT: "script",
     TOOL: "tool",
-};
+});
 
 /**
  * Bookmark type enum.
  */
-const BookmarkCommandTypes = {
+const BookmarkCommandTypes = Object.freeze({
     FILE: "file",
     FOLDER: "folder",
-};
+});
 
 module.exports = {
     BookmarkCommandTypes,

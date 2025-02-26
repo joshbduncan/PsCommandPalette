@@ -18,9 +18,13 @@ class CustomCommand extends Command {
         this.callback = callback.bind(this);
     }
 
-    execute() {
+    /**
+     * Execute the custom command
+     * @returns {Promise<void>}
+     */
+    async execute() {
         if (this.callback) {
-            this.callback();
+            return await this.callback();
         }
     }
 }

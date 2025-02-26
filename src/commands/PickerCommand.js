@@ -26,13 +26,38 @@ class PickerCommand extends Command {
      * @returns {Promise<void>}
      */
     async execute() {
+        async function clipboardCallback() {
+            try {
+                const clipboard = navigator.clipboard;
+                await clipboard.setContent({ "text/plain": this.name });
+                // TODO: write doc for accessing selected value
+                // TODO: remove popup
+                app.showAlert(`clipboard set to result '${this.name}'`);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function localStorageCallback() {
+            try {
+                localStorage.setItem("ps_last_custom_picker_result", this.name);
+                // TODO: write doc for accessing selected value
+                // TODO: remove popup
+                app.showAlert(
+                    `localStorate.get("ps_last_custom_picker_result") = '${localStorage.getItem("ps_last_custom_picker_result")}'`
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         try {
             const pickerCommands = this.commands.map(
                 ({ id, name, description }) =>
-                    new CustomCommand(id, name, description, function () {
-                        app.showAlert(`selected item\n'${this.name}'`);
-                    })
+                    new CustomCommand(id, name, description, localStorageCallback)
             );
+
+            console.log("pickerCommands:", pickerCommands);
 
             const picker = new CommandPalette(pickerCommands);
             const result = await picker.show();
