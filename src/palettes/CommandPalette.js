@@ -28,6 +28,8 @@ class CommandPalette {
         this.commands = commands;
         this.startupCommands = startupCommands || commands;
         this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 100);
+        this.scrollThroughHistory = true;
+        this.historyIndex = 0;
     }
 
     /**
@@ -151,10 +153,17 @@ class CommandPalette {
 
         listbox.innerHTML = "";
 
+        // check for a history event
+        if (!event.detail?.simulated) {
+            this.scrollThroughHistory = false;
+            this.historyIndex = 0; // reset history index
+        }
+
         let matches = [];
         if (query === "") {
             this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights());
             matches = this.startupCommands;
+            this.scrollThroughHistory = true;
         } else {
             const filters = {};
 
@@ -194,6 +203,26 @@ class CommandPalette {
 
         if (!["ArrowDown", "ArrowUp", "Tab"].includes(event.key)) return;
         event.preventDefault();
+
+        // allow the user to go back through the history using the arrow key
+        if (querybox.value === "" || this.scrollThroughHistory) {
+            if (event.key === "ArrowDown") {
+                this.historyIndex = 0;
+                this.scrollThroughHistory = false;
+            } else {
+                querybox.value = HISTORY.data[this.historyIndex].query;
+                this.historyIndex +=
+                    this.historyIndex < HISTORY.data.length - 1 ? 1 : 0;
+
+                querybox.dispatchEvent(
+                    new CustomEvent("input", {
+                        bubbles: true,
+                        detail: { simulated: true }, // let listener know this was simulated
+                    })
+                );
+                return;
+            }
+        }
 
         const items = listbox.children.length;
         if (items === 0) return;
