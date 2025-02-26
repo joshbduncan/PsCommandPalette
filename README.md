@@ -17,8 +17,8 @@ You can also install the plugin via [UXP Developer Tools](https://developer.adob
 
 Below are some of the things I hope to implement. A lot of these are features of the [Command Palette for Adobe Illustrator](<(https://github.com/joshbduncan/AiCommandPalette)>).
 
-- [ ] caching to speed up launch (right now all menu commands are reloaded every launch)
-- [ ] access other command types
+- [ ] caching to speed up launch (right now all menu commands are reloaded every launch, requires undoing any query highlighting)
+- [ ] add other command types
     - [x] tools
         - [ ] localize tool names
     - [x] actions
@@ -27,7 +27,7 @@ Below are some of the things I hope to implement. A lot of these are features of
     - [x] bookmarked files and folders
     - [x] custom pickers
         - [ ] create custom picker builder dialog
-- [ ] navigation query history with up and down arrow keys
+- [x] navigate query history with up arrow key
 - [x] improved results
     - [x] fuzzy filtering
     - [x] query latching
