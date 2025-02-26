@@ -202,7 +202,7 @@ async function launchPalette() {
 
     const palette = new CommandPalette(COMMANDS, startupCommands);
     const result = await palette.show();
-    console.log(`modal result ${JSON.stringify(result, null, 2)}`);
+    console.log("modal result:", result);
 
     if (result === "reasonCanceled" || !result) return;
 

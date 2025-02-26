@@ -1,4 +1,4 @@
-const { app, core } = require("photoshop");
+const { app } = require("photoshop");
 
 const { Command } = require("./Command.js");
 const { CustomCommand } = require("./CustomCommand.js");
@@ -47,6 +47,7 @@ class PickerCommand extends Command {
                     `localStorate.get("ps_last_custom_picker_result") = '${localStorage.getItem("ps_last_custom_picker_result")}'`
                 );
             } catch (error) {
+                localStorage.setItem("ps_last_custom_picker_result", null);
                 console.log(error);
             }
         }
