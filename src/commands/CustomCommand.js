@@ -14,7 +14,7 @@ class CustomCommand extends Command {
      * @param {Function} callback Custom command execute function
      */
     constructor(id, name, description, callback) {
-        super(id, name, CommandTypes.PICKER, description);
+        super(id, name, CommandTypes.CUSTOM, description);
         this.callback = callback.bind(this);
     }
 

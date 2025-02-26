@@ -62,7 +62,7 @@ sp-detail#main-plugin-info {
 
 #commands-list {
     width: 100%;
-    max-height: 585px;
+    height: 585px;
     overflow-y: auto;
 }
 
@@ -162,4 +162,10 @@ sp-detail#main-plugin-info {
     #commands-list #commands li.command .type-container span.type {
         background-color: rgba(0, 0, 0, 0.25);
     }
+}
+
+#info {
+    width: 100%;
+    margin-top: 12px;
+    text-align: center;
 }

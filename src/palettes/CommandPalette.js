@@ -94,8 +94,15 @@ class CommandPalette {
         listbox.setAttribute("id", "commands");
         commandsList.appendChild(listbox);
 
-        // add the form to the dialog
+        // info label
+        const info = document.createElement("sp-body");
+        info.setAttribute("id", "info");
+        info.setAttribute("size", "XS");
+        info.textContent = "...";
+
+        // add the elements to the dialog
         dialog.appendChild(form);
+        dialog.appendChild(info);
 
         // add dialog to the document
         document.body.appendChild(dialog);
@@ -129,6 +136,7 @@ class CommandPalette {
             }
             listbox.appendChild(command.element);
         });
+
         this.resetCommandSelection();
 
         return dialog;
@@ -170,6 +178,9 @@ class CommandPalette {
         }
 
         matches.forEach((cmd) => listbox.appendChild(cmd.element));
+
+        document.getElementById("info").textContent =
+            `Found ${matches.length} matching commands`;
 
         this.resetCommandSelection();
     }
