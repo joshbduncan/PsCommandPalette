@@ -139,6 +139,8 @@ class CommandPalette {
             listbox.appendChild(command.element);
         });
 
+        info.textContent = `${this.startupCommands.length} matching command(s)`;
+
         this.resetCommandSelection();
 
         return dialog;
@@ -189,7 +191,7 @@ class CommandPalette {
         matches.forEach((cmd) => listbox.appendChild(cmd.element));
 
         document.getElementById("info").textContent =
-            `Found ${matches.length} matching commands`;
+            `${matches.length} matching command(s)`;
 
         this.resetCommandSelection();
     }
@@ -206,20 +208,33 @@ class CommandPalette {
 
         // allow the user to go back through the history using the arrow key
         if (querybox.value === "" || this.scrollThroughHistory) {
+            // ensure HISTORY.data exists and has at least one item
+            if (
+                !HISTORY?.data ||
+                !Array.isArray(HISTORY.data) ||
+                HISTORY.data.length === 0
+            ) {
+                return;
+            }
+
+            // break out of history when user hits the down arrow to navigate the results
             if (event.key === "ArrowDown") {
                 this.historyIndex = 0;
                 this.scrollThroughHistory = false;
             } else {
                 querybox.value = HISTORY.data[this.historyIndex].query;
-                this.historyIndex +=
-                    this.historyIndex < HISTORY.data.length - 1 ? 1 : 0;
+                this.historyIndex = Math.min(
+                    this.historyIndex + 1,
+                    HISTORY.data.length - 1
+                );
 
                 querybox.dispatchEvent(
                     new CustomEvent("input", {
                         bubbles: true,
-                        detail: { simulated: true }, // let listener know this was simulated
+                        detail: { simulated: true }, // Indicate simulated input
                     })
                 );
+
                 return;
             }
         }
