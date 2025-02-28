@@ -1,47 +1,127 @@
 # Ps Command Palette
 
-Boost your Adobe Photoshop efficiency with quick access to most **Menu Commands**, **Tools**, **Actions**, and **more**.
+Supercharge your Photoshop workflow with **Ps Command Palette** — quickly access **Menu Commands**, **Tools**, **Actions**, **Scripts**, and more, all from your keyboard.
 
 ![ps-command-palette-2025-01-31](https://github.com/user-attachments/assets/1db12a54-4727-40a4-83c0-6f843710fd00)
 
+## Why?
+
+If you've used Alfred or VS Code, you know how powerful a "command palette" can be. Photoshop has tons of keyboard shortcuts, but you can only remember so many. Ps Command Palette makes finding and executing commands effortless with just a few keystrokes.
+
 ## Installation
 
-> [!WARNING]
+> [!CAUTION]
 > This project is experimental and under active development.
 
-You can install easily the plugin via the included CCX file [ps.command.palette.plugin_PS.ccx](dist/ps.command.palette.plugin_PS.ccx) and the Creative Cloud App ([docs](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files)).
+### Install via CCX File (Easiest Method)
 
-You can also install the plugin via [UXP Developer Tools](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/installation/) by [adding an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin). This allows you the ability to poke around the code and access the debug console.
+Download and install the plugin via the included CCX file:  
+[ps.command.palette.plugin_PS.ccx](dist/ps.command.palette.plugin_PS.ccx)  
+Follow the [Adobe CCX installation guide](https://developer.adobe.com/photoshop/uxp/2022/guides/distribution/distribution-options/#direct-distribution-with-ccx-files).
+
+### Install via UXP Developer Tools (For Developers)
+
+1. Install [UXP Developer Tools](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/installation/).
+2. [Add an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin).
+3. Access the code and debug console.
+
+And, for quick access to Ps Command Palette from your keyboard, I recommend firing the palette via <kbd>Command + Shift + P</kbd> using something like [Keyboard Maestro](https://www.keyboardmaestro.com/main/) (Mac), [BetterTouchTool](https://folivora.ai/) (Mac), or [AutoHotkey](https://www.autohotkey.com/) (Windows).
+
+## Features
+
+### 🚀 Menu Commands
+
+Instantly execute over **800 Photoshop menu commands** without touching your mouse.
+
+### 🛠 Tools
+
+Activate over **70 Photoshop tools** directly from your keyboard.
+
+### 🎬 Actions
+
+Find and run any **Photoshop action** in seconds. No more digging through palettes and action sets.
+
+### 📜 Scripts
+
+Load and execute JavaScript/ExtendScript files (.js, .jsx, .psjs) using the `Load Script(s)...` command.
+
+> [!TIP]  
+> Load multiple scripts at once using your OS’s multi-select feature.
+
+> [!WARNING]  
+> UXP API script execution is inconsistent. If a script fails, try running it again.
+
+> [!TIP]
+> A more foolproof way of executing script is by loading them into the Photoshop default scripts and accessing them via [Menu Commands](#menu-commands)
+
+### 📁 Bookmarks
+
+Save frequently used **files and folders** for instant access.
+
+- *File* bookmarks open directly in Photoshop.
+- *Folder* bookmarks open in your file system.
+
+### Custom Pickers
+
+In progress...
+
+### 🔄 Workflows (Coming Soon)
+
+Create automated **multi-step workflows** using Menu Commands, Tools, Actions, Scripts, or even other Workflows.
+
+- Combine multiple scripts into a single action
+- Automate repetitive tasks
+- Quickly prototype execution steps for new scripts
+
+### 📜 Command History
+
+Use <kbd>Up Arrow</kbd> to cycle through recently executed commands.
+
+> [!NOTE]  
+> All executed commands are logged in a JSON file and influence the [search algorithm](#search-algorithm).
+
+### 🔍 Search Algorithm
+
+Search results are ranked using:
+- **Fuzzy String Matching** – Finds approximate matches for faster searching.
+- **Recency Bias** – Frequently used commands appear higher in results.
+- **Query Latching** – Common queries "learn" your preferences, prioritizing commands you use most often.
+
+This system is inspired by the [Alfred](https://www.alfredapp.com) app.
 
 ## Future Plans...
 
-Below are some of the things I hope to implement. A lot of these are features of the [Command Palette for Adobe Illustrator](<(https://github.com/joshbduncan/AiCommandPalette)>).
+Many planned features mirror those in [AiCommandPalette](https://github.com/joshbduncan/AiCommandPalette):
 
 - [ ] caching to speed up launch (right now all menu commands are reloaded every launch, requires undoing any query highlighting)
-- [ ] add other command types
-    - [x] tools
-        - [ ] localize tool names
+- [ ] localization
+    - [ ] tools
+    - [ ] dialogs
+    - [ ] panels
+    - [ ] palettes
+    - [ ] command types
+- [ ] command types
     - [x] actions
-    - [x] scripts (not perfect but works)
-    - [ ] custom workflows
-    - [x] bookmarked files and folders
+    - [x] bookmarks (files and folders)
     - [x] custom pickers
         - [ ] create custom picker builder dialog
-- [x] navigate query history with up arrow key
+    - [x] menu commands
+    - [x] scripts (not perfect but works)
+    - [x] tools
+    - [ ] workflows
+- [x] query history navigation
 - [x] improved results
-    - [x] fuzzy filtering
-    - [x] query latching
+    - [x] fuzzy matching
     - [x] recency bias
+    - [x] query latching
 - [ ] plugin menu command recording for action/key combo [docs](https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/photoshop-manifest/#enablemenurecording)
-
-## Info
-
-General notes, issues, and things I don't want to forget.
 
 ### Known Issues
 
-- After an unknown amount of Ps inactivity menu commands that are considered "available" can't be executed via the api even thought they can still be executed in the ui.
-- Sometimes loaded scripts just don't execute. I can't determine why and the issue is intermittent, but usually just running the command again works.
+- Some menu commands stop executing via API after prolonged Photoshop inactivity (but still work manually).
+- Occasionally, loaded scripts don't execute; running them again usually works.
+
+🐞 If you find a bug please [file an issue](https://github.com/joshbduncan/PsCommandPalette/issues).
 
 ### Project Links
 

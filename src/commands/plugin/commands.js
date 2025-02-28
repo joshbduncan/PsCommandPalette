@@ -46,8 +46,8 @@ pluginCommands.intro = {
 
 const _help = async () => {
     await shell.openExternal(
-        "https://github.com/joshbduncan/PsCommandPalette/wiki",
-        "Ps Command Palette Help Wiki"
+        "https://github.com/joshbduncan/PsCommandPalette/blob/main/README.md",
+        "Ps Command Palette Online Documentation"
     );
 };
 
