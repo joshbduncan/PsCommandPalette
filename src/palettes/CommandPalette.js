@@ -43,8 +43,8 @@ class CommandPalette {
                 title: "Ps Command Palette",
                 resize: "vertical",
                 size: {
-                    width: 600,
-                    height: 700,
+                    width: 650,
+                    height: 550,
                 },
             });
         } catch (error) {

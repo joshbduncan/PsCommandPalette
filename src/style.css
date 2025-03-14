@@ -18,7 +18,7 @@ sp-heading#main-panel-title {
 }
 
 sp-divider {
-    margin: 8px;
+    margin: 8px 0;
 }
 
 #main-action-buttons li {
@@ -62,7 +62,7 @@ sp-detail#main-plugin-info {
 
 #commands-list {
     width: 100%;
-    height: 585px;
+    height: 450px;
     overflow-y: auto;
 }
 
@@ -71,13 +71,14 @@ sp-detail#main-plugin-info {
     align-items: center;
     justify-content: flex-start;
     padding: 14px 12px;
-    height: 65px;
+    height: 50px;
     color: var(--uxp-host-text-color);
+    cursor: pointer;
 }
 
 #commands-list #commands li.command[disabled] {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: black !important;
+    color: var(--uxp-label-color) !important;
+    background-color: var(--uxp-host-border-color);
 }
 
 #commands-list #commands li.command:hover {
@@ -85,14 +86,23 @@ sp-detail#main-plugin-info {
     color: var(--uxp-host-widget-hover-text-color);
 }
 
+#commands-list #commands li.command[disabled]:hover {
+    color: var(--uxp-label-color) !important;
+    background-color: var(--uxp-host-border-color);
+}
+
 #commands-list #commands li.command[selected] {
     background-color: #1473e6;
     color: #fff;
 }
 
-#commands-list #commands li.command[selected]:hover {
-    background-color: #0e66d0;
+#commands-list #commands li.command[selected][disabled]:hover {
+    background-color: #1473e6;
 }
+
+/* #commands-list #commands li.command[selected]:hover {
+    background-color: #0e66d0;
+} */
 
 #commands-list #commands li.command .body {
     padding-right: 8px;
@@ -107,7 +117,7 @@ sp-detail#main-plugin-info {
 }
 
 #commands-list #commands li.command .body span.title {
-    font-size: 16px;
+    font-size: var(--uxp-host-font-size);
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
@@ -122,7 +132,7 @@ sp-detail#main-plugin-info {
 #commands-list #commands li.command .body kbd.shortcut {
     margin-left: 8px;
     text-align: center;
-    font-size: 12px;
+    font-size: var(--uxp-host-font-size-smaller);
     font-weight: bold;
     color: rgba(255, 255, 255, 0.35);
     border-radius: 3px;
@@ -141,7 +151,7 @@ sp-detail#main-plugin-info {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    padding-top: 6px;
+    padding-top: 4px;
 }
 
 #commands-list #commands li.command .type-container {
