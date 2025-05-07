@@ -7,8 +7,17 @@
   https://developer.adobe.com/photoshop/uxp/2022/guides/theme-awareness/
 */
 
+:root {
+    --color-base: var(--uxp-host-background-color);
+    --color-copy: var(--uxp-host-text-color);
+
+    --color-command-selected: #1373e6;
+
+    --color-command-hover: var(--uxp-host-widget-hover-background-color);
+}
+
 body {
-    color: var(--uxp-host-text-color);
+    color: var(--color-copy);
     padding: 0 16px;
 }
 
@@ -72,18 +81,17 @@ sp-detail#main-plugin-info {
     justify-content: flex-start;
     padding: 14px 12px;
     height: 50px;
-    color: var(--uxp-host-text-color);
+    color: var(--color-copy);
     cursor: pointer;
 }
 
 #commands-list #commands li.command[disabled] {
-    color: var(--uxp-label-color) !important;
-    background-color: var(--uxp-host-border-color);
+    /* color: var(--uxp-label-color) !important; */
+    background-color: darkred;
 }
 
 #commands-list #commands li.command:hover {
-    background-color: var(--uxp-host-widget-hover-background-color);
-    color: var(--uxp-host-widget-hover-text-color);
+    background-color: var(--color-command-hover);
 }
 
 #commands-list #commands li.command[disabled]:hover {
@@ -92,8 +100,7 @@ sp-detail#main-plugin-info {
 }
 
 #commands-list #commands li.command[selected] {
-    background-color: #1473e6;
-    color: #fff;
+    background-color: var(--color-command-selected);
 }
 
 #commands-list #commands li.command[selected][disabled]:hover {

@@ -25,6 +25,12 @@ class CommandPalette {
      * @param {Command[]} startupCommands - Commands displayed at palette launch
      */
     constructor(commands, startupCommands) {
+        if (!Array.isArray(commands)) {
+            throw new TypeError("Commands must be an array");
+        }
+        if (startupCommands && !Array.isArray(startupCommands)) {
+            throw new TypeError("Startup commands must be an array");
+        }
         this.commands = commands;
         this.startupCommands = startupCommands || commands;
         this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 100);
@@ -39,7 +45,7 @@ class CommandPalette {
     async show() {
         const dialog = this.createModalDialog();
         try {
-            return await dialog.uxpShowModal({
+            const result = await dialog.uxpShowModal({
                 title: "Ps Command Palette",
                 resize: "vertical",
                 size: {
@@ -47,10 +53,15 @@ class CommandPalette {
                     height: 550,
                 },
             });
+            return result;
         } catch (error) {
             console.error(error);
         } finally {
-            dialog.remove();
+            try {
+                dialog.remove();
+            } catch (cleanupError) {
+                console.error("Failed to cleanup dialog:", cleanupError);
+            }
         }
     }
 

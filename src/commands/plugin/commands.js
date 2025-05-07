@@ -4,7 +4,6 @@ const fs = storage.localFileSystem;
 
 const { PickerCommand } = require("../PickerCommand.js");
 const { createBookmarkEntry } = require("../BookmarkCommand.js");
-const { createScriptEntry } = require("../ScriptCommand.js");
 
 // TODO: updates builtin
 // TODO: pluginSettings builtin
@@ -31,11 +30,7 @@ pluginCommands.about = {
 };
 
 const intro = () => {
-    const aboutString = `${PLUGIN_NAME}
-Plugin for Photoshop
-
-Introduction not yet implemented.`;
-    app.showAlert(aboutString);
+    app.showAlert("Not yet implemented");
 };
 
 pluginCommands.intro = {
@@ -57,6 +52,44 @@ pluginCommands.help = {
     callback: _help,
 };
 
+pluginCommands.reload = {
+    name: "Reload Plugin",
+    description: "Reload plugin data.",
+    callback: async () => {
+        try {
+            console.log("reloading plugin");
+            await USER.reload();
+            await HISTORY.reload();
+            app.showAlert("Plugin reloaded");
+        } catch (error) {
+            console.error(error);
+        }
+    },
+};
+
+pluginCommands.data = {
+    name: "Show Plugin Data",
+    description: "Reveal plugin data files on your system.",
+    callback: async () => {
+        try {
+            const dataFolder = await fs.getDataFolder();
+            await shell.openPath(dataFolder.nativePath);
+        } catch (error) {
+            console.error(error);
+        }
+    },
+};
+
+pluginCommands.clearHistory = {
+    name: "Clear Plugin History",
+    description: "Clear your command history.",
+    callback: async () => {
+        console.log("clearing user history");
+        // TODO: prompt to ensure
+        await HISTORY.clear();
+    },
+};
+
 pluginCommands.customPicker = {
     name: "Create a Custom Picker Palette",
     description: "Create your own custom command palette picker.",
@@ -69,33 +102,6 @@ pluginCommands.customPicker = {
         // );
         // await picker.execute();
         app.showAlert("Not yet implemented.");
-    },
-};
-
-pluginCommands.loadScripts = {
-    name: "Load Script(s)...",
-    description: "Load external script files for easy access as custom commands.",
-    callback: async () => {
-        const entries = await fs.getFileForOpening({
-            allowMultiple: true,
-            types: storage.fileTypes.all,
-        });
-
-        if (!entries || entries.length === 0) return;
-
-        const scripts = [];
-
-        for (const entry of entries) {
-            // TODO: limit filetypes to know script extensions
-            const script = await createScriptEntry(entry);
-
-            if (script) {
-                scripts.push(script);
-            }
-        }
-
-        USER.data.scripts.push(...scripts);
-        USER.write();
     },
 };
 

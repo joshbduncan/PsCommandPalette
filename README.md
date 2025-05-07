@@ -43,16 +43,7 @@ Find and run any **Photoshop action** in seconds. No more digging through palett
 
 ### 📜 Scripts
 
-Load and execute JavaScript/ExtendScript files (.js, .jsx, .psjs) using the `Load Script(s)...` command.
-
-> [!TIP]  
-> Load multiple scripts at once using your OS’s multi-select feature.
-
-> [!WARNING]  
-> UXP API script execution is inconsistent. If a script fails, try running it again.
-
-> [!TIP]
-> A more foolproof way of executing script is by loading them into the Photoshop default scripts and accessing them via [Menu Commands](#menu-commands)
+External script execution via the the Photoshop UXP API is inconsistent at best so this feature has been removed. I suggest loading your scripts into the Photoshop default scripts ([docs](https://helpx.adobe.com/in/photoshop/using/scripting.html#run_a_javascript)) and accessing them via [Menu Commands](#menu-commands).
 
 ### 📁 Bookmarks
 
@@ -106,7 +97,7 @@ Many planned features mirror those in [AiCommandPalette](https://github.com/josh
     - [x] custom pickers
         - [ ] create custom picker builder dialog
     - [x] menu commands
-    - [x] scripts (not perfect but works)
+    - [x] ~~ scripts (not perfect but works) ~~ suggest executing from File > Scripts menu ([docs](https://helpx.adobe.com/in/photoshop/using/scripting.html#run_a_javascript))
     - [x] tools
     - [ ] workflows
 - [x] query history navigation
@@ -119,7 +110,6 @@ Many planned features mirror those in [AiCommandPalette](https://github.com/josh
 ### Known Issues
 
 - Some menu commands stop executing via API after prolonged Photoshop inactivity (but still work manually).
-- Occasionally, loaded scripts don't execute; running them again usually works.
 
 🐞 If you find a bug please [file an issue](https://github.com/joshbduncan/PsCommandPalette/issues).
 

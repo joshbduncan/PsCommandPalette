@@ -1,5 +1,15 @@
 /**
- * Command type enum.
+ * @typedef {Object} CommandTypes
+ * @readonly
+ * @enum {string}
+ * @property {string} ACTION - Action command type
+ * @property {string} API - Photoshop API command type
+ * @property {string} BOOKMARK - Bookmark command type
+ * @property {string} CUSTOM - Custom command type
+ * @property {string} MENU - Menu command type
+ * @property {string} PICKER - Picker command type
+ * @property {string} PLUGIN - Plugin command type
+ * @property {string} TOOL - Tool command type
  */
 const CommandTypes = Object.freeze({
     ACTION: "action",
@@ -9,7 +19,6 @@ const CommandTypes = Object.freeze({
     MENU: "menu",
     PICKER: "picker",
     PLUGIN: "plugin",
-    SCRIPT: "script",
     TOOL: "tool",
 });
 

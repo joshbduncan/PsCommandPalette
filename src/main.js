@@ -31,123 +31,12 @@ const HOST_OS = os.platform();
 /////////////////////////
 const USER = new User();
 const HISTORY = new History();
-let COMMANDS = [];
 
 // TODO: localize menus here and in manifest - https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/#menu-localization
 entrypoints.setup({
     plugin: {
         create() {
             console.log(`loading plugin ${PLUGIN_NAME} v${PLUGIN_VERSION}`);
-        },
-    },
-    panels: {
-        ps_command_palette: {
-            create() {
-                /////////////////////////
-                // add main panel info //
-                /////////////////////////
-                const year = new Date().getFullYear();
-                document.getElementById("main-copyright").innerHTML =
-                    `Copyright &copy; ${year} ${PLUGIN_AUTHOR}`;
-
-                document.getElementById("main-plugin-info").textContent =
-                    `Plugin Version v${PLUGIN_VERSION}`;
-
-                ////////////////////////////////////
-                // add main panel event listeners //
-                ////////////////////////////////////
-
-                document
-                    .getElementById("btnOpenCommandPalette")
-                    .addEventListener("click", launchPalette);
-            },
-            // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
-            // TODO: updates builtin
-            // TODO: pluginSettings builtin
-            menuItems: [
-                {
-                    id: "about",
-                    label: "About",
-                },
-                {
-                    id: "intro",
-                    label: "Introduction",
-                },
-                {
-                    id: "help",
-                    label: "Help",
-                },
-                {
-                    id: "data",
-                    label: "Data",
-                    submenu: [
-                        {
-                            id: "clearHistory",
-                            label: "Clear History",
-                        },
-                        {
-                            id: "pluginData",
-                            label: "View User Data",
-                        },
-                    ],
-                },
-                {
-                    id: "settings",
-                    label: "Settings",
-                    submenu: [
-                        {
-                            id: "customizeStartup",
-                            label: "Custom Startup...",
-                        },
-                        {
-                            id: "fuzzyMatch",
-                            label: "Fuzzy Query Matching",
-                            checked: true,
-                        },
-                        {
-                            id: "queryLatching",
-                            label: "Query Latching",
-                            checked: true,
-                        },
-                    ],
-                },
-                {
-                    id: "reloadPlugin",
-                    label: "Reload Plugin",
-                },
-            ],
-            async invokeMenu(id) {
-                const { menuItems } = entrypoints.getPanel("ps_command_palette");
-
-                switch (id) {
-                    case "about":
-                        about();
-                        break;
-                    case "intro":
-                        intro();
-                        break;
-                    case "help":
-                        _help();
-                        break;
-                    case "customizeStartup":
-                        app.showAlert("Not yet implemented");
-                        break;
-                    case "fuzzyMatch":
-                    case "queryLatching":
-                        menuItems.getItem(id).checked = !menuItems.getItem(id).checked;
-                        app.showAlert("Not yet implemented");
-                        break;
-                    case "reloadPlugin":
-                        reloadPlugin();
-                        break;
-                    case "pluginData":
-                        pluginData();
-                        break;
-                    case "clearHistory":
-                        clearHistory();
-                        break;
-                }
-            },
         },
     },
     commands: {
@@ -159,37 +48,10 @@ entrypoints.setup({
 // plugin commands //
 /////////////////////
 
-async function reloadPlugin() {
-    try {
-        console.log("reloading plugin");
-        await USER.reload();
-        await HISTORY.reload();
-        COMMANDS = await loadCommands();
-        app.showAlert("Plugin reloaded");
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function pluginData() {
-    try {
-        const dataFolder = await fs.getDataFolder();
-        await shell.openPath(dataFolder.nativePath);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function clearHistory() {
-    console.log("clearing user history");
-    // TODO: prompt to ensure
-    await HISTORY.clear();
-}
-
 async function launchPalette() {
     await USER.reload();
     await HISTORY.reload();
-    COMMANDS = await loadCommands();
+    const commands = await loadCommands();
 
     // TODO: let user specify custom commands, or use most used or most recent
     const startupCommandIDs =
@@ -197,10 +59,10 @@ async function launchPalette() {
             ? USER.data.startupCommands
             : HISTORY.commandIDs;
     const startupCommands = sortCommandsByOccurrence(
-        filterByIds(COMMANDS, startupCommandIDs)
+        filterByIds(commands, startupCommandIDs)
     );
 
-    const palette = new CommandPalette(COMMANDS, startupCommands);
+    const palette = new CommandPalette(commands, startupCommands);
     const result = await palette.show();
     console.log("modal result:", result);
 

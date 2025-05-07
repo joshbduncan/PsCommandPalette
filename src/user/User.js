@@ -78,7 +78,7 @@ class User {
      * @returns {storage.File|void}
      */
     async write() {
-        if (this.data == {} || this.data === null) {
+        if (this.data == {} || this.data == null) {
             return;
         }
         console.log("writing user data");
@@ -90,6 +90,7 @@ class User {
                     overwrite: true,
                 });
             }
+            console.log(this.data);
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
         } catch (error) {

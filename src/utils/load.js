@@ -7,7 +7,6 @@ const {
 const { MenuCommand } = require("../commands/MenuCommand.js");
 const { PickerCommand } = require("../commands/PickerCommand.js");
 const { PluginCommand } = require("../commands/PluginCommand.js");
-const { ScriptCommand } = require("../commands/ScriptCommand.js");
 const { ToolCommand } = require("../commands/ToolCommand.js");
 
 const { apiCommands } = require("../commands/api/commands.js");
@@ -31,7 +30,6 @@ async function loadCommands(excludedTypes = []) {
         [CommandTypes.MENU]: loadMenuCommands,
         [CommandTypes.PICKER]: loadPickerCommands,
         [CommandTypes.PLUGIN]: loadPluginCommands,
-        [CommandTypes.SCRIPT]: loadScriptCommands,
         [CommandTypes.TOOL]: loadToolCommands,
     };
 
