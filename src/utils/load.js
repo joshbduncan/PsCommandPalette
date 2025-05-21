@@ -128,6 +128,7 @@ async function loadMenuCommands() {
     const menusToIgnore = new Set(["Open Recent"]);
     const menuItemsToIgnore = new Set();
 
+    // TODO: patch menu names
     // some nested menu items have command names like...
     // 'Layer > New > Layer' and 'Layer > Delete > Layer' which each
     // have the command name 'Layer' making querying hard so I plan

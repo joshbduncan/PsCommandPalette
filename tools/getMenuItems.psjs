@@ -1,0 +1,36 @@
+const { app } = require("photoshop");
+const uxp = require("uxp");
+const storage = uxp.storage;
+const fs = storage.localFileSystem;
+
+/**
+ * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
+ * @returns {Promise<object>}
+ */
+const getMenuBarItems = async () => {
+    try {
+        return await app.batchPlay(
+            [
+                {
+                    _obj: "get",
+                    _target: [{ _property: "menuBarInfo" }, { _ref: "application" }],
+                },
+            ],
+            {}
+        );
+    } catch (error) {
+        console.error("Error fetching menuBarInfo:", error);
+        return null;
+    }
+};
+
+try {
+    const fname = `${uxp.host.name}_Menu_Items_${uxp.host.version}_${uxp.host.uiLocale}.json`;
+    const file = await fs.getFileForSaving(fname);
+    const data = await getMenuBarItems();
+    const jsonString = JSON.stringify(data, null, 2);
+    await file.write(jsonString);
+} catch (e) {
+    app.showAlert(e);
+    console.log(e);
+}

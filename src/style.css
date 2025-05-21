@@ -8,16 +8,30 @@
 */
 
 :root {
-    --color-base: var(--uxp-host-background-color);
-    --color-copy: var(--uxp-host-text-color);
+    --base: #2e2e2e;
+    --text: #e2e2e2;
 
-    --color-command-selected: #1373e6;
+    --selected: #378ef0;
+    --selected-text: #fff;
 
-    --color-command-hover: var(--uxp-host-widget-hover-background-color);
+    --hover: #3f3e3f;
+
+    --disabled-text: #6e6e6e;
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+    :root {
+        --base: #fafafb;
+        --text: #4b4b4b;
+
+        --hover: #eaeaea;
+
+        --disabled-text: #b3b3b3;
+    }
 }
 
 body {
-    color: var(--color-copy);
+    color: var(--text);
     padding: 0 16px;
 }
 
@@ -60,6 +74,10 @@ sp-detail#main-plugin-info {
 /* // command palette // */
 /* ///////////////////// */
 
+dialog#ps-command-palette {
+    background-color: var(--base);
+}
+
 #query {
     width: 100%;
     margin-bottom: 8px;
@@ -81,35 +99,30 @@ sp-detail#main-plugin-info {
     justify-content: flex-start;
     padding: 14px 12px;
     height: 50px;
-    color: var(--color-copy);
+    color: var(--text);
     cursor: pointer;
 }
 
 #commands-list #commands li.command[disabled] {
-    /* color: var(--uxp-label-color) !important; */
-    background-color: darkred;
+    color: var(--disabled-text);
 }
 
 #commands-list #commands li.command:hover {
-    background-color: var(--color-command-hover);
+    background-color: var(--hover);
 }
 
 #commands-list #commands li.command[disabled]:hover {
-    color: var(--uxp-label-color) !important;
-    background-color: var(--uxp-host-border-color);
+    color: var(--disabled-text);
 }
 
 #commands-list #commands li.command[selected] {
-    background-color: var(--color-command-selected);
+    background-color: var(--selected);
+    color: var(--selected-text);
 }
 
 #commands-list #commands li.command[selected][disabled]:hover {
-    background-color: #1473e6;
+    background-color: var(--selected);
 }
-
-/* #commands-list #commands li.command[selected]:hover {
-    background-color: #0e66d0;
-} */
 
 #commands-list #commands li.command .body {
     padding-right: 8px;
@@ -133,7 +146,7 @@ sp-detail#main-plugin-info {
 }
 
 #commands-list #commands li.command .body span.title strong {
-    color: rgb(255, 100, 100);
+    font-weight: bolder;
 }
 
 #commands-list #commands li.command .body kbd.shortcut {
@@ -143,12 +156,6 @@ sp-detail#main-plugin-info {
     font-weight: bold;
     color: rgba(255, 255, 255, 0.35);
     border-radius: 3px;
-}
-
-@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
-    #commands-list #commands li.command .body kbd.shortcut {
-        color: rgba(0, 0, 0, 0.35);
-    }
 }
 
 #commands-list #commands li.command span.description {
@@ -173,12 +180,6 @@ sp-detail#main-plugin-info {
     font-weight: bold;
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
-}
-
-@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
-    #commands-list #commands li.command .type-container span.type {
-        background-color: rgba(0, 0, 0, 0.25);
-    }
 }
 
 #info {
