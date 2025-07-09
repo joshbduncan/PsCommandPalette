@@ -35,33 +35,93 @@ const HISTORY = new History();
 entrypoints.setup({
     plugin: {
         create() {
-            console.log(`loading plugin ${PLUGIN_NAME} v${PLUGIN_VERSION}`);
+            console.log(`${PLUGIN_NAME} v${PLUGIN_VERSION} loaded.`);
+        },
+        destroy() {
+            return new Promise(function (resolve, reject) {
+                console.log(`${PLUGIN_NAME} v${PLUGIN_VERSION} destroyed.`);
+                resolve();
+            });
         },
     },
     panels: {
         ps_command_palette: {
             create() {
-                /////////////////////////
-                // add main panel info //
-                /////////////////////////
-                const year = new Date().getFullYear();
-                document.getElementById("main-copyright").innerHTML =
-                    `Copyright &copy; ${year} ${PLUGIN_AUTHOR}`;
+                return new Promise(function (resolve, reject) {
+                    const panel = entrypoints.getPanel("ps_command_palette");
+                    console.log(`Panel '${panel.title}' created.`);
 
-                document.getElementById("main-plugin-info").textContent =
-                    `Plugin Version v${PLUGIN_VERSION}`;
+                    const year = new Date().getFullYear();
+                    document.getElementById("main-copyright").innerHTML =
+                        `Copyright &copy; ${year} ${PLUGIN_AUTHOR}`;
 
-                ////////////////////////////////////
-                // add main panel event listeners //
-                ////////////////////////////////////
+                    document.getElementById("main-plugin-info").textContent =
+                        `Plugin Version v${PLUGIN_VERSION}`;
 
-                document
-                    .getElementById("btnOpenCommandPalette")
-                    .addEventListener("click", launchPalette);
+                    document
+                        .getElementById("btnOpenCommandPalette")
+                        .addEventListener("click", launchPalette);
+
+                    // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
+                    // TODO: updates builtin
+                    // TODO: pluginSettings builtin
+
+                    resolve();
+                });
             },
-            // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
-            // TODO: updates builtin
-            // TODO: pluginSettings builtin
+            show() {
+                return new Promise(function (resolve, reject) {
+                    const panel = entrypoints.getPanel("ps_command_palette");
+                    console.log(`Panel '${panel.title}' shown.`);
+                    resolve();
+                });
+            },
+            hide() {
+                return new Promise(function (resolve, reject) {
+                    const panel = entrypoints.getPanel("ps_command_palette");
+                    console.log(`Panel '${panel.title}' hidden.`);
+                    resolve();
+                });
+            },
+            destroy() {
+                return new Promise(function (resolve, reject) {
+                    const panel = entrypoints.getPanel("ps_command_palette");
+                    console.log(`Panel '${panel.title}' destroyed.`);
+                    resolve();
+                });
+            },
+            async invokeMenu(id) {
+                const { menuItems } = entrypoints.getPanel("ps_command_palette");
+
+                switch (id) {
+                    case "about":
+                        pluginCommands.about.callback();
+                        break;
+                    case "intro":
+                        pluginCommands.intro.callback();
+                        break;
+                    case "help":
+                        pluginCommands.help.callback();
+                        break;
+                    case "customizeStartup":
+                        app.showAlert("Not yet implemented");
+                        break;
+                    case "fuzzyMatch":
+                    case "queryLatching":
+                        menuItems.getItem(id).checked = !menuItems.getItem(id).checked;
+                        app.showAlert("Not yet implemented");
+                        break;
+                    case "reloadPlugin":
+                        pluginCommands.reload.callback();
+                        break;
+                    case "pluginData":
+                        pluginCommands.data.callback();
+                        break;
+                    case "clearHistory":
+                        pluginCommands.clearHistory.callback();
+                        break;
+                }
+            },
             menuItems: [
                 {
                     id: "about",
@@ -114,38 +174,6 @@ entrypoints.setup({
                     label: "Reload Plugin",
                 },
             ],
-            async invokeMenu(id) {
-                const { menuItems } = entrypoints.getPanel("ps_command_palette");
-
-                switch (id) {
-                    case "about":
-                        pluginCommands.about.callback();
-                        break;
-                    case "intro":
-                        pluginCommands.intro.callback();
-                        break;
-                    case "help":
-                        pluginCommands.help.callback();
-                        break;
-                    case "customizeStartup":
-                        app.showAlert("Not yet implemented");
-                        break;
-                    case "fuzzyMatch":
-                    case "queryLatching":
-                        menuItems.getItem(id).checked = !menuItems.getItem(id).checked;
-                        app.showAlert("Not yet implemented");
-                        break;
-                    case "reloadPlugin":
-                        pluginCommands.reload.callback();
-                        break;
-                    case "pluginData":
-                        pluginCommands.data.callback();
-                        break;
-                    case "clearHistory":
-                        pluginCommands.clearHistory.callback();
-                        break;
-                }
-            },
         },
     },
     commands: {

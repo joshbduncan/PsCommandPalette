@@ -120,8 +120,13 @@ dialog#ps-command-palette {
     color: var(--selected-text);
 }
 
+#commands-list #commands li.command[selected][disabled] {
+    color: var(--disabled-text);
+}
+
 #commands-list #commands li.command[selected][disabled]:hover {
     background-color: var(--selected);
+    color: var(--disabled-text);
 }
 
 #commands-list #commands li.command .body {
