@@ -33,8 +33,9 @@ class MenuCommand extends Command {
         const id = `ps_menu_${command}`;
         const description = path.join(" > ");
         const commandName = name || cleanTitle(title.replace(/\.\.\.$/g, ""));
+        const queryString = [...path.slice(0, -1), commandName].join(" ");
 
-        super(id, commandName, CommandTypes.MENU, description, enabled);
+        super(id, commandName, CommandTypes.MENU, description, enabled, queryString);
 
         this.commandID = command;
         this.visible = visible;

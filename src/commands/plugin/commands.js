@@ -10,9 +10,12 @@ const { createBookmarkEntry } = require("../BookmarkCommand.js");
 
 const pluginCommands = {};
 
-const about = () => {
-    const year = new Date().getFullYear();
-    const aboutString = `${PLUGIN_NAME}
+pluginCommands.about = {
+    name: "About Ps Command Palette",
+    description: "Learn about Ps Command Palette.",
+    callback: () => {
+        const year = new Date().getFullYear();
+        const aboutString = `${PLUGIN_NAME}
 Plugin for Photoshop
 
 Version: ${PLUGIN_VERSION}
@@ -20,36 +23,27 @@ Version: ${PLUGIN_VERSION}
 Developed by Josh Duncan
 
 © ${year} Josh Duncan`;
-    app.showAlert(aboutString);
-};
-
-pluginCommands.about = {
-    name: "About Ps Command Palette",
-    description: "Learn about Ps Command Palette.",
-    callback: about,
-};
-
-const intro = () => {
-    app.showAlert("Not yet implemented");
+        app.showAlert(aboutString);
+    },
 };
 
 pluginCommands.intro = {
     name: "Ps Command Palette Plugin Introduction...",
     description: "How to use the Ps Command Plugin.",
-    callback: intro,
-};
-
-const _help = async () => {
-    await shell.openExternal(
-        "https://github.com/joshbduncan/PsCommandPalette/blob/main/README.md",
-        "Ps Command Palette Online Documentation"
-    );
+    callback: () => {
+        app.showAlert("Not yet implemented");
+    },
 };
 
 pluginCommands.help = {
     name: "Plugin Help",
     description: "Ps Command Palette online help documentation.",
-    callback: _help,
+    callback: async () => {
+        await shell.openExternal(
+            "https://github.com/joshbduncan/PsCommandPalette/",
+            "Ps Command Palette Online Documentation"
+        );
+    },
 };
 
 pluginCommands.reload = {
@@ -149,7 +143,4 @@ pluginCommands.loadFolderBookmark = {
 
 module.exports = {
     pluginCommands,
-    about,
-    _help,
-    intro,
 };

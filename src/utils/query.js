@@ -2,85 +2,98 @@ const { sortCommandsByOccurrence } = require("./commands");
 
 /**
  * @typedef {Object} CommandFilter
- * @property {string[]} types - Command types to filter for
- * @property {boolean} disabled - Should disabled commands be included (defaults to false)
- * @property {boolean} hidden - Should user hidden commands be included (defaults to false)
+ * @property {string[]} types - Command types to filter for.
+ * @property {boolean} disabled - Whether disabled commands should be included. Defaults to false.
+ * @property {boolean} hidden - Whether user-hidden commands should be included. Defaults to false.
  */
 
 /**
- * Filter commands by query.
- * @param {string} query - Query string
- * @param {Command[]} commands - Commands to filter
- * @param {CommandFilter} filters - Command filter options
- * @returns {Command[]}
+ * Filters commands based on query and filters.
+ * @param {string} query - Query string to filter against.
+ * @param {Command[]} commands - Commands to filter.
+ * @param {CommandFilter} filters - Filter options.
+ * @returns {Command[]} Filtered and sorted commands.
  */
 function filterCommandsByQuery(query, commands, filters = {}) {
     /**
-     * Fuzzy match commands against a search `query`.
-     * @param {Command} command - Command to match against
-     * @param {string} query - Search query string
-     * @returns {boolean}
+     * Determines if a command matches a fuzzy query.
+     * @param {Command} command - Command to test.
+     * @param {string} query - Query string to match.
+     * @returns {boolean} Whether the command matches the query.
      */
     function fuzzyMatch(command, query) {
         const cleanQuery = query.replace(/\s/g, "").toLowerCase();
-        const tokens = command.name.split("");
+        const tokens = command.queryString.split("");
         let pos = 0;
 
-        const highlightedTokens = tokens.map((token) => {
-            if (pos < cleanQuery.length && token.toLowerCase() === cleanQuery[pos]) {
+        // old code that highlighted matching tokens in the command name
+        // since commands are now matched on their queryString they command name
+        // and query string may no longer match leading to errors
+
+        // const highlightedTokens = tokens.map((token) => {
+        //     if (pos < cleanQuery.length && token.toLowerCase() === cleanQuery[pos]) {
+        //         pos++;
+        //         return `<strong>${token}</strong>`;
+        //     }
+        //     return token;
+        // });
+
+        // if (pos < cleanQuery.length) return false; // No full match, exit early
+
+        // command.addQueryHighlights(highlightedTokens.join(""));
+        // return true;
+
+        for (let i = 0; i < tokens.length && pos < cleanQuery.length; i++) {
+            if (tokens[i].toLowerCase() === cleanQuery[pos]) {
                 pos++;
-                return `<strong>${token}</strong>`;
             }
-            return token;
-        });
+        }
 
-        if (pos < cleanQuery.length) return false; // No full match, exit early
-
-        command.addQueryHighlights(highlightedTokens.join(""));
-        return true;
+        return pos === cleanQuery.length;
     }
 
     /**
-     * Creates a sorting function that sorts commands by the number of matching chunks in their name.
-     * Matches closer to the start of the name are given higher weight, with an extra boost for exact prefix matches.
-     * @param {string} query - Search query used for comparison
-     * @returns {(a: { name: string }, b: { name: string }) => number} Sorting function
+     * Returns a scoring function to sort commands by relevance. Matches closer to the start of the name are given higher weight, with an extra boost for exact prefix matches.
+     * @param {string} query - Query used to score matches.
+     * @returns {(a: { name: string }, b: { name: string }) => number} Scoring comparator.
      */
     function scoreMatches(query) {
         const queryChunks = query.toLowerCase().split(/\s+/); // split query into an array
 
         /**
-         * Counts matches between the query chunks and name chunks.
-         * Matches earlier in the name are given higher weight.
-         * @param {string} name - Command name to check against
-         * @returns {number} Weighted match count
+         * Counts weighted matches between a query and command string. Matches earlier in the name are given higher weight.
+         * @param {string} queryString - Command query string.
+         * @returns {number} Weighted match score.
          */
-        const countMatches = (name) => {
-            const nameChunks = name.toLowerCase().split(/\s+/);
+        const countMatches = (queryString) => {
+            const commandQueryStringChunks = queryString.toLowerCase().split(/\s+/);
 
             return queryChunks.reduce((count, queryChunk) => {
                 return (
                     count +
-                    nameChunks.reduce((total, nameChunk, index) => {
-                        if (nameChunk.includes(queryChunk)) {
-                            let weight = 1 / (index + 1); // base weight: earlier chunks matter more
-                            if (nameChunk.startsWith(queryChunk)) {
-                                weight += 1; // extra boost for exact prefix matches
+                    commandQueryStringChunks.reduce(
+                        (total, commandQueryStringChunk, index) => {
+                            if (commandQueryStringChunk.includes(queryChunk)) {
+                                let weight = 1 / (index + 1); // base weight: earlier chunks matter more
+                                if (commandQueryStringChunk.startsWith(queryChunk)) {
+                                    weight += 1; // extra boost for exact prefix matches
+                                }
+                                if (commandQueryStringChunk == queryChunk) {
+                                    weight += 2; // extra boost for exact chunk/word matches
+                                }
+                                total += weight;
                             }
-                            if (nameChunk == queryChunk) {
-                                weight += 2; // extra boost for exact chunk/word matches
-                            }
-                            total += weight;
-                        }
-                        return total;
-                    }, 0)
+                            return total;
+                        },
+                        0
+                    )
                 );
             }, 0);
         };
 
         const scoreMatch = (command) => {
             // calculate base score for query chunk matches
-            let score = countMatches(command.name);
+            let score = countMatches(command.queryString);
 
             // boost for exact match
             score += command.name.toLowerCase() == query.toLowerCase() ? 5 : 0;
@@ -101,12 +114,11 @@ function filterCommandsByQuery(query, commands, filters = {}) {
         };
 
         /**
-         * Comparison function for sorting commands for the palette.
-         * @param {{ name: - string }} a First command to compare
-         * @param {{ name: - string }} b Second command to compare
-         * @returns {number} Negative if `a` should be before `b`, positive if `b` should be before `a`.
+         * Comparator function to sort commands by match score.
+         * @param {{ name: string }} a - First command to compare.
+         * @param {{ name: string }} b - Second command to compare.
+         * @returns {number} Sorting value.
          */
-
         return (a, b) => scoreMatch(b) - scoreMatch(a); // sort descending
     }
 
@@ -140,16 +152,16 @@ function filterCommandsByQuery(query, commands, filters = {}) {
     } else {
         // TODO: sort by most used or most recent
         matches = sortCommandsByOccurrence(matches);
-        matches.forEach((cmd) => cmd.removeQueryHighlights());
+        // matches.forEach((cmd) => cmd.removeQueryHighlights());
     }
 
     return matches;
 }
 
 /**
- * Get enabled commands.
- * @param {Command[]} commands - Commands to filter
- * @returns {Command[]}
+ * Returns only enabled commands.
+ * @param {Command[]} commands - Commands to filter.
+ * @returns {Command[]} Enabled commands.
  */
 function enabledCommands(commands) {
     return commands.filter((command) => {
@@ -158,9 +170,9 @@ function enabledCommands(commands) {
 }
 
 /**
- * Get disabled commands.
- * @param {Command[]} commands - Commands to filter
- * @returns {Command[]}
+ * Returns only disabled commands.
+ * @param {Command[]} commands - Commands to filter.
+ * @returns {Command[]} Disabled commands.
  */
 function disabledCommands(commands) {
     return commands.filter((command) => {
@@ -169,10 +181,10 @@ function disabledCommands(commands) {
 }
 
 /**
- * Commands with the type of `type`
- * @param {Command[]} commands - Commands to filter
- * @param {string} type - Command type to match
- * @returns {Command[]}
+ * Returns commands that match a specific type.
+ * @param {Command[]} commands - Commands to filter.
+ * @param {string} type - Command type to match.
+ * @returns {Command[]} Filtered commands of the specified type.
  */
 function commandsByType(commands, type) {
     return commands.filter((command) => {
@@ -181,10 +193,10 @@ function commandsByType(commands, type) {
 }
 
 /**
- * Command with a type included in `types`.
- * @param {Command[]} commands - Commands to filter
- * @param {string[]} types - Command types to match
- * @returns {Command[]}
+ * Returns commands with a type included in the `types` array.
+ * @param {Command[]} commands - Commands to filter.
+ * @param {string[]} types - Command types to match.
+ * @returns {Command[]} Filtered commands.
  */
 function commandsByTypes(commands, types) {
     const result = [];
@@ -195,20 +207,20 @@ function commandsByTypes(commands, types) {
 }
 
 /**
- * Lookup a command by id.
- * @param {Command[]} commands - Commands to filter
- * @param {string|number} id - ID of the command to lookup
- * @returns {Command}
+ * Finds a command by ID.
+ * @param {Command[]} commands - Commands to filter.
+ * @param {string|number} id - ID of the command to find.
+ * @returns {Command[]} Matching command(s).
  */
 function filterById(commands, id) {
     return commands.filter((command) => command.id === id);
 }
 
 /**
- * Lookup a command by id.
- * @param {Command[]} commands - Commands to filter
- * @param {string|number} commandID - IDs of the commands to lookup
- * @returns {Command}
+ * Finds commands by a list of IDs.
+ * @param {Command[]} commands - Commands to filter.
+ * @param {string[]|number[]} ids - IDs of the commands to find.
+ * @returns {Command[]} Matching commands.
  */
 function filterByIds(commands, ids) {
     return commands.filter((command) => ids.includes(command.id));

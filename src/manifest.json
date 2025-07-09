@@ -16,10 +16,51 @@
     },
     "entrypoints": [
         {
+            "type": "panel",
+            "id": "ps_command_palette",
+            "label": {
+                "default": "Ps Command Palette"
+            },
+            "minimumSize": {
+                "width": 250,
+                "height": 400
+            },
+            "maximumSize": {
+                "width": 2000,
+                "height": 2000
+            },
+            "preferredDockedSize": {
+                "width": 250,
+                "height": 400
+            },
+            "preferredFloatingSize": {
+                "width": 250,
+                "height": 400
+            },
+            "icons": [
+                {
+                    "width": 23,
+                    "height": 23,
+                    "path": "icons/icon_D.png",
+                    "scale": [1, 2],
+                    "theme": ["dark", "darkest"],
+                    "species": ["generic"]
+                },
+                {
+                    "width": 23,
+                    "height": 23,
+                    "path": "icons/icon_N.png",
+                    "scale": [1, 2],
+                    "theme": ["lightest", "light"],
+                    "species": ["generic"]
+                }
+            ]
+        },
+        {
             "type": "command",
             "id": "launchPalette",
             "label": {
-                "default": "Ps Command Palette"
+                "default": "Launch Ps Command Palette"
             }
         }
     ],

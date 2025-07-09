@@ -1,3 +1,4 @@
+const { app } = require("photoshop");
 const { storage } = require("uxp");
 const fs = storage.localFileSystem;
 

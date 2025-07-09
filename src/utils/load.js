@@ -1,3 +1,5 @@
+const { app } = require("photoshop");
+
 const { ActionCommand } = require("../commands/ActionCommand.js");
 const { APICommand } = require("../commands/APICommand.js");
 const {
@@ -84,12 +86,7 @@ async function loadActionCommands() {
     for (const set of actionTree) {
         const parentName = set.name; // cache repeated property access
         for (const action of set.actions) {
-            actions[index++] = new ActionCommand(
-                `ps_action_${parentName}_${action.name}_${action.id}`,
-                action.name,
-                `Action Set: ${parentName}`,
-                action.play
-            );
+            actions[index++] = new ActionCommand(action);
         }
     }
     return actions;

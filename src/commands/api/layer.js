@@ -1,4 +1,4 @@
-const { app, core, constants } = require("photoshop");
+const { app, core } = require("photoshop");
 
 const _layer = {};
 

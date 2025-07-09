@@ -1,3 +1,5 @@
+const { app } = require("photoshop");
+
 const { Command } = require("./Command.js");
 const { CommandTypes } = require("../types.js");
 

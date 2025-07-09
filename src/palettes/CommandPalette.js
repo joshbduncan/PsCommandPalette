@@ -174,7 +174,7 @@ class CommandPalette {
 
         let matches = [];
         if (query === "") {
-            this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights());
+            // this.startupCommands.forEach((cmd) => cmd.removeQueryHighlights());
             matches = this.startupCommands;
             this.scrollThroughHistory = true;
         } else {

@@ -22,7 +22,7 @@ class PickerCommand extends Command {
     }
 
     /**
-     * Perform menu command.
+     * Perform picker command.
      * @returns {Promise<void>}
      */
     async execute() {

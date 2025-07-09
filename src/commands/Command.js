@@ -10,8 +10,9 @@ class Command {
      * @param {string} type - Command type
      * @param {string} description - Command description displayed below command
      * @param {boolean} enabled - Is command enabled for use (defaults to true)
+     * @param {string|null} queryString - String to be queried against. Defaults to `name`.
      */
-    constructor(id, name, type, description = "", enabled = true) {
+    constructor(id, name, type, description = "", enabled = true, queryString = null) {
         if (!id || !name || !type) {
             throw new Error("Command requires a valid ID, name, and type.");
         }
@@ -21,6 +22,9 @@ class Command {
         this.type = type;
         this.description = description;
         this.enabled = enabled;
+        this.queryString = queryString ? queryString : name;
+
+        console.debug(this.name);
     }
 
     get element() {

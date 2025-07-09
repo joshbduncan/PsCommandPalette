@@ -8,16 +8,18 @@ const { CommandTypes } = require("../types.js");
  */
 class ActionCommand extends Command {
     /**
-     * @param {string} id - Action command id
-     * @param {string} name - Action name
-     * @param {string} description Action description
-     * @param {function} playFunc Action play function
+     * @param {Action} action - Action command id
      */
-    constructor(id, name, description, playFunction) {
+    constructor(action) {
+        const id = `ps_action_${action.parent.id}_${action.id}_${action.name.replace(/\s/g, "_")}`;
+        const description = `${action.parent.name} > ${action.name}`;
+        const commandName = action.name;
+        const queryString = `${action.parent.name} ${action.name}`;
+
         // TODO: not sure about using _id/id in command id since index can change
         // TODO: implement action shortcut key?
-        super(id, name, CommandTypes.ACTION, description);
-        this.play = playFunction;
+        super(id, commandName, CommandTypes.ACTION, description, true, queryString);
+        this.play = action.play;
     }
 
     /**
