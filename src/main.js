@@ -53,12 +53,10 @@ globalThis.invalidateHistoryData = () => {
 async function loadUserDataIfNeeded() {
     try {
         if (USER_NEEDS_RELOAD) {
-            console.log("Reloading user data...");
             await USER.reload();
             USER_NEEDS_RELOAD = false;
         }
         if (HISTORY_NEEDS_RELOAD) {
-            console.log("Reloading history data...");
             await HISTORY.reload();
             HISTORY_NEEDS_RELOAD = false;
         }
