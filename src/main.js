@@ -42,12 +42,12 @@ let HISTORY_NEEDS_RELOAD = true; // Force initial load
 /////////////////////////
 globalThis.invalidateUserData = () => {
     USER_NEEDS_RELOAD = true;
-    console.log("User data invalidated - will reload on next access");
+    console.log("User data invalidated - will reload on next access.");
 };
 
 globalThis.invalidateHistoryData = () => {
     HISTORY_NEEDS_RELOAD = true;
-    console.log("History data invalidated - will reload on next access");
+    console.log("History data invalidated - will reload on next access.");
 };
 
 async function loadUserDataIfNeeded() {
@@ -292,7 +292,7 @@ async function launchPalette() {
         });
 
     const result = await palette.show();
-    console.log("modal result:", result);
+    console.log("Ps Command Palette Result:", result);
 
     if (result === "reasonCanceled" || !result) return;
 

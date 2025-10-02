@@ -51,7 +51,7 @@ pluginCommands.reload = {
     description: "Reload plugin data.",
     callback: async () => {
         try {
-            console.log("reloading plugin");
+            console.log(`Reloading ${PLUGIN_NAME} v${PLUGIN_VERSION}...`);
             await USER.reload();
             await HISTORY.reload();
             app.showAlert("Plugin reloaded");
@@ -78,7 +78,6 @@ pluginCommands.clearHistory = {
     name: "Clear Plugin History",
     description: "Clear your command history.",
     callback: async () => {
-        console.log("clearing user history");
         // TODO: prompt to ensure
         await HISTORY.clear();
     },

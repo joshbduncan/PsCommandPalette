@@ -49,7 +49,7 @@ async function loadCommands(excludedTypes = []) {
         //     Object.hasOwn(USER.data, "disabledCommandTypes") &&
         //     USER.data.disabledCommandTypes.includes(key)
         // ) {
-        //     console.log(`skipping command type ${key}`);
+        //     console.log(`Skipping Command Type: ${key}`);
         //     continue;
         // }
         try {
@@ -57,12 +57,12 @@ async function loadCommands(excludedTypes = []) {
             if (!func) return { type, commands: [], time: 0 };
 
             const typeStart = performance.now();
-            console.log(`loading ${type} commands`);
+            console.log(`Loading ${type} commands...`);
             const commands = await func();
             const typeEnd = performance.now();
 
             console.log(
-                `${type}: ${commands.length} commands in ${(typeEnd - typeStart).toFixed(1)}ms`
+                `${type}: ${commands.length} commands in ${(typeEnd - typeStart).toFixed(1)}ms.`
             );
             return { type, commands, time: typeEnd - typeStart };
         } catch (error) {
@@ -82,7 +82,7 @@ async function loadCommands(excludedTypes = []) {
     const end = performance.now();
     console.groupEnd();
     console.log(
-        `${commands.length} total commands loaded in ${(end - start).toFixed(1)}ms`
+        `${commands.length} total commands loaded in ${(end - start).toFixed(1)}ms.`
     );
 
     return commands;

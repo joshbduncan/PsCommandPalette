@@ -23,7 +23,7 @@ class History {
      * Load the user history file.
      */
     async load() {
-        console.log("loading user history");
+        console.log("Loading user history...");
         try {
             const dataFolder = await fs.getDataFolder();
             this.file = await dataFolder.getEntry(this.fileName);
@@ -123,7 +123,7 @@ class History {
         if (this.data == {} || this.data === null) {
             return;
         }
-        console.log("writing user history");
+        console.log("Writing user history");
         try {
             const dataFolder = await fs.getDataFolder();
             if (!this.file) {
@@ -163,7 +163,7 @@ class History {
             const backupName = `${f.name}.bak`;
 
             await dataFolder.renameEntry(f, backupName, { overwrite: true });
-            console.log(`backing up user history file to ${f.nativePath}`);
+            console.log(`Backing up user history file to ${f.nativePath}.`);
 
             return f;
         } catch (error) {
@@ -194,7 +194,7 @@ class History {
         this.data = [];
         await this.write();
         await this.reload();
-        app.showAlert("History cleared");
+        app.showAlert("History cleared!");
     }
 }
 

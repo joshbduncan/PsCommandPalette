@@ -62,7 +62,7 @@ class PickerCommand extends Command {
 
             const picker = new CommandPalette(pickerCommands);
             const result = await picker.show();
-            console.log(`picker result ${JSON.stringify(result, null, 2)}`);
+            console.log(`Picker Result: ${JSON.stringify(result, null, 2)}`);
 
             if (result === "reasonCanceled" || !result) return;
 
