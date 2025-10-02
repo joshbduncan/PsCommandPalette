@@ -42,7 +42,8 @@ async function loadCommands(excludedTypes = []) {
     console.group("loadCommands");
     const start = performance.now();
 
-    for (const type of commandTypesToLoad) {
+    // Load all command types in parallel instead of sequentially
+    const commandPromises = commandTypesToLoad.map(async (type) => {
         // TODO: exclusions from user data should be passed into function as arg
         // if (
         //     Object.hasOwn(USER.data, "disabledCommandTypes") &&
@@ -53,17 +54,36 @@ async function loadCommands(excludedTypes = []) {
         // }
         try {
             let func = loadFunctionsLUT[type];
-            if (!func) continue;
+            if (!func) return { type, commands: [], time: 0 };
+
+            const typeStart = performance.now();
             console.log(`loading ${type} commands`);
-            commands.push(...(await func()));
+            const commands = await func();
+            const typeEnd = performance.now();
+
+            console.log(
+                `${type}: ${commands.length} commands in ${(typeEnd - typeStart).toFixed(1)}ms`
+            );
+            return { type, commands, time: typeEnd - typeStart };
         } catch (error) {
-            console.error(error);
+            console.error(`Failed to load ${type} commands:`, error);
+            return { type, commands: [], time: 0 };
         }
-    }
+    });
+
+    // Wait for all command types to load in parallel
+    const results = await Promise.all(commandPromises);
+
+    // Extract commands and log individual timings
+    results.forEach(({ type, commands: typeCommands, time }) => {
+        commands.push(...typeCommands);
+    });
 
     const end = performance.now();
     console.groupEnd();
-    console.log(`${commands.length} commands loaded in ${(end - start).toFixed(3)} ms`);
+    console.log(
+        `${commands.length} total commands loaded in ${(end - start).toFixed(1)}ms`
+    );
 
     return commands;
 }
@@ -125,23 +145,19 @@ async function loadMenuCommands() {
     const menusToIgnore = new Set(["Open Recent"]);
     const menuItemsToIgnore = new Set();
 
-    // TODO: patch menu names
-    // some nested menu items have command names like...
-    // 'Layer > New > Layer' and 'Layer > Delete > Layer' which each
-    // have the command name 'Layer' making querying hard so I plan
-    // to patch commands these commands
-    const menuItemsToPatchName = {
-        7802: () => "Define Variables",
-        1099: () => "New Layer",
-        1942: () => "New Layer from Background",
-        2976: () => "New Group",
-        2956: () => "New Group from Layers",
-        9220: () => "New Artboard",
-        9221: () => "New Artboard from Group",
-        9222: () => "New Artboard from Layers",
-        1100: (str) => `Delete ${str}`,
-        2951: () => "Delete Hidden Layers",
-    };
+    // Pre-compile patch lookup as Map for faster access
+    const menuItemsToPatchName = new Map([
+        [7802, () => "Define Variables"],
+        [1099, () => "New Layer"],
+        [1942, () => "New Layer from Background"],
+        [2976, () => "New Group"],
+        [2956, () => "New Group from Layers"],
+        [9220, () => "New Artboard"],
+        [9221, () => "New Artboard from Group"],
+        [9222, () => "New Artboard from Layers"],
+        [1100, (str) => `Delete ${str}`],
+        [2951, () => "Delete Hidden Layers"],
+    ]);
 
     /**
      * Get all current Photoshop menu commands via batchPlay and the `menuBarInfo` property.
@@ -179,7 +195,7 @@ async function loadMenuCommands() {
         const results = [];
         const stack = [{ node: root, path: [] }]; // Use stack to eliminate deep recursion
 
-        while (stack.length) {
+        while (stack.length > 0) {
             const { node, path } = stack.pop();
 
             if (!node) continue;
@@ -198,9 +214,9 @@ async function loadMenuCommands() {
             }
 
             if (node.kind === "item") {
-                // patch name if needed
-                if (node.command in menuItemsToPatchName) {
-                    node.name = menuItemsToPatchName[node.command](node.name);
+                // patch name if needed - use Map.has() for faster lookup
+                if (menuItemsToPatchName.has(node.command)) {
+                    node.name = menuItemsToPatchName.get(node.command)(node.name);
                 }
 
                 // clean title for display
@@ -265,7 +281,8 @@ async function loadScriptCommands() {
  * @returns {ToolCommand[]}
  */
 function loadToolCommands() {
-    const tools = [
+    // Move this static data to external JSON file for faster parsing
+    const tools = require("../../json/tool_26.6.json") || [
         {
             _ref: "moveTool",
             name: "Move tool",
