@@ -137,6 +137,11 @@ class History {
             this.buildQueryLatches();
             this.buildRecencyLUT();
             this.buildOccurrencesLUT();
+
+            // Invalidate cached data
+            if (typeof globalThis !== "undefined" && globalThis.invalidateHistoryData) {
+                globalThis.invalidateHistoryData();
+            }
         } catch (error) {
             console.error(error);
             app.showAlert(

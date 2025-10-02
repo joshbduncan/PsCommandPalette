@@ -31,11 +31,53 @@ const HOST_OS = os.platform();
 const USER = new User();
 const HISTORY = new History();
 
+/////////////////////////
+// data invalidation flags
+/////////////////////////
+let USER_NEEDS_RELOAD = true; // Force initial load
+let HISTORY_NEEDS_RELOAD = true; // Force initial load
+
+/////////////////////////
+// data invalidation callbacks
+/////////////////////////
+globalThis.invalidateUserData = () => {
+    USER_NEEDS_RELOAD = true;
+    console.log("User data invalidated - will reload on next access");
+};
+
+globalThis.invalidateHistoryData = () => {
+    HISTORY_NEEDS_RELOAD = true;
+    console.log("History data invalidated - will reload on next access");
+};
+
+async function loadUserDataIfNeeded() {
+    try {
+        if (USER_NEEDS_RELOAD) {
+            console.log("Reloading user data...");
+            await USER.reload();
+            USER_NEEDS_RELOAD = false;
+        }
+        if (HISTORY_NEEDS_RELOAD) {
+            console.log("Reloading history data...");
+            await HISTORY.reload();
+            HISTORY_NEEDS_RELOAD = false;
+        }
+    } catch (error) {
+        console.warn("Failed to load user data:", error);
+        // Reset flags on error to retry next time
+        USER_NEEDS_RELOAD = true;
+        HISTORY_NEEDS_RELOAD = true;
+    }
+}
+
 // TODO: localize menus here and in manifest - https://developer.adobe.com/photoshop/uxp/2022/guides/uxp_guide/uxp-misc/manifest-v4/#menu-localization
 entrypoints.setup({
     plugin: {
-        create() {
+        async create() {
             console.log(`${PLUGIN_NAME} v${PLUGIN_VERSION} loaded.`);
+            // Pre-load user data on plugin startup for faster palette launch
+            await loadUserDataIfNeeded();
+            console.log("Plugin initialization complete");
         },
         destroy() {
             return new Promise(function (resolve, reject) {
@@ -61,6 +103,14 @@ entrypoints.setup({
                     document
                         .getElementById("btnOpenCommandPalette")
                         .addEventListener("click", launchPalette);
+
+                    // Add keyboard shortcut for faster access (Cmd/Ctrl + K)
+                    document.addEventListener("keydown", (event) => {
+                        if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+                            event.preventDefault();
+                            launchPalette();
+                        }
+                    });
 
                     // TODO: add settings as menu items - https://www.youtube.com/watch?v=v-x1ZrOtlzQ&list=PLRR5kmVeh43alNtSKHUlmbBjLqezgwzPJ&index=12
                     // TODO: updates builtin
@@ -186,20 +236,29 @@ entrypoints.setup({
 /////////////////////
 
 async function launchPalette() {
-    await USER.reload();
-    await HISTORY.reload();
+    // Load user data only if invalidated since last access
+    await loadUserDataIfNeeded();
 
     // Show modal immediately with empty commands first, then load in background
     const palette = new CommandPalette([], []);
 
+    // Show loading indicator immediately
+    setTimeout(() => {
+        const info = document.getElementById("info");
+        if (info) {
+            info.textContent = "Loading commands...";
+        }
+    }, 0);
+
+    // Pre-calculate startup command IDs to avoid recalculation
+    const startupCommandIDs =
+        USER.data.startupCommands.length > 0
+            ? USER.data.startupCommands
+            : HISTORY.commandIDs;
+
     // Start loading commands in background immediately
     loadCommands()
         .then((commands) => {
-            // TODO: let user specify custom commands, or use most used or most recent
-            const startupCommandIDs =
-                USER.data.startupCommands.length > 0
-                    ? USER.data.startupCommands
-                    : HISTORY.commandIDs;
             const startupCommands = sortCommandsByOccurrence(
                 filterByIds(commands, startupCommandIDs)
             );
@@ -210,16 +269,19 @@ async function launchPalette() {
             const querybox = document.getElementById("query");
             if (querybox && querybox.value.trim() === "") {
                 const listbox = document.getElementById("commands");
-                listbox.innerHTML = "";
-                startupCommands.forEach((command) => {
-                    if (!command.element) {
-                        command.createElement();
-                    }
-                    listbox.appendChild(command.element);
-                });
-                document.getElementById("info").textContent =
-                    `${startupCommands.length} matching command(s)`;
-                palette.resetCommandSelection();
+                const info = document.getElementById("info");
+
+                if (listbox && info) {
+                    listbox.innerHTML = "";
+                    startupCommands.forEach((command) => {
+                        if (!command.element) {
+                            command.createElement();
+                        }
+                        listbox.appendChild(command.element);
+                    });
+                    info.textContent = `${startupCommands.length} matching command(s)`;
+                    palette.resetCommandSelection();
+                }
             }
         })
         .catch((error) => {
@@ -242,11 +304,10 @@ async function launchPalette() {
         return;
     }
 
-    // to allow for external user data file editing, don't write
-    // user data when "Reload Plugin Data" command is executed
+    // Add to history for all commands except plugin reload
+    // USER.write() is now called manually by specific commands that need it
     if (command.id !== "ps_plugin_reload") {
         HISTORY.add(query, command.id);
-        USER.write();
     }
 
     try {

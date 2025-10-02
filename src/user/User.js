@@ -92,6 +92,11 @@ class User {
             console.log(this.data);
             this.data.timestamp = Date.now();
             await this.file.write(JSON.stringify(this.data), { append: false });
+
+            // Invalidate cached data
+            if (typeof globalThis !== "undefined" && globalThis.invalidateUserData) {
+                globalThis.invalidateUserData();
+            }
         } catch (error) {
             console.error(error);
             app.showAlert(
