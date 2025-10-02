@@ -180,6 +180,9 @@ class CommandPalette {
         } else {
             const filters = {};
 
+            // TODO: should disabled commands be included in the results
+            filters.disabled = true;
+
             // extract **FIRST** command type hashtag
             const hashtagTypeRegex = /#(\w+)/;
             const match = query.match(hashtagTypeRegex);
