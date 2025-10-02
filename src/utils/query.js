@@ -77,54 +77,61 @@ function filterCommandsByQuery(query, commands, filters = {}) {
             const lowerCommandString = queryString.toLowerCase();
             const commandQueryStringChunks = lowerCommandString.split(/\s+/);
 
-            return queryChunks.reduce((count, queryChunk) => {
-                return (
-                    count +
-                    commandQueryStringChunks.reduce(
-                        (total, commandQueryStringChunk, index) => {
-                            if (commandQueryStringChunk.includes(queryChunk)) {
-                                let weight = 1 / (index + 1); // base weight: earlier chunks matter more
-                                if (commandQueryStringChunk.startsWith(queryChunk)) {
-                                    weight += SCORING.PREFIX_BOOST; // extra boost for exact prefix matches
-                                }
-                                if (commandQueryStringChunk === queryChunk) {
-                                    weight += SCORING.EXACT_WORD_BOOST; // extra boost for exact chunk/word matches
-                                }
-                                total += weight;
-                            }
-                            return total;
-                        },
-                        0
-                    )
-                );
-            }, 0);
+            let totalScore = 0;
+
+            for (const queryChunk of queryChunks) {
+                for (let index = 0; index < commandQueryStringChunks.length; index++) {
+                    const commandQueryStringChunk = commandQueryStringChunks[index];
+
+                    if (commandQueryStringChunk.includes(queryChunk)) {
+                        let weight = 1 / (index + 1); // base weight: earlier chunks matter more
+
+                        if (commandQueryStringChunk.startsWith(queryChunk)) {
+                            weight += SCORING.PREFIX_BOOST; // extra boost for exact prefix matches
+                        }
+
+                        if (commandQueryStringChunk === queryChunk) {
+                            weight += SCORING.EXACT_WORD_BOOST; // extra boost for exact chunk/word matches
+                        }
+
+                        totalScore += weight;
+                    }
+                }
+            }
+
+            return totalScore;
         };
+
+        // Pre-calculate expensive values once
+        const historySize = HISTORY.recencyLUT?.size || 1;
+        const latchedCommandId = HISTORY.latches?.[query];
+        const occurrencesLUT = HISTORY.occurrencesLUT || {};
+        const recencyLUT = HISTORY.recencyLUT || new Map();
 
         const scoreMatch = (command) => {
             // calculate base score for query chunk matches
             let score = countMatches(command.queryString);
 
-            // boost for exact match
-            score +=
-                command.name.toLowerCase() === lowerQuery
-                    ? SCORING.EXACT_NAME_BOOST
-                    : 0;
+            // boost for exact match (use cached lowerQuery)
+            if (command.name.toLowerCase() === lowerQuery) {
+                score += SCORING.EXACT_NAME_BOOST;
+            }
 
-            // boost for latched query
-            score +=
-                HISTORY.latches?.[query] === command.id
-                    ? SCORING.LATCHED_QUERY_BOOST
-                    : 0;
+            // boost for latched query (use cached latchedCommandId)
+            if (latchedCommandId === command.id) {
+                score += SCORING.LATCHED_QUERY_BOOST;
+            }
 
-            // boost for recent command
-            score +=
-                (HISTORY.recencyLUT?.get(command.id) ?? 0) /
-                (HISTORY.recencyLUT?.size || 1);
+            // boost for recent command (use cached recencyLUT and historySize)
+            const recencyScore = recencyLUT.get(command.id);
+            if (recencyScore) {
+                score += recencyScore / historySize;
+            }
 
-            // boost for often used command
-            score += HISTORY.occurrencesLUT?.[command.id]
-                ? SCORING.FREQUENT_COMMAND_BOOST
-                : 0;
+            // boost for often used command (use cached occurrencesLUT)
+            if (occurrencesLUT[command.id]) {
+                score += SCORING.FREQUENT_COMMAND_BOOST;
+            }
 
             return score;
         };
@@ -138,27 +145,32 @@ function filterCommandsByQuery(query, commands, filters = {}) {
         return (a, b) => scoreMatch(b) - scoreMatch(a); // sort descending
     }
 
-    let matches = commands;
+    // Combine all filters in a single pass for better performance
+    const typeSet =
+        filters.types && filters.types.length > 0 ? new Set(filters.types) : null;
+    const hiddenCommands =
+        !filters.hidden && USER.data?.hiddenCommands
+            ? new Set(USER.data.hiddenCommands)
+            : null;
 
-    // filter by types first
-    if (filters.types && filters.types.length > 0) {
-        matches = commandsByTypes(commands, filters.types);
-    }
+    let matches = commands.filter((command) => {
+        // Type filter
+        if (typeSet && !typeSet.has(command.type)) {
+            return false;
+        }
 
-    //  TODO: determine how to handle disabled commands
-    // filter disabled commands
-    // if (!filters.disabled) {
-    //     matches = matches.filter((command) => {
-    //         return command.enabled;
-    //     });
-    // }
+        // Hidden commands filter
+        if (hiddenCommands && hiddenCommands.has(command.id)) {
+            return false;
+        }
 
-    // filter hidden commands
-    if (!filters.hidden && Object.hasOwn(USER.data, "hiddenCommands")) {
-        matches = matches.filter((command) => {
-            return !USER.data.hiddenCommands.includes(command.id);
-        });
-    }
+        // Disabled commands filter (when implemented)
+        if (!filters.disabled && !command.enabled) {
+            return false;
+        }
+
+        return true;
+    });
 
     // fuzzy match by query and sort by chunk matches
     if (query !== "") {
