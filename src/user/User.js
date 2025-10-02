@@ -10,6 +10,7 @@ class User {
         this.data = null;
         this.fileName = "user.json";
         this.file = null;
+        this._dataFolder = null;
     }
 
     /**
@@ -37,28 +38,104 @@ class User {
     }
 
     /**
+     * Validate user data structure and fix common issues.
+     * @returns {boolean} - True if data was valid, false if corrections were made
+     */
+    validateData() {
+        if (!this.data || typeof this.data !== "object") {
+            this.data = this.defaultData;
+            return false;
+        }
+
+        // Ensure required properties exist
+        const required = [
+            "bookmarks",
+            "disabledCommandTypes",
+            "hiddenCommands",
+            "pickers",
+            "startupCommands",
+        ];
+        let isValid = true;
+
+        required.forEach((prop) => {
+            if (!Array.isArray(this.data[prop])) {
+                this.data[prop] = [];
+                isValid = false;
+            }
+        });
+
+        // Ensure plugin and app info exists
+        if (!this.data.plugin || typeof this.data.plugin !== "object") {
+            this.data.plugin = this.defaultData.plugin;
+            isValid = false;
+        }
+        if (!this.data.app || typeof this.data.app !== "object") {
+            this.data.app = this.defaultData.app;
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Get cached data folder handle.
+     * @returns {Promise<storage.Folder>}
+     */
+    async getDataFolder() {
+        if (!this._dataFolder) {
+            this._dataFolder = await fs.getDataFolder();
+        }
+        return this._dataFolder;
+    }
+
+    /**
      * Load the user data file.
      */
-    async load() {
-        console.log("loading user data");
+    /**
+     * Create backup on error.
+     */
+    async createBackupOnError() {
+        if (!this.file) return;
         try {
-            const dataFolder = await fs.getDataFolder();
-            this.file = await dataFolder.getEntry(this.fileName);
-            const fileData = await this.file.read({ format: storage.formats.utf8 });
-            this.data = JSON.parse(fileData);
-        } catch (error) {
-            console.warn(error);
-            this.data = this.defaultData;
-            console.log("using default user data");
-
-            if (!this.file) return;
-
-            // create backup
-            const backupFile = this.backup();
+            const backupFile = await this.backup();
             if (backupFile) {
                 app.showAlert(
                     "User data error\n\nThere was an error reading your user data file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
                 );
+            }
+        } catch (backupError) {
+            console.error("Failed to create backup:", backupError);
+        }
+    }
+
+    async load() {
+        console.log("Loading user data...");
+        try {
+            const dataFolder = await this.getDataFolder();
+            this.file = await dataFolder.getEntry(this.fileName);
+            const fileData = await this.file.read({ format: storage.formats.utf8 });
+            this.data = JSON.parse(fileData);
+
+            // Validate and migrate data if needed
+            if (!this.validateData()) {
+                console.warn("Data validation failed, saving corrected version");
+                await this.write();
+            }
+        } catch (error) {
+            if (error.code === "ENOENT" || error.name === "EntryNotFoundError") {
+                // File doesn't exist - use defaults (first run)
+                console.log("User data file not found, using defaults.");
+                this.data = this.defaultData;
+            } else if (error instanceof SyntaxError) {
+                // JSON parse error - corrupt file
+                console.error("User data file corrupted (JSON parse error):", error);
+                await this.createBackupOnError();
+                this.data = this.defaultData;
+            } else {
+                // Other error - backup and use defaults
+                console.error("User data load error:", error);
+                await this.createBackupOnError();
+                this.data = this.defaultData;
             }
         }
     }
@@ -69,39 +146,70 @@ class User {
     async reload() {
         this.data = null;
         this.file = null;
+        this._dataFolder = null;
         await this.load();
     }
 
     /**
-     * Write user data to disk.
-     * @returns {storage.File|void}
+     * Write user data to disk using atomic write with backup.
+     * @returns {Promise<void>}
      */
     async write() {
-        if (this.data == {} || this.data == null) {
+        if (!this.data || Object.keys(this.data).length === 0) {
             return;
         }
-        console.log("writing user data");
+
+        // Validate data before writing
+        if (!this.validateData()) {
+            console.warn(
+                "User data validation failed during write, using corrected data"
+            );
+        }
+
+        console.log("Writing user data.");
         try {
-            const dataFolder = await fs.getDataFolder();
-            if (!this.file) {
-                this.file = await dataFolder.createEntry(this.fileName, {
-                    type: storage.types.file,
-                    overwrite: true,
-                });
-            }
-            console.log(this.data);
+            const dataFolder = await this.getDataFolder();
+            const tempFileName = `${this.fileName}.tmp`;
+
+            // Write to temp file first (atomic operation)
+            const tempFile = await dataFolder.createEntry(tempFileName, {
+                type: storage.types.file,
+                overwrite: true,
+            });
+
             this.data.timestamp = Date.now();
-            await this.file.write(JSON.stringify(this.data), { append: false });
+            const jsonData = JSON.stringify(this.data, null, 2);
+            await tempFile.write(jsonData, { append: false });
+
+            // Create backup of existing file if it exists
+            if (this.file) {
+                try {
+                    await dataFolder.renameEntry(this.file, `${this.fileName}.bak`, {
+                        overwrite: true,
+                    });
+                } catch (backupError) {
+                    console.warn("Could not create backup:", backupError);
+                    // Continue with write even if backup fails
+                }
+            }
+
+            // Atomic rename temp file to final file
+            this.file = await dataFolder.renameEntry(tempFile, this.fileName, {
+                overwrite: true,
+            });
+
+            console.log("User data written successfully.");
 
             // Invalidate cached data
             if (typeof globalThis !== "undefined" && globalThis.invalidateUserData) {
                 globalThis.invalidateUserData();
             }
         } catch (error) {
-            console.error(error);
+            console.error("User data write failed:", error);
             app.showAlert(
                 "User data error\n\nThere was an error writing your user data file."
             );
+            throw error; // Re-throw so caller can handle if needed
         }
     }
 
@@ -113,12 +221,12 @@ class User {
         if (!this.file) return;
 
         try {
-            const dataFolder = await fs.getDataFolder();
+            const dataFolder = await this.getDataFolder();
             const f = this.file;
             const backupName = `${f.name}.bak`;
 
             await dataFolder.renameEntry(f, backupName, { overwrite: true });
-            console.log(`backing up user data file to ${f.nativePath}`);
+            console.log(`Backing up user data file to ${f.nativePath}.`);
 
             return f;
         } catch (error) {
@@ -134,7 +242,7 @@ class User {
      */
     async reveal() {
         try {
-            const dataFolder = await fs.getDataFolder();
+            const dataFolder = await this.getDataFolder();
             await shell.openPath(dataFolder.nativePath);
         } catch (error) {
             console.error(error);
