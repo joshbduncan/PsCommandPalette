@@ -188,18 +188,49 @@ entrypoints.setup({
 async function launchPalette() {
     await USER.reload();
     await HISTORY.reload();
-    const commands = await loadCommands();
 
-    // TODO: let user specify custom commands, or use most used or most recent
-    const startupCommandIDs =
-        USER.data.startupCommands.length > 0
-            ? USER.data.startupCommands
-            : HISTORY.commandIDs;
-    const startupCommands = sortCommandsByOccurrence(
-        filterByIds(commands, startupCommandIDs)
-    );
+    // Show modal immediately with empty commands first, then load in background
+    const palette = new CommandPalette([], []);
 
-    const palette = new CommandPalette(commands, startupCommands);
+    // Start loading commands in background immediately
+    loadCommands()
+        .then((commands) => {
+            // TODO: let user specify custom commands, or use most used or most recent
+            const startupCommandIDs =
+                USER.data.startupCommands.length > 0
+                    ? USER.data.startupCommands
+                    : HISTORY.commandIDs;
+            const startupCommands = sortCommandsByOccurrence(
+                filterByIds(commands, startupCommandIDs)
+            );
+
+            palette.updateCommands(commands);
+
+            // Update startup commands display if user hasn't started searching
+            const querybox = document.getElementById("query");
+            if (querybox && querybox.value.trim() === "") {
+                const listbox = document.getElementById("commands");
+                listbox.innerHTML = "";
+                startupCommands.forEach((command) => {
+                    if (!command.element) {
+                        command.createElement();
+                    }
+                    listbox.appendChild(command.element);
+                });
+                document.getElementById("info").textContent =
+                    `${startupCommands.length} matching command(s)`;
+                palette.resetCommandSelection();
+            }
+        })
+        .catch((error) => {
+            console.error("Failed to load commands:", error);
+            // Show error message in the info area
+            const info = document.getElementById("info");
+            if (info) {
+                info.textContent = "Failed to load commands. Please try again.";
+            }
+        });
+
     const result = await palette.show();
     console.log("modal result:", result);
 

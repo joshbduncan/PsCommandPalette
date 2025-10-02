@@ -33,7 +33,7 @@ class CommandPalette {
         }
         this.commands = commands;
         this.startupCommands = startupCommands || commands;
-        this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 100);
+        this.debouncedQueryCommands = debounce(this.queryCommands.bind(this), 25);
         this.scrollThroughHistory = true;
         this.historyIndex = 0;
     }
@@ -324,6 +324,20 @@ class CommandPalette {
             query: querybox.value,
             command: event.detail.command,
         });
+    }
+
+    /**
+     * Update the commands array and refresh the current query if needed.
+     * @param {Command[]} newCommands - Updated commands array
+     */
+    updateCommands(newCommands) {
+        this.commands = newCommands;
+
+        // If user is currently searching, re-run the query with new commands
+        const querybox = document.getElementById("query");
+        if (querybox && querybox.value.trim() !== "") {
+            this.debouncedQueryCommands({ target: querybox });
+        }
     }
 
     /**
