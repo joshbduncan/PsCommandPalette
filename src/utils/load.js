@@ -287,7 +287,7 @@ async function loadScriptCommands() {
 function loadToolCommands() {
     // Load static tool data from external JSON file for faster parsing
     const tools = require("../tools.json");
-    return tools.map((tool) => {
+    return tools.tools.map((tool) => {
         return new ToolCommand(
             tool._ref,
             tool.name,
