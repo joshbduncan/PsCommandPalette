@@ -27,6 +27,9 @@ Follow the [Adobe CCX installation guide](https://developer.adobe.com/photoshop/
 
 And, for quick access to Ps Command Palette from your keyboard, I recommend firing the palette via <kbd>Command + Shift + P</kbd> using something like [Keyboard Maestro](https://www.keyboardmaestro.com/main/) (Mac), [BetterTouchTool](https://folivora.ai/) (Mac), or [AutoHotkey](https://www.autohotkey.com/) (Windows).
 
+> [!IMPORTANT]
+> Having trouble with installation? Read [Installing a UXP panel (from a CCX file)](https://gregbenzphotography.com/installing-a-uxp-panel-from-ccx) from Greg Benz for some useful tips.
+
 ## Features
 
 ### 🚀 Menu Commands
