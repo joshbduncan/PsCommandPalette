@@ -202,7 +202,9 @@ class CommandPalette {
             matches = filterCommandsByQuery(_query, this.commands, filters);
         }
 
-        matches.forEach((cmd) => listbox.appendChild(cmd.element));
+        matches.slice(0, 30).forEach((cmd) => {
+            listbox.appendChild(cmd.element);
+        });
 
         document.getElementById("info").textContent =
             `${matches.length} matching command(s)`;
