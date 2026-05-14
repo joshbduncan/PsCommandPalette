@@ -302,6 +302,8 @@ async function launchPalette() {
         return;
     }
 
+    // TODO: backup setting and history in case of UXP plugin error
+
     // Add to history for all commands except plugin reload
     // USER.write() is now called manually by specific commands that need it
     if (command.id !== "ps_plugin_reload") {
