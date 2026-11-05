@@ -8,6 +8,11 @@ const fs = storage.localFileSystem;
 
 const CACHE_FILE_NAME = "menu-commands-cache.json";
 
+// The cached `enabled`/`visible`/`checked` flags are a snapshot of whatever
+// session wrote the cache, so they're stale until the live fetch replaces
+// them. That's an accepted tradeoff, not an oversight: the palette neither
+// filters nor styles rows on them (see renderCommandItem.ts), and
+// launchPalette() re-fetches menu state in the background on every open.
 type MenuCommandCacheFile = {
     hostVersion: string;
     generatedAt: string;
