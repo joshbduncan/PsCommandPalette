@@ -11,7 +11,11 @@ import { host, PLUGIN_AUTHOR } from "./user/host";
 import { filterByIds } from "./utils/query";
 import { sortCommandsByOccurrence } from "./utils/commands";
 import { pluginCommands } from "./commands/plugin/commands";
-import { CommandTypes, RELOAD_PLUGIN_COMMAND_ID } from "./commands/types";
+import {
+    ABOUT_PLUGIN_COMMAND_ID,
+    CommandTypes,
+    RELOAD_PLUGIN_COMMAND_ID,
+} from "./commands/types";
 
 const { entrypoints } = uxp;
 
@@ -82,10 +86,16 @@ export async function launchPalette(): Promise<void> {
         console.error("Failed to refresh menu command state:", error);
     });
 
+    // The empty-query list: the user's own startupCommands if they set any,
+    // otherwise their recent/most-used commands, otherwise (first run, no
+    // history yet) just "About".
+    const customStartupCommands = user.data?.settings.startupCommands ?? [];
     const startupCommandIDs =
-        user.data && user.data.settings.startupCommands.length > 0
-            ? user.data.settings.startupCommands
-            : history.commandIDs;
+        customStartupCommands.length > 0
+            ? customStartupCommands
+            : history.commandIDs.length > 0
+              ? history.commandIDs
+              : [ABOUT_PLUGIN_COMMAND_ID];
 
     const startupCommands = sortCommandsByOccurrence(
         filterByIds(commandsStore.commands, startupCommandIDs),

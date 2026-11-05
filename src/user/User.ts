@@ -56,7 +56,7 @@ export type UserData = {
     pickers: PickerRecord[];
 };
 
-export const USER_SCHEMA_VERSION = 2;
+export const USER_SCHEMA_VERSION = 3;
 
 /** On-disk shape read/written by `load()`/`writeNow()`. */
 export type UserFile = UserData & {
@@ -132,6 +132,26 @@ const USER_MIGRATIONS: Record<number, (raw: any) => unknown> = {
               }))
             : [],
     }),
+    // v2 and earlier saved `startupCommands: ["ps_plugin_about"]` as the
+    // default, which hid the recent-commands fallback for good (it only
+    // applies when the list is empty). Clear it only when it's exactly that
+    // default, so a list the user set themselves is left alone.
+    2: (raw: UserFile): UserFile => {
+        const startup = raw?.settings?.startupCommands;
+        const isOldDefault =
+            Array.isArray(startup) &&
+            startup.length === 1 &&
+            startup[0] === ABOUT_PLUGIN_COMMAND_ID;
+        return {
+            ...raw,
+            schemaVersion: 3,
+            updatedAt: Date.now(),
+            settings: {
+                ...raw.settings,
+                startupCommands: isOldDefault ? [] : startup,
+            },
+        };
+    },
 };
 
 function migrateUserFile(raw: unknown): { data: UserFile; migrated: boolean } {
@@ -255,7 +275,8 @@ export class User {
             settings: {
                 disabledCommandTypes: [], // TODO: allow command types to be disabled all together
                 hiddenCommands: [], // TODO: build out skips for hidden commands
-                startupCommands: [ABOUT_PLUGIN_COMMAND_ID], // TODO: add default plugin startup commands with about, docs, etc.
+                // empty = recent commands (or "About" with no history yet) - see main.ts's launchPalette
+                startupCommands: [],
             },
             bookmarks: [],
             pickers: [],
