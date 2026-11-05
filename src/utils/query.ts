@@ -26,6 +26,8 @@ const SCORING = {
     EXACT_WORD_BOOST: 2,
     EXACT_NAME_BOOST: 5,
     LATCHED_QUERY_BOOST: 10,
+    /** Boost for the most recently run command, scaled down linearly for older ones. */
+    RECENCY_BOOST_MAX: 1,
     /** Ceiling for the "previously used" boost below - never exceeded, however often a command has run. */
     PREVIOUSLY_USED_BOOST_MAX: 2.5,
     /** Occurrence count at which the boost reaches its ceiling. */
@@ -84,7 +86,11 @@ function scoreCommand(query: string, { history }: QueryContext) {
     };
 
     // Pre-calculate expensive values once
-    const historySize = history.recencyLUT?.size || 1;
+    // recencyLUT values run from 1 (oldest entry) up to history.data.length
+    // (newest), so divide by the entry count - not the number of unique
+    // commands, which let the boost grow with history length and outrank an
+    // exact name match.
+    const historyLength = history.data.length || 1;
     const latchedCommandId = history.latches?.[normalizeQuery(query)];
     const occurrencesLUT = history.occurrencesLUT || {};
     const recencyLUT = history.recencyLUT || new Map<string, number>();
@@ -103,10 +109,10 @@ function scoreCommand(query: string, { history }: QueryContext) {
             score += SCORING.LATCHED_QUERY_BOOST;
         }
 
-        // boost for recent command (use cached recencyLUT and historySize)
+        // boost for recent command (use cached recencyLUT and historyLength)
         const recencyScore = recencyLUT.get(command.id);
         if (recencyScore) {
-            score += recencyScore / historySize;
+            score += SCORING.RECENCY_BOOST_MAX * (recencyScore / historyLength);
         }
 
         // boost for previously used command (use cached occurrencesLUT) -
