@@ -332,6 +332,13 @@ export class CommandPalette {
         const listbox = this.#listbox;
         if (!listbox) return;
 
+        if (this.#visibleCommands.length === 0) {
+            listbox.replaceChildren(
+                createElement("li", { class: "empty-state" }, this.emptyStateText)
+            );
+            return;
+        }
+
         const onSelect = (command: Command) => this.selectCommand(command);
         const fragment = document.createDocumentFragment();
         this.#visibleCommands.forEach((command, index) => {
@@ -345,6 +352,17 @@ export class CommandPalette {
         });
         listbox.replaceChildren(fragment);
         this.scrollSelectedIntoView();
+    }
+
+    /** What an empty list says instead of rendering as a blank box. */
+    private get emptyStateText(): string {
+        if (!this.#options.commands && commandsStore.loadingTypes.length > 0) {
+            return "Loading commands…";
+        }
+        if (this.#debouncedQuery === "") {
+            return "Start typing to search menu commands, tools, actions, and more.";
+        }
+        return "No matching commands.";
     }
 
     private renderInfo(): void {

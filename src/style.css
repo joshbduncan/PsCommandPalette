@@ -208,6 +208,12 @@ dialog#ps-command-palette {
     padding-top: 4px;
 }
 
+#commands-list #commands li.empty-state {
+    padding: 24px 12px;
+    text-align: center;
+    color: var(--shortcut-text);
+}
+
 #commands-list #commands li.command .type-container {
     display: inline-flex;
     align-items: center;
