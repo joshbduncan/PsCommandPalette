@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 const SRC = "src";
 const OUT = "build";
-const STATIC = ["index.html", "style.css", "manifest.json", "tools.json", "icons"];
+const STATIC = ["index.html", "index.js", "style.css", "manifest.json", "tools.json", "icons"];
 
 function copyStatic() {
     mkdirSync(OUT, { recursive: true });

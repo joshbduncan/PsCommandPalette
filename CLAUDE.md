@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A UXP (Unified Extensibility Platform) panel plugin for Adobe Photoshop. It shows a VS Code/Alfred-style "command palette" (launched via the panel's button, or an OS-level keyboard shortcut tool bound to the `launchPalette` command entrypoint - there is no in-panel Cmd/Ctrl+K shortcut) for fuzzy-searching and executing Photoshop menu commands, tools, actions, and user bookmarks without leaving the keyboard.
 
-Written in plain TypeScript - no UI framework and no bundler. `tsc` compiles `src/` to CommonJS in `build/` (`tsconfig.json`), and `scripts/copy-static.mjs` copies the non-TS files (`index.html`, `style.css`, `manifest.json`, `tools.json`, `icons/`) alongside. `build/` is an ordinary UXP plugin folder: UXP Developer Tool loads and packages it as a CCX. `src/manifest.json` is hand-maintained (manifest v6, Photoshop ≥ 24.2.0). Panel flyout menus (`menuItems`/`invokeMenu`) register via the JS-side `entrypoints.setup()` call in `src/main.ts`, not in the manifest.
+Written in plain TypeScript - no UI framework and no bundler. `tsc` compiles `src/` to CommonJS in `build/` (`tsconfig.json`), and `scripts/copy-static.mjs` copies the non-TS files (`index.html`, `index.js`, `style.css`, `manifest.json`, `tools.json`, `icons/`) alongside. `build/` is an ordinary UXP plugin folder: UXP Developer Tool loads and packages it as a CCX. `src/manifest.json` is hand-maintained (manifest v6, Photoshop ≥ 24.2.0). Panel flyout menus (`menuItems`/`invokeMenu`) register via the JS-side `entrypoints.setup()` call in `src/main.ts`, not in the manifest.
 
 ## Commands
 
@@ -22,7 +22,7 @@ There is no test framework — verification is manual, inside Photoshop via UXP 
 
 ### Entry point and state
 
-`src/main.ts` is the plugin entry (loaded by `index.html`): it calls `entrypoints.setup()` (plugin lifecycle, the panel and its flyout menu, and the `launchPalette` command entrypoint), wires the panel's launch button, and owns `launchPalette()`.
+`src/main.ts` is the plugin entry: `index.html` loads the tiny plain-JS `src/index.js`, which `require()`s the compiled `main.js` (a `<script>` tag runs as a classic script with no CommonJS `exports`, which tsc's output needs - so `main.js` can't be the `<script>` itself). It calls `entrypoints.setup()` (plugin lifecycle, the panel and its flyout menu, and the `launchPalette` command entrypoint), wires the panel's launch button, and owns `launchPalette()`.
 
 Cross-module singletons are explicitly imported wherever needed (no implicit/bare globals): `src/user/User.ts` (`User` class + `user` instance, persisted `user.json`), `src/user/History.ts` (`History` class + `history` instance, persisted `history.json`), `src/user/host.ts` (plugin/host identity, computed once at module load from `manifest.json` and `uxp.host`), `src/utils/CommandsStore.ts` (the live command list — see Performance below). `User`/`History` expose an `onInvalidate` callback field (set by `main.ts`) instead of a `globalThis` callback.
 

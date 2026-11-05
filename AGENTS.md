@@ -2,7 +2,7 @@
 
 ## Build/Test Commands
 
-- `npm run build` - Compile `src/` with `tsc` into `build/` and copy static files (html, css, manifest, tools.json, icons)
+- `npm run build` - Compile `src/` with `tsc` into `build/` and copy static files (index.html, the plain-JS `index.js` loader, css, manifest, tools.json, icons)
 - `npm run watch` - Recompile/copy on every change
 - `npm run check` - Type-check only (`tsc --noEmit`)
 - `npm run format` / `prettier -w src` - Format all source files
