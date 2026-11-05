@@ -40,7 +40,7 @@ export async function openPalette(
     });
     return showModal<PaletteResult>((ctx) => palette.mount(ctx), {
         title: "Ps Command Palette",
-        resize: "vertical",
+        resize: "none",
         size: { width: 650, height: 550 },
     });
 }

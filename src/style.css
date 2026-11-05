@@ -89,21 +89,8 @@ sp-detail#main-plugin-info {
 /* // command palette // */
 /* ///////////////////// */
 
-/* Flex column so the results list (not empty space around it) grows and
-   shrinks when the user resizes the dialog - see openPalette.ts's
-   `resize: "vertical"`. `min-height: 0` lets a flex child shrink below its
-   content height, so #commands-list scrolls instead of overflowing. */
 dialog#ps-command-palette {
-    display: flex;
-    flex-direction: column;
     background-color: var(--base);
-}
-
-#command-palette-form {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
 }
 
 #query {
@@ -115,10 +102,10 @@ dialog#ps-command-palette {
     margin-top: 4px;
 }
 
+/* Fixed height - the palette dialog isn't resizable (openPalette.ts). */
 #commands-list {
     width: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 450px;
     overflow-y: auto;
 }
 
