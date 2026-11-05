@@ -53,6 +53,8 @@ export const _document: CommandRegistry = {
         name: "Split Channels",
         description:
             "Splits the document channels into separate, single-channel documents.",
+        // closes the original document, unsaved changes and all
+        destructive: true,
         callback: async () => {
             const doc = app.activeDocument;
             if (!doc) {
