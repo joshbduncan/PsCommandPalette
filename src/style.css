@@ -7,6 +7,18 @@
   https://developer.adobe.com/photoshop/uxp/2022/guides/theme-awareness/
 */
 
+/* --shortcut-text/--shortcut-text-selected: keyboard shortcut text, dimmed
+   relative to --text - and its own variant for a selected row, since
+   --selected's blue background doesn't change with theme the way
+   --base/--text do.
+
+   --match-highlight/--match-highlight-selected: fuzzy-match highlight
+   color, themed the same way, plus its own selected-row variant.
+
+   (Explained here, above the rule, rather than as comments between the
+   declarations below - UXP's CSS engine throws a CssSyntaxError on a
+   comment placed inside a rule body between declarations, confirmed at
+   runtime.) */
 :root {
     --base: #2e2e2e;
     --text: #e2e2e2;
@@ -16,7 +28,11 @@
 
     --hover: #3f3e3f;
 
-    --disabled-text: #6e6e6e;
+    --shortcut-text: rgba(255, 255, 255, 0.35);
+    --shortcut-text-selected: rgba(255, 255, 255, 0.7);
+
+    --match-highlight: #ffc107;
+    --match-highlight-selected: #ffc107;
 }
 
 @media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
@@ -26,8 +42,15 @@
 
         --hover: #eaeaea;
 
-        --disabled-text: #b3b3b3;
+        --shortcut-text: rgba(0, 0, 0, 0.35);
+        --match-highlight: #ffc107;
     }
+}
+
+html,
+body {
+    height: 100vh;
+    background-color: var(--uxp-host-background-color);
 }
 
 body {
@@ -60,14 +83,6 @@ sp-detail#main-copyright {
 sp-detail#main-plugin-info {
     width: 100%;
     text-align: center;
-}
-
-/* /////////////////// */
-/* // alert dialogs // */
-/* /////////////////// */
-
-#alert-divider {
-    margin: 5px 0 15px 0;
 }
 
 /* ///////////////////// */
@@ -103,30 +118,25 @@ dialog#ps-command-palette {
     cursor: pointer;
 }
 
-#commands-list #commands li.command[disabled] {
-    color: var(--disabled-text);
-}
-
+/* Commands are intentionally NOT visually distinguished by `enabled` state
+   (no greyed-out/disabled styling). They used to be, styled to match
+   Photoshop's own menu bar - but for MenuCommand, `enabled` is sourced from
+   Photoshop's `menuBarInfo`, which has demonstrated real staleness/
+   inaccuracy on some Photoshop versions (same category of issue as the
+   `getMenuCommandState` FIXME in MenuCommand.ts). A row that looks
+   "disabled" but is actually fully clickable/runnable (or vice versa) reads
+   as broken, so every row now gets identical styling regardless of
+   `enabled` - selection/execution was never gated on it either (see
+   renderCommandItem.ts/CommandPalette.ts), so this just makes the UI
+   honest about that. A genuinely-unavailable command still surfaces via the
+   alert in MenuCommand.execute(). */
 #commands-list #commands li.command:hover {
     background-color: var(--hover);
-}
-
-#commands-list #commands li.command[disabled]:hover {
-    color: var(--disabled-text);
 }
 
 #commands-list #commands li.command[selected] {
     background-color: var(--selected);
     color: var(--selected-text);
-}
-
-#commands-list #commands li.command[selected][disabled] {
-    color: var(--disabled-text);
-}
-
-#commands-list #commands li.command[selected][disabled]:hover {
-    background-color: var(--selected);
-    color: var(--disabled-text);
 }
 
 #commands-list #commands li.command .body {
@@ -151,7 +161,12 @@ dialog#ps-command-palette {
 }
 
 #commands-list #commands li.command .body span.title strong {
-    font-weight: bolder;
+    font-weight: inherit;
+    color: var(--match-highlight);
+}
+
+#commands-list #commands li.command[selected] .body span.title strong {
+    color: var(--match-highlight-selected);
 }
 
 #commands-list #commands li.command .body kbd.shortcut {
@@ -159,8 +174,12 @@ dialog#ps-command-palette {
     text-align: center;
     font-size: var(--uxp-host-font-size-smaller);
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--shortcut-text);
     border-radius: 3px;
+}
+
+#commands-list #commands li.command[selected] .body kbd.shortcut {
+    color: var(--shortcut-text-selected);
 }
 
 #commands-list #commands li.command span.description {
@@ -191,4 +210,106 @@ dialog#ps-command-palette {
     width: 100%;
     margin-top: 12px;
     text-align: center;
+}
+
+/* ///////////////////// */
+/* // generic dialogs // */
+/* ///////////////////// */
+
+.dialog-heading {
+    margin-top: 0;
+}
+
+.dialog-buttons {
+    margin-top: 24px;
+}
+
+/* /////////////////////// */
+/* // resize-by-percent // */
+/* /////////////////////// */
+
+#input-percentage {
+    width: 100%;
+}
+
+.quick-pick-label {
+    margin-top: 6px;
+}
+
+.quick-picks {
+    display: flex;
+}
+
+.error {
+    color: #e34850;
+    margin-top: 4px;
+}
+
+/* /////////////////////// */
+/* // getting started   // */
+/* /////////////////////// */
+
+.getting-started {
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+    color: var(--text);
+}
+
+.getting-started .content h3 {
+    font-size: var(--uxp-host-font-size);
+    font-weight: bold;
+    color: var(--text);
+    margin: 16px 0 6px;
+    padding-top: 8px;
+}
+
+.getting-started .content h3:first-child {
+    margin-top: 0;
+}
+
+.getting-started .content p {
+    margin: 0 0 8px;
+    line-height: 1.4;
+}
+
+.getting-started .content ul {
+    margin: 0 0 8px;
+    padding-left: 0;
+}
+
+/* UXP's CSS engine doesn't support list-style (throws "Invalid property
+   name"), so fake the bullet with a positioned pseudo-element instead. */
+.getting-started .content li {
+    position: relative;
+    margin-bottom: 4px;
+    padding-left: 16px;
+    line-height: 1.4;
+}
+
+.getting-started .content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 2px;
+    color: var(--text);
+}
+
+.getting-started .dialog-buttons {
+    margin-top: 16px;
+}
+
+.getting-started kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background-color: rgba(127, 127, 127, 0.2);
+    font-size: 0.9em;
+}
+
+.getting-started code {
+    font-family: inherit;
+    background-color: rgba(127, 127, 127, 0.15);
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-right: 2px;
 }
