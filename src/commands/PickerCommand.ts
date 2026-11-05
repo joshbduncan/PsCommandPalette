@@ -40,7 +40,11 @@ function buildPickerItemCommand(item: PickerItem, index: number): CustomCommand 
                         return;
                     }
                     await target.execute();
-                }
+                },
+                // carry the target's flag over, so PickerCommand.execute()
+                // confirms a destructive command the same as the top-level
+                // palette does
+                target?.destructive ?? false
             );
         }
         case "value":

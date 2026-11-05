@@ -13,9 +13,10 @@ export class CustomCommand extends Command {
         id: string,
         name: string,
         description: string,
-        callback: () => unknown
+        callback: () => unknown,
+        destructive = false
     ) {
-        super(id, name, CommandTypes.CUSTOM, description);
+        super(id, name, CommandTypes.CUSTOM, description, true, null, destructive);
         this.callback = callback.bind(this);
     }
 
