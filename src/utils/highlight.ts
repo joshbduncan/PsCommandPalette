@@ -34,14 +34,17 @@ function toSegments(text: string, matchedChars: boolean[]): HighlightSegment[] {
 }
 
 /**
- * Highlight segments for a command's title. Uses the same
- * `matchQueryParts` match `fuzzyMatch` uses for filtering (see
- * `query.ts`/`matchQuery.ts`) rather than an independent re-match against
- * the title alone - `queryParts`'s last element is always `command.name`,
- * so slicing out its portion of the shared match reflects exactly whether
- * (and where) the query landed in the title versus elsewhere, e.g. a menu
- * path component. Previously a query that matched purely via the path
- * produced a visible result row with zero highlighted title characters.
+ * Highlight segments for a command's title (`queryParts`'s last element is
+ * always `command.name`).
+ *
+ * Prefers matching the query against the title on its own: the filter's
+ * greedy left-to-right match over every part consumes the query in the
+ * earliest part it fits, so for "New Artboard" (parts `Layer`, `New`,
+ * `New Artboard`) the query "new" is spent on the `New` path component and
+ * the title would get no highlight at all. Only when the query doesn't fit
+ * in the title alone does this fall back to the title's slice of that
+ * shared match - the right answer for a query that spans path and title
+ * (e.g. "sel all" on Select > All highlights just "All").
  */
 export function getTitleHighlightSegments(
     queryParts: string[],
@@ -50,6 +53,10 @@ export function getTitleHighlightSegments(
     const title = queryParts[queryParts.length - 1] ?? "";
     if (!query.replace(/\s/g, "")) {
         return [{ text: title, matched: false }];
+    }
+    const titleOnly = matchQueryParts([title], query);
+    if (titleOnly.matched) {
+        return toSegments(title, titleOnly.partMatches[0]);
     }
     const { partMatches } = matchQueryParts(queryParts, query);
     return toSegments(title, partMatches[partMatches.length - 1] ?? []);
