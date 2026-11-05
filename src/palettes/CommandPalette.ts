@@ -375,11 +375,15 @@ export class CommandPalette {
         this.scrollSelectedIntoView();
     }
 
-    /** Keep the selected row scrolled into view as selection moves. */
+    /**
+     * Keep the selected row scrolled into view as selection moves. Instant,
+     * not smooth: holding an arrow key would otherwise queue one animation
+     * per keypress and the list would visibly lag behind the selection.
+     */
     private scrollSelectedIntoView(): void {
         const el = this.#listbox?.children[this.#selectedIndex] as
             HTMLElement | undefined;
-        el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        el?.scrollIntoView({ block: "nearest", behavior: "auto" });
     }
 
     private recallHistoryQuery(index: number): void {
