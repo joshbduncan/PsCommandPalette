@@ -36,3 +36,15 @@ export function appendChildren(parent: Node, children: ElementChild[]): void {
         );
     }
 }
+
+/**
+ * Replace all of `parent`'s children. Use this instead of the native
+ * `Element.replaceChildren()`: UXP's DOM appends the new children without
+ * removing the old ones, so the palette kept stale rows above fresh results.
+ */
+export function replaceChildren(parent: Node, children: ElementChild[]): void {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+    appendChildren(parent, children);
+}

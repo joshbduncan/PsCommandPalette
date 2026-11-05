@@ -5,7 +5,7 @@ import { sortCommandsByOccurrence } from "../utils/commands";
 import { normalizeQuery } from "../utils/queryNormalize";
 import { history } from "../user/History";
 import { commandsStore } from "../utils/CommandsStore";
-import { createElement } from "../utils/dom";
+import { createElement, replaceChildren } from "../utils/dom";
 import { renderCommandItem, setItemSelected } from "./renderCommandItem";
 import type { ModalContext } from "../dialogs/showModal";
 
@@ -350,28 +350,27 @@ export class CommandPalette {
         if (!listbox) return;
 
         if (this.#visibleCommands.length === 0) {
-            listbox.replaceChildren(
+            replaceChildren(listbox, [
                 createElement(
                     "li",
                     { class: "empty-state", role: "option", "aria-disabled": "true" },
                     this.emptyStateText
-                )
-            );
+                ),
+            ]);
             return;
         }
 
         const onSelect = (command: Command) => this.selectCommand(command);
-        const fragment = document.createDocumentFragment();
-        this.#visibleCommands.forEach((command, index) => {
-            fragment.appendChild(
+        replaceChildren(
+            listbox,
+            this.#visibleCommands.map((command, index) =>
                 renderCommandItem(command, {
                     selected: index === this.#selectedIndex,
                     query: this.#searchQuery.text,
                     onSelect,
                 })
-            );
-        });
-        listbox.replaceChildren(fragment);
+            )
+        );
         this.scrollSelectedIntoView();
     }
 
