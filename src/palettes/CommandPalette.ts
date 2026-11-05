@@ -433,7 +433,8 @@ export class CommandPalette {
      */
     private scrollSelectedIntoView(): void {
         const el = this.#listbox?.children[this.#selectedIndex] as
-            HTMLElement | undefined;
+            | HTMLElement
+            | undefined;
         el?.scrollIntoView({ block: "nearest", behavior: "auto" });
     }
 

@@ -121,11 +121,13 @@ const USER_MIGRATIONS: Record<number, (raw: any) => unknown> = {
                   name: picker.name,
                   description: picker.description,
                   items: Array.isArray(picker.commands)
-                      ? picker.commands.map((c): PickerItem => ({
-                            kind: "value",
-                            value: c.id,
-                            label: c.name,
-                        }))
+                      ? picker.commands.map(
+                            (c): PickerItem => ({
+                                kind: "value",
+                                value: c.id,
+                                label: c.name,
+                            })
+                        )
                       : [],
               }))
             : [],
