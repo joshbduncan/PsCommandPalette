@@ -44,7 +44,7 @@ async function relinkBookmark(
     entry: FSFile | FSFolder,
     expectedType: BookmarkCommandType
 ): Promise<void> {
-    const newBookmark = await createBookmarkEntry(entry);
+    const newBookmark = await createBookmarkEntry(entry, id);
     if (!newBookmark) return;
 
     if (newBookmark.type !== expectedType) {
@@ -205,23 +205,33 @@ const hashPath = (path: string): string => {
 };
 
 /**
- * Check if a bookmark is already loaded.
+ * Check if a bookmark for `path` is already loaded, ignoring the bookmark
+ * `ignoreId` (the one being relinked - see `createBookmarkEntry`).
  */
-const duplicateBookmark = (path: string): boolean => {
+const duplicateBookmark = (path: string, ignoreId?: string): boolean => {
     const normalizedPath = normalizePathForComparison(path);
-    return user.data!.bookmarks.some(
-        (item) => normalizePathForComparison(item.path) === normalizedPath
+    return (
+        user.data?.bookmarks.some(
+            (item) =>
+                item.id !== ignoreId &&
+                normalizePathForComparison(item.path) === normalizedPath
+        ) ?? false
     );
 };
 
 /**
  * Store a bookmark in persistent local storage.
+ *
+ * @param replacingId - the id of a bookmark this entry is relinking.
+ * Excluded from the duplicate check, so relinking an expired token to the
+ * same file/folder (the usual case) isn't refused as "already exists".
  */
 export async function createBookmarkEntry(
-    entry: FSFile | FSFolder
+    entry: FSFile | FSFolder,
+    replacingId?: string
 ): Promise<BookmarkRecord | undefined> {
     // ensure bookmark isn't already loaded
-    if (duplicateBookmark(entry.nativePath)) {
+    if (duplicateBookmark(entry.nativePath, replacingId)) {
         await showAlert("Bookmark already exists");
         return;
     }
