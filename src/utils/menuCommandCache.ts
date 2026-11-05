@@ -48,13 +48,27 @@ export async function readMenuCommandCache(
     }
 }
 
+// Serializes cache writes, the same as `User`/`History`'s `writeChain`:
+// atomicWriteJSON reuses fixed `.tmp`/`.bak` names, so two overlapping writes
+// would race each other's renames. `writeNow()` never rejects, so the chain
+// can't get stuck on a failed write.
+let writeChain: Promise<void> = Promise.resolve();
+
 /**
  * Persist a fresh menu command list to disk (fire-and-forget from the
  * caller's perspective - failures are logged, not thrown, since this is a
  * pure optimization and losing the cache just means next launch falls back
- * to a live-only fetch).
+ * to a live-only fetch). Queued behind any write already in progress.
  */
-export async function writeMenuCommandCache(
+export function writeMenuCommandCache(
+    hostVersion: string,
+    commands: MenuCommandData[]
+): Promise<void> {
+    writeChain = writeChain.then(() => writeNow(hostVersion, commands));
+    return writeChain;
+}
+
+async function writeNow(
     hostVersion: string,
     commands: MenuCommandData[]
 ): Promise<void> {
