@@ -175,8 +175,18 @@ function loadMenuCommandsWithCache(): Promise<void> {
     menuLoadInFlight = (async () => {
         const cached = await readMenuCommandCache(host.hostVersion);
         if (cached) {
-            console.log(`menu: ${cached.length} commands loaded from cache.`);
-            commandsStore.upsertType(CommandTypes.MENU, cached.map(toMenuCommand));
+            // A malformed entry (hand edit, or a MenuCommandData shape change)
+            // makes the MenuCommand constructor throw. Ignore the cache and
+            // fall through to the live fetch, which overwrites it - letting
+            // this throw would skip that fetch and leave menu commands
+            // "loading" forever, retrying the same bad cache on every open.
+            try {
+                const commands = cached.map(toMenuCommand);
+                console.log(`menu: ${commands.length} commands loaded from cache.`);
+                commandsStore.upsertType(CommandTypes.MENU, commands);
+            } catch (error) {
+                console.warn("Ignoring unreadable menu command cache:", error);
+            }
         }
 
         let fresh: MenuCommandData[];
