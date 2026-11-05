@@ -25,6 +25,7 @@ import { host } from "../user/host";
 import { commandsStore, LOADABLE_COMMAND_TYPES } from "./CommandsStore";
 import { readMenuCommandCache, writeMenuCommandCache } from "./menuCommandCache";
 import type { MenuBarInfoNode } from "./uxpTypes";
+import { showAlert } from "./showAlert";
 
 import * as toolsData from "../tools.json";
 
@@ -147,12 +148,21 @@ export async function refreshCommandType(
 // their own overlapping cache write.
 let menuLoadInFlight: Promise<void> | null = null;
 
+// Set after a failed live menu fetch has been reported, so a persistent
+// failure alerts once instead of on every palette open (each one runs a
+// background refresh). Cleared by the next successful fetch.
+let menuFetchFailureReported = false;
+
 /**
  * Menu commands: hydrate the store instantly from a cached, host-version-
  * matched list if one exists (palette is fully searchable, including menu
  * commands, before the live fetch even starts), then kick off the real
  * `batchPlay` fetch in true background and replace the store's menu slice
  * (and the on-disk cache) once it resolves.
+ *
+ * A failed live fetch keeps whatever the store already has and never
+ * touches the disk cache - caching a failed (empty) result would wipe menu
+ * commands from every later session too - and tells the user once.
  *
  * Not generation-gated like the other loaders: the data it fetches ("the
  * current live menu tree") doesn't depend on `LoadContext`, so there's
@@ -169,15 +179,36 @@ function loadMenuCommandsWithCache(): Promise<void> {
             commandsStore.upsertType(CommandTypes.MENU, cached.map(toMenuCommand));
         }
 
+        let fresh: MenuCommandData[];
         try {
-            const fresh = await fetchLiveMenuCommandData();
-            console.log(`menu: ${fresh.length} commands loaded live.`);
-            commandsStore.upsertType(CommandTypes.MENU, fresh.map(toMenuCommand));
-            await writeMenuCommandCache(host.hostVersion, fresh);
+            fresh = await fetchLiveMenuCommandData();
         } catch (error) {
             console.error("Failed to load menu commands:", error);
-            if (!cached) commandsStore.upsertType(CommandTypes.MENU, []);
+            // Only end the "loading" state - never replace menu commands the
+            // store already holds (from the cache or an earlier fetch).
+            if (commandsStore.loadingTypes.includes(CommandTypes.MENU)) {
+                commandsStore.upsertType(CommandTypes.MENU, []);
+            }
+            if (!menuFetchFailureReported) {
+                menuFetchFailureReported = true;
+                const hasMenuCommands = commandsStore.commands.some(
+                    (command) => command.type === CommandTypes.MENU
+                );
+                await showAlert(
+                    "Menu commands error\n\nPhotoshop's menu commands couldn't be loaded" +
+                        (hasMenuCommands
+                            ? ", so the palette is showing the last loaded list."
+                            : ".") +
+                        " Try 'Reload Plugin' if this keeps happening."
+                );
+            }
+            return;
         }
+
+        menuFetchFailureReported = false;
+        console.log(`menu: ${fresh.length} commands loaded live.`);
+        commandsStore.upsertType(CommandTypes.MENU, fresh.map(toMenuCommand));
+        await writeMenuCommandCache(host.hostVersion, fresh);
     })().finally(() => {
         menuLoadInFlight = null;
     });
@@ -241,6 +272,10 @@ async function loadBookmarkCommands({ user }: LoadContext): Promise<Command[]> {
  * tree in a single atomic IPC round-trip) is the actual bottleneck - past
  * attempts to speed this up by optimizing the JS-side tree-walk below
  * didn't move the needle, because the walk was never the slow part.
+ *
+ * @throws if the `batchPlay` call fails or returns no menu commands - a
+ * real menu bar always has hundreds, so an empty result is a failed fetch,
+ * not "no menus".
  */
 async function fetchLiveMenuCommandData(): Promise<MenuCommandData[]> {
     const menusToIgnore = new Set(["Open Recent"]);
@@ -262,27 +297,19 @@ async function fetchLiveMenuCommandData(): Promise<MenuCommandData[]> {
 
     /**
      * Get all current Photoshop menu commands via batchPlay and the
-     * `menuBarInfo` property.
+     * `menuBarInfo` property. Lets a `batchPlay` error propagate - see
+     * this function's `@throws`.
      */
-    const getMenuBarItems = async () => {
-        try {
-            return await app.batchPlay(
-                [
-                    {
-                        _obj: "get",
-                        _target: [
-                            { _property: "menuBarInfo" },
-                            { _ref: "application" },
-                        ],
-                    },
-                ],
-                {}
-            );
-        } catch (error) {
-            console.error("Error fetching menuBarInfo:", error);
-            return null;
-        }
-    };
+    const getMenuBarItems = () =>
+        app.batchPlay(
+            [
+                {
+                    _obj: "get",
+                    _target: [{ _property: "menuBarInfo" }, { _ref: "application" }],
+                },
+            ],
+            {}
+        );
 
     /**
      * Flatten the menu tree into `MenuCommandData`. Uses an iterative
@@ -344,12 +371,11 @@ async function fetchLiveMenuCommandData(): Promise<MenuCommandData[]> {
     };
 
     const menuBarItems = await getMenuBarItems();
-    if (!menuBarItems?.[0]?.menuBarInfo) {
-        console.warn("No menu items found.");
-        return [];
+    const commands = buildMenus(menuBarItems?.[0]?.menuBarInfo as MenuBarInfoNode);
+    if (commands.length === 0) {
+        throw new Error("Photoshop returned no menu commands (menuBarInfo was empty).");
     }
-
-    return buildMenus(menuBarItems[0].menuBarInfo as MenuBarInfoNode);
+    return commands;
 }
 
 async function loadPickerCommands({ user }: LoadContext): Promise<Command[]> {
