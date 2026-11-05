@@ -4,7 +4,17 @@
     "description": "Boost your Adobe Photoshop efficiency with quick access to most Menu Commands, Tools, and more.",
     "author": "Josh Duncan",
     "license": "MIT",
+    "private": true,
+    "scripts": {
+        "build": "tsc && node scripts/copy-static.mjs",
+        "watch": "node scripts/copy-static.mjs --watch & tsc -w --preserveWatchOutput",
+        "check": "tsc --noEmit",
+        "format": "prettier -w src"
+    },
     "devDependencies": {
-        "prettier": "3.5.1"
+        "@adobe/cc-ext-uxp-types": "https://github.com/justintaylor-dev/cc-ext-uxp-types.git",
+        "@types/photoshop": "^25.0.2",
+        "prettier": "3.5.1",
+        "typescript": "^5.8.3"
     }
 }
