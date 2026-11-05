@@ -150,7 +150,7 @@ dialog#ps-command-palette {
     background-color: var(--hover);
 }
 
-#commands-list #commands li.command[selected] {
+#commands-list #commands li.command[aria-selected="true"] {
     background-color: var(--selected);
     color: var(--selected-text);
 }
@@ -181,7 +181,7 @@ dialog#ps-command-palette {
     color: var(--match-highlight);
 }
 
-#commands-list #commands li.command[selected] .body span.title strong {
+#commands-list #commands li.command[aria-selected="true"] .body span.title strong {
     color: var(--match-highlight-selected);
 }
 
@@ -194,7 +194,7 @@ dialog#ps-command-palette {
     border-radius: 3px;
 }
 
-#commands-list #commands li.command[selected] .body kbd.shortcut {
+#commands-list #commands li.command[aria-selected="true"] .body kbd.shortcut {
     color: var(--shortcut-text-selected);
 }
 

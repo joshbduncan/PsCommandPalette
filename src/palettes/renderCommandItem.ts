@@ -82,11 +82,6 @@ export function renderCommandItem(
 /** Toggle a rendered row's selected state without re-rendering it. */
 export function setItemSelected(item: Element, selected: boolean): void {
     item.setAttribute("aria-selected", String(selected));
-    if (selected) {
-        item.setAttribute("selected", "");
-    } else {
-        item.removeAttribute("selected");
-    }
 }
 
 function renderSegments(segments: HighlightSegment[]): (Node | string)[] {
