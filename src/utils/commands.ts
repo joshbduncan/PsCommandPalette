@@ -83,19 +83,3 @@ export function sortCommandsByOccurrence(
         return scoreB - scoreA || a.name.localeCompare(b.name);
     });
 }
-
-/**
- * Sort commands by HISTORY recency score, then by name.
- */
-export function sortCommandsByRecency(
-    commands: Command[],
-    history: History
-): Command[] {
-    return commands.slice().sort((a, b) => {
-        const scoreA = history.recencyLUT?.get(a.id) || 0;
-        const scoreB = history.recencyLUT?.get(b.id) || 0;
-
-        // sort by recency score (higher first), then by name (alphabetically)
-        return scoreB - scoreA || a.name.localeCompare(b.name);
-    });
-}
