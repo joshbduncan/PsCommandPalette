@@ -115,17 +115,22 @@ export class History {
         return isValid;
     }
 
+    /**
+     * Back up an unreadable user history file before `load()` falls back to
+     * defaults, and tell the user what happened - including when the backup
+     * itself fails, so falling back to defaults is never silent.
+     */
     async createBackupOnError(): Promise<void> {
         if (!this.file) return;
-        try {
-            const backupFile = await this.backup();
-            if (backupFile) {
-                await showAlert(
-                    "User history error\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
-                );
-            }
-        } catch (backupError) {
-            console.error("Failed to create history backup:", backupError);
+        const backupFile = await this.backup();
+        if (backupFile) {
+            await showAlert(
+                "User history error\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
+            );
+        } else {
+            await showAlert(
+                "User history error\n\nYour user history file couldn't be read, and backing it up failed too, so the plugin is using defaults for now. Use the command 'Open Plugin Data Folder' to copy the file somewhere safe."
+            );
         }
     }
 
@@ -354,6 +359,8 @@ export class History {
 
     /**
      * Backup the user history file.
+     * @returns The backed-up file, or `undefined` if the backup failed (logged,
+     * not alerted - `createBackupOnError()` tells the user either way).
      */
     async backup(): Promise<FSFile | undefined> {
         if (!this.file) return;
@@ -368,10 +375,7 @@ export class History {
 
             return f;
         } catch (error) {
-            console.error(error);
-            await showAlert(
-                "User history error\n\nAn error occurred while backing up your user history file."
-            );
+            console.error("Failed to back up user history file:", error);
         }
     }
 
