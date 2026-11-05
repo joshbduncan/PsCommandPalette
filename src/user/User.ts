@@ -504,8 +504,13 @@ export class User {
      */
     async replaceBookmark(id: string, bookmark: BookmarkRecord): Promise<void> {
         if (!this.data) return;
-        this.data.bookmarks = this.data.bookmarks.filter((item) => item.id !== id);
-        this.data.bookmarks.push({ ...bookmark, id });
+        const replacement = { ...bookmark, id };
+        const index = this.data.bookmarks.findIndex((item) => item.id === id);
+        if (index === -1) {
+            this.data.bookmarks.push(replacement);
+        } else {
+            this.data.bookmarks[index] = replacement;
+        }
         await this.write();
     }
 
