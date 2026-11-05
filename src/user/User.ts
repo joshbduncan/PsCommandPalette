@@ -358,11 +358,11 @@ export class User {
         const backupFile = await this.backup();
         if (backupFile) {
             await showAlert(
-                "User data error\n\nThere was an error reading your user data file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
+                "User data error\n\nThere was an error reading your user data file so a backup was created. Use the command 'Show Plugin Data' to view the backup file."
             );
         } else {
             await showAlert(
-                "User data error\n\nYour user data file couldn't be read, and backing it up failed too, so the plugin is using defaults for now. Use the command 'Open Plugin Data Folder' to copy the file somewhere safe."
+                "User data error\n\nYour user data file couldn't be read, and backing it up failed too, so the plugin is using defaults for now. Use the command 'Show Plugin Data' to copy the file somewhere safe."
             );
         }
     }

@@ -125,11 +125,11 @@ export class History {
         const backupFile = await this.backup();
         if (backupFile) {
             await showAlert(
-                "User history error\n\nThere was an error reading your user history file so a backup was created. Use the command 'Open Plugin Data Folder' to view the backup file."
+                "User history error\n\nThere was an error reading your user history file so a backup was created. Use the command 'Show Plugin Data' to view the backup file."
             );
         } else {
             await showAlert(
-                "User history error\n\nYour user history file couldn't be read, and backing it up failed too, so the plugin is using defaults for now. Use the command 'Open Plugin Data Folder' to copy the file somewhere safe."
+                "User history error\n\nYour user history file couldn't be read, and backing it up failed too, so the plugin is using defaults for now. Use the command 'Show Plugin Data' to copy the file somewhere safe."
             );
         }
     }
