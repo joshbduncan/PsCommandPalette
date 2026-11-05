@@ -154,13 +154,30 @@ export class CommandPalette {
         this.#close = close;
         dialog.id = "ps-command-palette";
 
+        // ARIA: the list is a listbox of `role="option"` rows (see
+        // renderCommandItem.ts) and #info is a polite live region. The query
+        // box deliberately gets only an accessible name, not
+        // role="combobox"/aria-activedescendant/tabindex - sp-textfield is a
+        // native UXP widget that owns its own focus and Enter handling, and
+        // the svelte-migration branch's attempt at full combobox wiring was
+        // reverted.
         const querybox = createElement("sp-textfield", {
             id: "query",
             type: "search",
             placeholder: "Search for menu commands, tools, actions, and more...",
+            "aria-label": "Search commands",
         }) as HTMLInputElement;
-        const listbox = createElement("ul", { id: "commands" }) as HTMLUListElement;
-        const info = createElement("sp-body", { id: "info", size: "XS" });
+        const listbox = createElement("ul", {
+            id: "commands",
+            role: "listbox",
+            "aria-label": "Commands",
+        }) as HTMLUListElement;
+        const info = createElement("sp-body", {
+            id: "info",
+            size: "XS",
+            role: "status",
+            "aria-live": "polite",
+        });
 
         const form = createElement(
             "form",
@@ -334,7 +351,11 @@ export class CommandPalette {
 
         if (this.#visibleCommands.length === 0) {
             listbox.replaceChildren(
-                createElement("li", { class: "empty-state" }, this.emptyStateText)
+                createElement(
+                    "li",
+                    { class: "empty-state", role: "option", "aria-disabled": "true" },
+                    this.emptyStateText
+                )
             );
             return;
         }
