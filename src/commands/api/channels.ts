@@ -6,7 +6,7 @@ const { app, core } = photoshop;
 
 export const _channels: CommandRegistry = {
     newAlphaChannel: {
-        name: "New Alpha Chanel",
+        name: "New Alpha Channel",
         description: "Create a new alpha channel in the document.",
         callback: async () => {
             const doc = app.activeDocument;
