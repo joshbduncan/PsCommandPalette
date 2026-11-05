@@ -14,6 +14,14 @@ import { showAlert } from "../utils/showAlert";
 
 const { app, core } = photoshop;
 
+// performMenuCommand() spuriously reports simple, always-available commands
+// (e.g. File > New) as unavailable right after the palette's modal dialog
+// closes, then runs them fine moments later. An unavailable result means
+// the command did not run, so retrying it can't run it twice.
+const UNAVAILABLE_RETRY_DELAYS_MS = [50, 150, 300];
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export type MenuCommandData = {
     name: string;
     title: string;
@@ -94,9 +102,21 @@ export class MenuCommand extends Command {
             //     return;
             // }
 
-            const result = await core.performMenuCommand({
+            let result = await core.performMenuCommand({
                 commandID: this.commandID,
             });
+            let retries = 0;
+            for (const ms of UNAVAILABLE_RETRY_DELAYS_MS) {
+                if (result?.available) break;
+                await delay(ms);
+                retries++;
+                result = await core.performMenuCommand({ commandID: this.commandID });
+            }
+            if (retries > 0 && result?.available) {
+                console.log(
+                    `MenuCommand "${this.name}" ran after ${retries} retry(s).`
+                );
+            }
 
             if (!result?.available) {
                 // This is Photoshop's own API reporting the command didn't
