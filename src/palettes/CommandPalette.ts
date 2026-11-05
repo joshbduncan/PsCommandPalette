@@ -119,6 +119,9 @@ export class CommandPalette {
     #filteredCommands: Command[] = [];
     #visibleCommands: Command[] = [];
     #selectedIndex = 0;
+    // The query the list was last rendered for - null until the first
+    // render, so that one always counts as a query change.
+    #renderedQuery: string | null = null;
     // -1 = not currently viewing a history entry; 0 = the most recent
     // unique query, counting up toward older ones.
     #historyIndex = -1;
@@ -306,10 +309,20 @@ export class CommandPalette {
             );
         }
 
+        // A new query starts back at the top result. A live store update
+        // under the same query (a type finishing loading, the background
+        // menu refresh) keeps the user's selection on the same command if
+        // it's still listed, rather than yanking it back to row 0.
+        const previousId = this.#visibleCommands[this.#selectedIndex]?.id;
+        const queryChanged = this.#debouncedQuery !== this.#renderedQuery;
+        this.#renderedQuery = this.#debouncedQuery;
+
         this.#visibleCommands = this.#filteredCommands.slice(0, MAX_RESULTS);
-        // Reset selection whenever the visible result set changes (new
-        // query, startup commands, a command type finishing loading, etc.).
-        this.#selectedIndex = 0;
+        const keptIndex =
+            queryChanged || previousId === undefined
+                ? -1
+                : this.#visibleCommands.findIndex((c) => c.id === previousId);
+        this.#selectedIndex = Math.max(keptIndex, 0);
 
         this.renderList();
         this.renderInfo();
