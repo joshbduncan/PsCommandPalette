@@ -12,6 +12,7 @@ import {
     ABOUT_PLUGIN_COMMAND_ID,
     BookmarkCommandTypes,
     CommandTypes,
+    type CommandType,
 } from "../commands/types";
 
 const { shell, storage } = uxp;
@@ -48,7 +49,7 @@ export type PickerRecord = {
 };
 
 export type Settings = {
-    disabledCommandTypes: string[];
+    disabledCommandTypes: CommandType[];
     hiddenCommands: string[];
     startupCommands: string[];
 };
@@ -239,9 +240,14 @@ function isValidPicker(value: unknown): value is PickerRecord {
     );
 }
 
-function isValidDisabledCommandType(value: unknown): value is string {
+/**
+ * A command type a user can switch off - any type except `custom`, which is
+ * only ever created dynamically (for picker items), never loaded.
+ */
+function isValidDisabledCommandType(value: unknown): value is CommandType {
     return (
         typeof value === "string" &&
+        value !== CommandTypes.CUSTOM &&
         (Object.values(CommandTypes) as string[]).includes(value)
     );
 }
