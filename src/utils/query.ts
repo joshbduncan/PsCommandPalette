@@ -251,60 +251,6 @@ export function filterCommandsByQuery(
     return matches;
 }
 
-/** Returns only enabled commands. */
-export function enabledCommands(commands: Command[]): Command[] {
-    if (!Array.isArray(commands)) {
-        console.warn("enabledCommands: commands must be an array");
-        return [];
-    }
-    return commands.filter((command) => command.enabled);
-}
-
-/** Returns only disabled commands. */
-export function disabledCommands(commands: Command[]): Command[] {
-    if (!Array.isArray(commands)) {
-        console.warn("disabledCommands: commands must be an array");
-        return [];
-    }
-    return commands.filter((command) => !command.enabled);
-}
-
-/** Returns commands that match a specific type. */
-export function commandsByType(commands: Command[], type: CommandType): Command[] {
-    if (!Array.isArray(commands)) {
-        console.warn("commandsByType: commands must be an array");
-        return [];
-    }
-    return commands.filter((command) => command.type === type);
-}
-
-/** Returns commands with a type included in the `types` array. */
-export function commandsByTypes(commands: Command[], types: CommandType[]): Command[] {
-    if (!Array.isArray(commands)) {
-        console.warn("commandsByTypes: commands must be an array");
-        return [];
-    }
-    if (!Array.isArray(types)) {
-        console.warn("commandsByTypes: types must be an array");
-        return [];
-    }
-    const typeSet = new Set(types);
-    return commands.filter((command) => typeSet.has(command.type));
-}
-
-/** Finds a command by ID. */
-export function filterById(commands: Command[], id: string): Command[] {
-    if (!Array.isArray(commands)) {
-        console.warn("filterById: commands must be an array");
-        return [];
-    }
-    if (id === null || id === undefined) {
-        console.warn("filterById: id cannot be null or undefined");
-        return [];
-    }
-    return commands.filter((command) => command.id === id);
-}
-
 /**
  * Finds commands by a list of IDs, returned in `ids`' order (not
  * `commands`' order) - `ids` is typically a user-arranged list (e.g.
