@@ -273,18 +273,6 @@ export class User {
     data: UserData | null = null;
     fileName = "user.json";
     file: FSFile | null = null;
-    /**
-     * NOT called by our own `write()` - this instance's in-memory state is
-     * always the freshest available right after it writes, so treating our
-     * own write as "invalidated" would just discard that state and trigger
-     * a pointless reload from the file we ourselves just wrote. Reserved as
-     * an extension point for a
-     * future detector of genuine external edits (e.g. the user hand-editing
-     * `user.json` - the "Show Plugin Data" command opens that file's
-     * folder, so this is a real if rare scenario) - not currently wired to
-     * anything.
-     */
-    onInvalidate: (() => void) | null = null;
     private _dataFolder: FSFolder | null = null;
     /**
      * Serializes writes so concurrent `write()` calls never run
@@ -555,8 +543,6 @@ export class User {
             );
 
             console.log("User data written successfully.");
-            // Deliberately not calling onInvalidate() here - see the
-            // matching comment in History.writeNow() for why.
         } catch (error) {
             console.error("User data write failed:", error);
             await showAlert(

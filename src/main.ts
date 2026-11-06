@@ -21,44 +21,25 @@ const { entrypoints } = uxp;
 
 const PANEL_ID = "ps_command_palette";
 
-// Both flags start true so the very first call actually loads from disk.
-// Neither `User`/`History`'s own `write()` sets these anymore (see their
-// `onInvalidate` doc comments) - a self-write no longer means "stale", so in
-// practice these only fire once, at startup. "Reload Plugin" bypasses this
-// entirely and calls user.reload()/history.reload() directly. This wiring
-// stays in place as the hook a future external-edit detector would use.
-let userNeedsReload = true;
-let historyNeedsReload = true;
-
-user.onInvalidate = () => {
-    userNeedsReload = true;
-    console.log("User data invalidated - will reload on next access.");
-};
-history.onInvalidate = () => {
-    historyNeedsReload = true;
-    console.log("History data invalidated - will reload on next access.");
-};
+// The one load of user.json/history.json, shared by every caller (see
+// `loadUserData()`). Reset to null to force the next call to load again.
+let userDataLoad: Promise<void> | null = null;
 
 /**
- * (Re)load `user.json`/`history.json` if they're flagged as needing it. On
- * failure, logs and leaves both flagged, so the next call retries.
+ * Load `user.json` and `history.json` once, the first time anything needs
+ * them. Later calls - including ones made while that first load is still in
+ * flight - wait on the same load instead of starting another. A failed load
+ * is logged and retried on the next call. "Reload Plugin" doesn't go through
+ * this: it calls `user.reload()`/`history.reload()` directly.
  */
-async function loadUserDataIfNeeded(): Promise<void> {
-    try {
-        if (userNeedsReload) {
-            await user.reload();
-            userNeedsReload = false;
-        }
-        if (historyNeedsReload) {
-            await history.reload();
-            historyNeedsReload = false;
-        }
-    } catch (error) {
-        console.warn("Failed to load user data:", error);
-        // Reset flags on error to retry next time
-        userNeedsReload = true;
-        historyNeedsReload = true;
-    }
+function loadUserData(): Promise<void> {
+    userDataLoad ??= Promise.all([user.reload(), history.reload()])
+        .then(() => {})
+        .catch((error) => {
+            console.warn("Failed to load user data:", error);
+            userDataLoad = null;
+        });
+    return userDataLoad;
 }
 
 /**
@@ -72,7 +53,7 @@ async function loadUserDataIfNeeded(): Promise<void> {
  * with no cache yet) appears live as it resolves, with no reopen needed.
  */
 export async function launchPalette(): Promise<void> {
-    await loadUserDataIfNeeded();
+    await loadUserData();
 
     // Menu commands' enabled/visible/checked state is a snapshot from
     // whenever it was last fetched (plugin load, or the last "Reload
@@ -202,7 +183,7 @@ export function setupEntrypoints(): void {
             async create() {
                 console.log("Ps Command Palette loaded.");
                 // Pre-load user data on plugin startup for faster palette launch
-                await loadUserDataIfNeeded();
+                await loadUserData();
                 // Kick off command loading now (not gated behind the user opening
                 // the palette) - see startLoadingCommands' own doc comment.
                 startLoadingCommands({ user });

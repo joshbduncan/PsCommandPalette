@@ -60,10 +60,6 @@ export class History {
     recencyLUT: Map<string, number> | null = null;
     fileName = "history.json";
     file: FSFile | null = null;
-    /**
-     * NOT called by our own `write()` - see `User.onInvalidate` for why.
-     */
-    onInvalidate: (() => void) | null = null;
     private _dataFolder: FSFolder | null = null;
     /**
      * Serializes writes so concurrent `write()` calls (e.g. rapid-fire
@@ -369,12 +365,6 @@ export class History {
             this.buildOccurrencesLUT();
 
             console.log("History data written successfully");
-            // Deliberately not calling onInvalidate() here - this instance's
-            // in-memory data/lookup tables are already the freshest possible
-            // state (we just wrote them), so scheduling a reload from disk
-            // would only discard that state and re-read what we just wrote.
-            // onInvalidate is reserved for a future actual-external-edit
-            // detector, not "we wrote, so we must be stale."
         } catch (error) {
             console.error("History data write failed:", error);
             await showAlert(
