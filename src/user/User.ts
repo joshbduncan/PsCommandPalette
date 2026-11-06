@@ -15,7 +15,7 @@ import {
     type CommandType,
 } from "../commands/types";
 
-const { shell, storage } = uxp;
+const { storage } = uxp;
 const fs = storage.localFileSystem;
 
 export type BookmarkRecord = {
@@ -612,18 +612,6 @@ export class User {
         } catch (error) {
             console.error("Failed to back up user data file:", error);
             return undefined;
-        }
-    }
-
-    /**
-     * Open the user data folder in the file system explorer.
-     */
-    async reveal(): Promise<void> {
-        try {
-            const dataFolder = await this.getDataFolder();
-            await shell.openPath(dataFolder.nativePath, "");
-        } catch (error) {
-            console.error(error);
         }
     }
 }
