@@ -98,7 +98,11 @@ export class PickerCommand extends Command {
         this.items = items;
     }
 
-    async execute(): Promise<unknown> {
+    /**
+     * Open this picker's sub-palette and run (and record in history) the
+     * item the user picks.
+     */
+    override async execute(): Promise<void> {
         try {
             const itemsByCommandId = new Map<string, PickerItem>();
             const pickerCommands = this.items.map((item, index) => {

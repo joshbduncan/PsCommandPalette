@@ -561,6 +561,7 @@ export class User {
             return f;
         } catch (error) {
             console.error("Failed to back up user data file:", error);
+            return undefined;
         }
     }
 

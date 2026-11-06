@@ -81,7 +81,7 @@ export class FileBookmarkCommand extends BookmarkCommand {
     /**
      * Open the file bookmark in Photoshop.
      */
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         let entry: FSFile | undefined;
         try {
             entry = (await fs.getEntryForPersistentToken(this.token)) as FSFile;
@@ -135,7 +135,7 @@ export class FolderBookmarkCommand extends BookmarkCommand {
     /**
      * Open the folder bookmark in the system file explorer.
      */
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         let entry: FSFolder | undefined;
         try {
             entry = (await fs.getEntryForPersistentToken(this.token)) as FSFolder;

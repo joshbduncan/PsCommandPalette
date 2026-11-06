@@ -27,7 +27,7 @@ export class APICommand extends Command {
         this.callback = callback;
     }
 
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         return await this.callback();
     }
 }

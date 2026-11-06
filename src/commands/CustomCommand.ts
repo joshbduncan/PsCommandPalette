@@ -20,9 +20,7 @@ export class CustomCommand extends Command {
         this.callback = callback.bind(this);
     }
 
-    async execute(): Promise<unknown> {
-        if (this.callback) {
-            return await this.callback();
-        }
+    override async execute(): Promise<unknown> {
+        return await this.callback();
     }
 }

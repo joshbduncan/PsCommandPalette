@@ -25,7 +25,7 @@ export class ActionCommand extends Command {
     /**
      * Play the action.
      */
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         return core.executeAsModal(() => this.play(), {
             commandName: "Executing Action",
         });

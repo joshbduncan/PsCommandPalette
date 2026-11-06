@@ -376,6 +376,7 @@ export class History {
             return f;
         } catch (error) {
             console.error("Failed to back up user history file:", error);
+            return undefined;
         }
     }
 

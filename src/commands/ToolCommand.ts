@@ -31,7 +31,7 @@ export class ToolCommand extends Command {
     /**
      * Activate the tool.
      */
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         const target = { _ref: [{ _ref: this.ref }] };
         const command = { _obj: "select", _target: target };
         return await app.batchPlay([command], {});

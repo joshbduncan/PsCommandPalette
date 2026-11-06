@@ -85,7 +85,7 @@ export class MenuCommand extends Command {
     /**
      * Perform menu command.
      */
-    async execute(): Promise<unknown> {
+    override async execute(): Promise<unknown> {
         try {
             // ensure a menu command is still available since sometimes after long
             // periods between app operations ps will report the command is
@@ -145,6 +145,7 @@ export class MenuCommand extends Command {
             return result;
         } catch (error) {
             await handleCommandExecutionError(this, error);
+            return undefined;
         }
     }
 }
