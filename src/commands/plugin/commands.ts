@@ -115,14 +115,6 @@ Developed by ${PLUGIN_AUTHOR}
         },
     },
 
-    customPicker: {
-        name: "Create a Custom Picker Palette",
-        description: "Create your own custom command palette picker.",
-        callback: async () => {
-            await showAlert("Not yet implemented.");
-        },
-    },
-
     loadFileBookmarks: {
         name: "Load File Bookmark(s)...",
         description: "Load files for easy access as custom commands.",
