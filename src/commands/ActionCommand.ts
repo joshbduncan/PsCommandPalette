@@ -9,7 +9,7 @@ const { core } = photoshop;
  * A command palette action command, wrapping a Photoshop Action.
  */
 export class ActionCommand extends Command {
-    private play: () => Promise<void>;
+    private action: PhotoshopAction;
 
     constructor(action: PhotoshopAction) {
         const id = `${ID_PREFIXES.action}${action.parent.id}_${action.id}_${action.name.replace(/\s/g, "_")}`;
@@ -19,14 +19,16 @@ export class ActionCommand extends Command {
 
         // TODO: implement action shortcut key?
         super(id, commandName, CommandTypes.ACTION, description, true, queryParts);
-        this.play = action.play;
+        this.action = action;
     }
 
     /**
      * Play the action.
      */
     override async execute(): Promise<unknown> {
-        return core.executeAsModal(() => this.play(), {
+        // Called as a method on the Action itself, so Photoshop's `play()`
+        // gets the `this` it expects.
+        return core.executeAsModal(() => this.action.play(), {
             commandName: "Executing Action",
         });
     }
