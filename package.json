@@ -1,10 +1,20 @@
 {
     "name": "ps-command-palette",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Boost your Adobe Photoshop efficiency with quick access to most Menu Commands, Tools, and more.",
     "author": "Josh Duncan",
     "license": "MIT",
+    "private": true,
+    "scripts": {
+        "build": "node scripts/clean.mjs && tsc && node scripts/copy-static.mjs",
+        "watch": "node scripts/watch.mjs",
+        "check": "tsc --noEmit",
+        "format": "prettier -w src scripts"
+    },
     "devDependencies": {
-        "prettier": "3.5.1"
+        "@adobe/cc-ext-uxp-types": "https://github.com/justintaylor-dev/cc-ext-uxp-types.git#4d5d1d2b9b33729a5de44c63aba202efa575d88d",
+        "@types/photoshop": "^25.0.2",
+        "prettier": "3.5.1",
+        "typescript": "^5.8.3"
     }
 }

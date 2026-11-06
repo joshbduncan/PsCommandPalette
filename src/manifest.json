@@ -1,13 +1,13 @@
 {
-    "manifestVersion": 5,
+    "manifestVersion": 6,
     "id": "ps.command.palette.plugin",
     "name": "Ps Command Palette",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "author": "Josh Duncan",
-    "main": "./index.html",
+    "main": "index.html",
     "host": {
         "app": "PS",
-        "minVersion": "23.0.0",
+        "minVersion": "24.2.0",
         "data": {
             "apiVersion": 2,
             "loadEvent": "use",
@@ -64,6 +64,9 @@
             }
         }
     ],
+    "featureFlags": {
+        "enableAlerts": true
+    },
     "requiredPermissions": {
         "clipboard": "readAndWrite",
         "localFileSystem": "request",

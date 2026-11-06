@@ -1,0 +1,86 @@
+import type { UxpShowModalOptions } from "../utils/uxpTypes";
+
+// See `waitForModalToClose()`.
+const CLOSE_SETTLE_MS = 150;
+
+/**
+ * Wait for Photoshop to finish tearing down a just-closed modal's window.
+ * `showModal()` resolves before that's done, and `executeAsModal()` work
+ * started in that gap blocks the teardown: the dialog stays on screen,
+ * blank, until the work finishes. Await this after `showModal()` and before
+ * anything that runs in `executeAsModal()` (see `Command.runsAsModal`) -
+ * everything else skips the delay.
+ */
+export function waitForModalToClose(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, CLOSE_SETTLE_MS));
+}
+
+export type ModalContext<Result> = {
+    /** The `<dialog>` element to build the modal's content into. */
+    dialog: HTMLDialogElement;
+    /** Close the dialog, resolving `showModal`'s promise with `result`. */
+    close: (result?: Result) => void;
+};
+
+/**
+ * Builds a modal's content into `ctx.dialog`. May return a cleanup function
+ * (remove listeners, unsubscribe from stores, ...) that runs once the dialog
+ * has closed.
+ */
+export type ModalBuilder<Result> = (ctx: ModalContext<Result>) => (() => void) | void;
+
+/**
+ * Show a UXP `uxpShowModal()` dialog whose content is created by `build`,
+ * resolving a promise with the value passed to `close()` once it closes
+ * (or `undefined` if the user dismissed it natively, e.g. with Escape).
+ * Resolves as soon as the dialog is removed - see `waitForModalToClose()`
+ * before running modal Photoshop work afterwards.
+ */
+export async function showModal<Result = unknown>(
+    build: ModalBuilder<Result>,
+    options: UxpShowModalOptions
+): Promise<Result | undefined> {
+    if (typeof build !== "function") {
+        throw new TypeError("showModal() requires a builder function");
+    }
+
+    const dialog = document.createElement("dialog");
+    // Plain HTML inside the dialog can't rely on inheriting `color` from
+    // <body> - that doesn't reliably reach a dynamically-created top-level
+    // <dialog> in UXP. Spectrum elements style themselves internally
+    // regardless, but set this explicitly so plain text/lists/etc. aren't
+    // invisible by default.
+    dialog.style.color = "var(--text)";
+    document.body.appendChild(dialog);
+
+    const close = (result?: Result) => dialog.close(result);
+
+    let cleanup: (() => void) | void = undefined;
+    try {
+        cleanup = build({ dialog, close });
+
+        const result = await dialog.uxpShowModal(options);
+        // UXP resolves (not rejects) with this string on native dismiss
+        // (e.g. Escape) - a truthy value that a plain `if (!result)` check
+        // won't catch. Normalize it to undefined here once, for every
+        // caller, instead of every dialog needing to know the magic string.
+        if (result === "reasonCanceled") return undefined;
+        // Otherwise it's whatever `close()` passed, which `close`'s own
+        // signature already restricts to `Result`.
+        return result as Result;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    } finally {
+        try {
+            cleanup?.();
+        } catch (cleanupError) {
+            console.error("Failed to clean up modal:", cleanupError);
+        }
+        try {
+            dialog.remove();
+        } catch (cleanupError) {
+            console.error("Failed to cleanup dialog:", cleanupError);
+        }
+    }
+}

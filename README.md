@@ -22,13 +22,31 @@ Follow the [Adobe CCX installation guide](https://developer.adobe.com/photoshop/
 ### Install via UXP Developer Tools (For Developers)
 
 1. Install [UXP Developer Tools](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/installation/).
-2. [Add an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin).
-3. Access the code and debug console.
+2. Run `npm install && npm run build` in this repo (see [Development](#development)).
+3. [Add an existing plugin](https://developer.adobe.com/photoshop/uxp/2022/guides/devtool/plugin-management/#adding-an-existing-plugin), pointing at the generated `build/manifest.json`.
+4. Access the code and debug console.
 
 And, for quick access to Ps Command Palette from your keyboard, I recommend firing the palette via <kbd>Command + Shift + P</kbd> using something like [Keyboard Maestro](https://www.keyboardmaestro.com/main/) (Mac), [BetterTouchTool](https://folivora.ai/) (Mac), or [AutoHotkey](https://www.autohotkey.com/) (Windows).
 
 > [!IMPORTANT]
 > Having trouble with installation? Read [Installing a UXP panel (from a CCX file)](https://gregbenzphotography.com/installing-a-uxp-panel-from-ccx) from Greg Benz for some useful tips.
+
+## Development
+
+Written in plain TypeScript (no framework, no bundler). `tsc` compiles `src/` to CommonJS in `build/`, which is a normal UXP plugin folder that UXP Developer Tool can load and package as a CCX.
+
+```sh
+npm install
+npm run build     # clean build/, compile src/ into it, and copy static files
+npm run watch     # recompile on change (pair with UXP Developer Tool's "Watch")
+npm run check     # type-check only
+npm run format    # prettier (src/ and scripts/)
+./watch.sh        # build, load into Photoshop, then hot reload on change
+```
+
+`./watch.sh` needs the UXP CLI (`uxp`, from `@adobe/uxp-devtools-cli`) and `nodemon` on your `PATH`. Package the CCX from a fresh `npm run build`, so nothing stale ends up in it.
+
+No automated test suite - verification is manual, in Photoshop via UXP Developer Tool.
 
 ## Features
 
@@ -87,7 +105,7 @@ This system is inspired by the [Alfred](https://www.alfredapp.com) app.
 
 Many planned features mirror those in [AiCommandPalette](https://github.com/joshbduncan/AiCommandPalette):
 
-- [ ] caching to speed up launch (right now all menu commands are reloaded every launch, requires undoing any query highlighting)
+- [x] caching to speed up launch (menu commands load from a disk cache instantly, then refresh live in the background)
 - [ ] localization
     - [ ] tools
     - [ ] dialogs
