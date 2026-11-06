@@ -7,7 +7,6 @@ import { openPalette } from "./palettes/openPalette";
 import { confirmDestructiveCommand } from "./dialogs/confirmDestructiveCommand";
 import { waitForModalToClose } from "./dialogs/showModal";
 import { handleCommandExecutionError } from "./utils/commandExecutionError";
-import { showAlert } from "./utils/showAlert";
 import { host, PLUGIN_AUTHOR } from "./user/host";
 import { filterByIds } from "./utils/query";
 import { sortCommandsByOccurrence } from "./utils/commands";
@@ -154,15 +153,10 @@ export async function launchPalette(): Promise<void> {
 }
 
 /**
- * Handle a panel flyout menu click. Routes to the matching `pluginCommands`
- * callback for the real actions; "customizeStartup"/"fuzzyMatch"/
- * "queryLatching" are unimplemented (they just alert "Not yet implemented" -
- * fuzzyMatch/queryLatching also toggle their own checkmark, but don't
- * actually change any behavior yet).
+ * Handle a panel flyout menu click by running the matching `pluginCommands`
+ * callback. (The planned Settings submenu is tracked in TODO.md.)
  */
 async function invokeMenu(id: string): Promise<void> {
-    const panel = entrypoints.getPanel(PANEL_ID);
-
     switch (id) {
         case "about":
             pluginCommands.about.callback();
@@ -173,16 +167,6 @@ async function invokeMenu(id: string): Promise<void> {
         case "help":
             pluginCommands.help.callback();
             break;
-        case "customizeStartup":
-            await showAlert("Not yet implemented");
-            break;
-        case "fuzzyMatch":
-        case "queryLatching": {
-            const item = panel.menuItems.getItem(id);
-            item.checked = !item.checked;
-            await showAlert("Not yet implemented");
-            break;
-        }
         case "reloadPlugin":
             pluginCommands.reload.callback();
             break;
@@ -247,23 +231,6 @@ export function setupEntrypoints(): void {
                         submenu: [
                             { id: "clearHistory", label: "Clear History" },
                             { id: "pluginData", label: "View User Data" },
-                        ],
-                    },
-                    {
-                        id: "settings",
-                        label: "Settings",
-                        submenu: [
-                            { id: "customizeStartup", label: "Custom Startup..." },
-                            {
-                                id: "fuzzyMatch",
-                                label: "Fuzzy Query Matching",
-                                checked: true,
-                            },
-                            {
-                                id: "queryLatching",
-                                label: "Query Latching",
-                                checked: true,
-                            },
                         ],
                     },
                     { id: "reloadPlugin", label: "Reload Plugin" },
