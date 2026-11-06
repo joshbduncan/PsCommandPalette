@@ -28,8 +28,13 @@ function buildPickerItemCommand(item: PickerItem, index: number): CustomCommand 
     switch (item.kind) {
         case "command": {
             const target = commandsStore.commands.find((c) => c.id === item.commandId);
+            // Reuse the target's own id (not a synthetic `command_<index>_…`
+            // one) so the history entry PickerCommand.execute() records is
+            // the real command's - its frequency/recency/latch boosts then
+            // apply both here and in the top-level palette. A command listed
+            // twice in one picker shares that id; both entries run it.
             return new CustomCommand(
-                `${item.kind}_${index}_${item.commandId}`,
+                item.commandId,
                 item.label ?? target?.name ?? item.commandId,
                 target?.description ?? "",
                 async () => {
