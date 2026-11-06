@@ -37,11 +37,14 @@ Written in plain TypeScript (no framework, no bundler). `tsc` compiles `src/` to
 
 ```sh
 npm install
-npm run build     # compile src/ into build/ and copy static files
+npm run build     # clean build/, compile src/ into it, and copy static files
 npm run watch     # recompile on change (pair with UXP Developer Tool's "Watch")
 npm run check     # type-check only
-npm run format    # prettier
+npm run format    # prettier (src/ and scripts/)
+./watch.sh        # build, load into Photoshop, then hot reload on change
 ```
+
+`./watch.sh` needs the UXP CLI (`uxp`, from `@adobe/uxp-devtools-cli`) and `nodemon` on your `PATH`. Package the CCX from a fresh `npm run build`, so nothing stale ends up in it.
 
 No automated test suite - verification is manual, in Photoshop via UXP Developer Tool.
 

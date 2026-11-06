@@ -11,10 +11,10 @@ Written in plain TypeScript - no UI framework and no bundler. `tsc` compiles `sr
 ## Commands
 
 - `npm install` — install dev dependencies (TypeScript, type packages, Prettier)
-- `npm run build` — compile into `build/`
+- `npm run build` — delete `build/`, then compile into it (tsc never removes stale outputs, and UDT packages everything in `build/`)
 - `npm run watch` — recompile on change (`./watch.sh` also hot reloads via the `uxp` CLI)
 - `npm run check` — type-check (`tsc --noEmit`); should report zero errors
-- `npm run format` — format all source files (also runs via the pre-commit hook)
+- `npm run format` — format `src/` and `scripts/` (also runs via the pre-commit hook)
 
 There is no test framework — verification is manual, inside Photoshop via UXP Developer Tool. To test a change, rebuild, reload `build/manifest.json` in UDT, open the palette, search, select a command, confirm it executes and, for anything touching persisted data, that `user.json`/`history.json`/`menu-commands-cache.json` (in the UXP plugin data folder) are written correctly.
 

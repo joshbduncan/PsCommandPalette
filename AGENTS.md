@@ -2,11 +2,11 @@
 
 ## Build/Test Commands
 
-- `npm run build` - Compile `src/` with `tsc` into `build/` and copy static files (index.html, the plain-JS `index.js` loader, css, manifest, tools.json, icons)
-- `npm run watch` - Recompile/copy on every change
+- `npm run build` - Delete `build/`, compile `src/` into it with `tsc`, and copy static files (index.html, the plain-JS `index.js` loader, css, manifest, tools.json, icons)
+- `npm run watch` - Recompile/copy on every change (`scripts/watch.mjs`; doesn't clean `build/`)
 - `npm run check` - Type-check only (`tsc --noEmit`)
-- `npm run format` / `prettier -w src` - Format all source files
-- `./watch.sh` - Development mode: watch build plus `uxp plugin reload` on output changes
+- `npm run format` - Format `src/` and `scripts/` (also runs via the pre-commit hook)
+- `./watch.sh` - Development mode: build, `uxp plugin load`, then watch plus `uxp plugin reload` on output changes (needs `uxp` and `nodemon` on PATH)
 - Load/package `build/manifest.json` in UXP Developer Tool (UDT does not compile TypeScript itself)
 - No test framework configured - plugin relies on manual testing in Photoshop
 

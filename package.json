@@ -6,13 +6,13 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build": "tsc && node scripts/copy-static.mjs",
-        "watch": "node scripts/copy-static.mjs --watch & tsc -w --preserveWatchOutput",
+        "build": "node scripts/clean.mjs && tsc && node scripts/copy-static.mjs",
+        "watch": "node scripts/watch.mjs",
         "check": "tsc --noEmit",
-        "format": "prettier -w src"
+        "format": "prettier -w src scripts"
     },
     "devDependencies": {
-        "@adobe/cc-ext-uxp-types": "https://github.com/justintaylor-dev/cc-ext-uxp-types.git",
+        "@adobe/cc-ext-uxp-types": "https://github.com/justintaylor-dev/cc-ext-uxp-types.git#4d5d1d2b9b33729a5de44c63aba202efa575d88d",
         "@types/photoshop": "^25.0.2",
         "prettier": "3.5.1",
         "typescript": "^5.8.3"
