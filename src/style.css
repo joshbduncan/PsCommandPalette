@@ -12,8 +12,8 @@
    --selected's blue background doesn't change with theme the way
    --base/--text do.
 
-   --match-highlight/--match-highlight-selected: fuzzy-match highlight
-   color, themed the same way, plus its own selected-row variant.
+   --match-highlight: fuzzy-match highlight color, the same in every theme
+   and on the selected row.
 
    (Explained here, above the rule, rather than as comments between the
    declarations below - UXP's CSS engine throws a CssSyntaxError on a
@@ -32,7 +32,6 @@
     --shortcut-text-selected: rgba(255, 255, 255, 0.7);
 
     --match-highlight: #ffc107;
-    --match-highlight-selected: #ffc107;
 }
 
 @media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
@@ -43,7 +42,6 @@
         --hover: #eaeaea;
 
         --shortcut-text: rgba(0, 0, 0, 0.35);
-        --match-highlight: #ffc107;
     }
 }
 
@@ -166,10 +164,6 @@ dialog#ps-command-palette {
 #commands-list #commands li.command .body span.title strong {
     font-weight: inherit;
     color: var(--match-highlight);
-}
-
-#commands-list #commands li.command[aria-selected="true"] .body span.title strong {
-    color: var(--match-highlight-selected);
 }
 
 #commands-list #commands li.command .body kbd.shortcut {
