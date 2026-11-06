@@ -24,9 +24,9 @@ export function showResizeByPercentageDialog(): Promise<string | number | undefi
             const submit = (event: Event) => {
                 event.preventDefault();
                 const value = parseFloat(input.value);
-                if (isNaN(value)) {
+                if (isNaN(value) || value <= 0) {
                     error.textContent =
-                        "Invalid numeric entry. Default value inserted.";
+                        "Enter a percentage greater than 0. Default value inserted.";
                     error.style.display = "";
                     input.value = DEFAULT_PERCENTAGE;
                     return;
