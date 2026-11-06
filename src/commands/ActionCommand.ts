@@ -10,6 +10,7 @@ const { core } = photoshop;
  */
 export class ActionCommand extends Command {
     private action: PhotoshopAction;
+    override runsAsModal = true;
 
     constructor(action: PhotoshopAction) {
         const id = `${ID_PREFIXES.action}${action.parent.id}_${action.id}_${action.name.replace(/\s/g, "_")}`;

@@ -3,6 +3,7 @@ import { CustomCommand } from "./CustomCommand";
 import { CommandTypes } from "./types";
 import { openPalette } from "../palettes/openPalette";
 import { confirmDestructiveCommand } from "../dialogs/confirmDestructiveCommand";
+import { waitForModalToClose } from "../dialogs/showModal";
 import { handleCommandExecutionError } from "../utils/commandExecutionError";
 import { showAlert } from "../utils/showAlert";
 import { commandsStore } from "../utils/CommandsStore";
@@ -33,7 +34,7 @@ function buildPickerItemCommand(item: PickerItem, index: number): CustomCommand 
             // the real command's - its frequency/recency/latch boosts then
             // apply both here and in the top-level palette. A command listed
             // twice in one picker shares that id; both entries run it.
-            return new CustomCommand(
+            const wrapper = new CustomCommand(
                 item.commandId,
                 item.label ?? target?.name ?? item.commandId,
                 target?.description ?? "",
@@ -51,6 +52,8 @@ function buildPickerItemCommand(item: PickerItem, index: number): CustomCommand 
                 // palette does
                 target?.destructive ?? false
             );
+            wrapper.runsAsModal = target?.runsAsModal ?? false;
+            return wrapper;
         }
         case "value":
             return new CustomCommand(
@@ -126,6 +129,8 @@ export class PickerCommand extends Command {
             if (command.destructive && !(await confirmDestructiveCommand(command))) {
                 return;
             }
+
+            if (command.runsAsModal) await waitForModalToClose();
 
             try {
                 await command.execute();

@@ -58,6 +58,14 @@ export class Command {
      * `execute()` when this is true.
      */
     destructive: boolean;
+    /**
+     * Whether `execute()` runs in `core.executeAsModal()`. Callers that just
+     * closed a dialog (the palette, a confirm) await
+     * `waitForModalToClose()` before executing one of these, or Photoshop
+     * leaves the closed dialog on screen until the command finishes.
+     * Subclasses that use `executeAsModal()` set it to true.
+     */
+    runsAsModal = false;
 
     constructor(
         id: string,

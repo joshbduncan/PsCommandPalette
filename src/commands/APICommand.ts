@@ -7,6 +7,8 @@ import { CommandTypes, ID_PREFIXES } from "./types";
  */
 export class APICommand extends Command {
     private callback: () => unknown;
+    // every Photoshop API command (commands/api/*.ts) runs in executeAsModal
+    override runsAsModal = true;
 
     constructor(
         id: string,

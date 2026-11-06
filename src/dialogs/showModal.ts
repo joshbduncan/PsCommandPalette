@@ -1,5 +1,20 @@
 import type { UxpShowModalOptions } from "../utils/uxpTypes";
 
+// See `waitForModalToClose()`.
+const CLOSE_SETTLE_MS = 150;
+
+/**
+ * Wait for Photoshop to finish tearing down a just-closed modal's window.
+ * `showModal()` resolves before that's done, and `executeAsModal()` work
+ * started in that gap blocks the teardown: the dialog stays on screen,
+ * blank, until the work finishes. Await this after `showModal()` and before
+ * anything that runs in `executeAsModal()` (see `Command.runsAsModal`) -
+ * everything else skips the delay.
+ */
+export function waitForModalToClose(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, CLOSE_SETTLE_MS));
+}
+
 export type ModalContext<Result> = {
     /** The `<dialog>` element to build the modal's content into. */
     dialog: HTMLDialogElement;
@@ -18,6 +33,8 @@ export type ModalBuilder<Result> = (ctx: ModalContext<Result>) => (() => void) |
  * Show a UXP `uxpShowModal()` dialog whose content is created by `build`,
  * resolving a promise with the value passed to `close()` once it closes
  * (or `undefined` if the user dismissed it natively, e.g. with Escape).
+ * Resolves as soon as the dialog is removed - see `waitForModalToClose()`
+ * before running modal Photoshop work afterwards.
  */
 export async function showModal<Result = unknown>(
     build: ModalBuilder<Result>,

@@ -5,6 +5,7 @@ import { commandsStore } from "./utils/CommandsStore";
 import { startLoadingCommands, refreshCommandType } from "./utils/load";
 import { openPalette } from "./palettes/openPalette";
 import { confirmDestructiveCommand } from "./dialogs/confirmDestructiveCommand";
+import { waitForModalToClose } from "./dialogs/showModal";
 import { handleCommandExecutionError } from "./utils/commandExecutionError";
 import { showAlert } from "./utils/showAlert";
 import { host, PLUGIN_AUTHOR } from "./user/host";
@@ -136,6 +137,8 @@ export async function launchPalette(): Promise<void> {
                   console.error("Failed to record history:", error);
               })
             : Promise.resolve();
+
+    if (command.runsAsModal) await waitForModalToClose();
 
     try {
         await command.execute();

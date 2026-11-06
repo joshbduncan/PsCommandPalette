@@ -74,6 +74,8 @@ export class BookmarkCommand extends Command {
  * A command palette file bookmark command.
  */
 export class FileBookmarkCommand extends BookmarkCommand {
+    override runsAsModal = true;
+
     constructor({ id, name, path, token }: BookmarkRecord) {
         super(id, name, path, token);
     }

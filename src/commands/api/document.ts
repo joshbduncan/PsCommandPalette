@@ -2,6 +2,7 @@ import * as photoshop from "photoshop";
 import { showAlert } from "../../utils/showAlert";
 import type { CommandRegistry } from "../registry";
 import { showResizeByPercentageDialog } from "../../dialogs/resizeByPercentage";
+import { waitForModalToClose } from "../../dialogs/showModal";
 
 const { app, core, constants } = photoshop;
 
@@ -91,6 +92,9 @@ export const _document: CommandRegistry = {
             const result = await showResizeByPercentageDialog();
 
             if (!result || result === 100) return;
+
+            // the resize below runs in executeAsModal right after this dialog
+            await waitForModalToClose();
 
             const percent = Number(result) / 100;
             const width = doc.width * percent;
