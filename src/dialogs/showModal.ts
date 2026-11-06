@@ -48,7 +48,9 @@ export async function showModal<Result = unknown>(
         // won't catch. Normalize it to undefined here once, for every
         // caller, instead of every dialog needing to know the magic string.
         if (result === "reasonCanceled") return undefined;
-        return result;
+        // Otherwise it's whatever `close()` passed, which `close`'s own
+        // signature already restricts to `Result`.
+        return result as Result;
     } catch (error) {
         console.error(error);
         return undefined;

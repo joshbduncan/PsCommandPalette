@@ -17,7 +17,7 @@ export type FSFolder = storage.Folder;
 // actually expects at runtime. Cast through this type at call sites instead
 // of `as any`.
 export type UxpClipboard = {
-    writeText(text: Record<string, string>): Promise<any>;
+    writeText(text: Record<string, string>): Promise<unknown>;
 };
 
 // `Action`/`ActionSet` (from `app.actionTree`) are fully typed in
@@ -58,7 +58,7 @@ export type UxpShowModalOptions = {
 // string "reasonCanceled" if the user dismissed the dialog natively.
 declare global {
     interface HTMLDialogElement {
-        uxpShowModal(options: UxpShowModalOptions): Promise<any>;
+        uxpShowModal(options: UxpShowModalOptions): Promise<unknown>;
         /**
          * UXP's `<dialog>` accepts and round-trips any value here (not just
          * a string, per the standard DOM `close(returnValue?: string)`
