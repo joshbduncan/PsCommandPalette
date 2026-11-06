@@ -1,6 +1,10 @@
 import * as uxp from "uxp";
 
-import { atomicWriteJSON, recoverFromInterruptedWrite } from "../utils/atomicWriteJSON";
+import {
+    atomicWriteJSON,
+    isNotFoundError,
+    recoverFromInterruptedWrite,
+} from "../utils/atomicWriteJSON";
 import { runMigrations } from "../utils/schemaMigration";
 import { showAlert } from "../utils/showAlert";
 import type { FSFile, FSFolder } from "../utils/uxpTypes";
@@ -412,8 +416,8 @@ export class User {
                 console.warn("User data upgraded to the current schema, saving...");
                 await this.write();
             }
-        } catch (error: any) {
-            if (error.code === "ENOENT" || error.name === "EntryNotFoundError") {
+        } catch (error) {
+            if (isNotFoundError(error)) {
                 console.log(
                     "User data file not found, checking for an interrupted-write recovery candidate..."
                 );

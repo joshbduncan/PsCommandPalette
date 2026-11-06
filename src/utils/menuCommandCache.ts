@@ -1,5 +1,5 @@
 import * as uxp from "uxp";
-import { atomicWriteJSON } from "./atomicWriteJSON";
+import { atomicWriteJSON, isNotFoundError } from "./atomicWriteJSON";
 import type { FSFile } from "./uxpTypes";
 import type { MenuCommandData } from "../commands/MenuCommand";
 
@@ -39,14 +39,14 @@ export async function readMenuCommandCache(
             return null;
         }
         return cache.commands;
-    } catch (error: any) {
+    } catch (error) {
         // ENOENT/EntryNotFoundError (no cache file yet - first run, or it was
         // never successfully written) is the normal, expected case and not
         // worth logging. Anything else - corrupt JSON, a permission error,
         // some other unexpected read failure - still degrades to "no usable
         // cache" the same way, but is worth a debug trail instead of
         // silently looking identical to a routine first run.
-        if (error?.code !== "ENOENT" && error?.name !== "EntryNotFoundError") {
+        if (!isNotFoundError(error)) {
             console.warn("Failed to read menu command cache:", error);
         }
         return null;

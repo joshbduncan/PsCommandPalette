@@ -80,6 +80,17 @@ export async function atomicWriteJSON(
 }
 
 /**
+ * Whether `error` is UXP's "no such file" error, which `Folder#getEntry()`
+ * throws for a missing entry - reported as `code: "ENOENT"` on some hosts
+ * and versions, and as an `EntryNotFoundError` on others.
+ */
+export function isNotFoundError(error: unknown): boolean {
+    if (!error || typeof error !== "object") return false;
+    const { code, name } = error as { code?: unknown; name?: unknown };
+    return code === "ENOENT" || name === "EntryNotFoundError";
+}
+
+/**
  * Recovers file contents when the canonical `fileName` is missing (e.g. an
  * `ENOENT` on load) by checking for leftovers from an `atomicWriteJSON`
  * write that was interrupted before completing - the same failure window

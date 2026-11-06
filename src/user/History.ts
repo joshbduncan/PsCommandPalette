@@ -1,6 +1,10 @@
 import * as uxp from "uxp";
 
-import { atomicWriteJSON, recoverFromInterruptedWrite } from "../utils/atomicWriteJSON";
+import {
+    atomicWriteJSON,
+    isNotFoundError,
+    recoverFromInterruptedWrite,
+} from "../utils/atomicWriteJSON";
 import { normalizeQuery } from "../utils/queryNormalize";
 import { runMigrations } from "../utils/schemaMigration";
 import { showAlert } from "../utils/showAlert";
@@ -152,8 +156,8 @@ export class History {
                 console.warn("History upgraded to the current schema, saving...");
                 await this.write(true);
             }
-        } catch (error: any) {
-            if (error.code === "ENOENT" || error.name === "EntryNotFoundError") {
+        } catch (error) {
+            if (isNotFoundError(error)) {
                 console.log(
                     "History file not found, checking for an interrupted-write recovery candidate..."
                 );
