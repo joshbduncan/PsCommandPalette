@@ -125,7 +125,11 @@ export async function launchPalette(): Promise<void> {
     // delay the command the user actually asked for, but caught immediately
     // so a failed write becomes a logged error instead of an unhandled
     // rejection, and awaited below so this function doesn't return before
-    // the write has actually settled.
+    // the write has actually settled. Recorded whether or not the command
+    // then succeeds: history captures what the user meant to run, so a
+    // command that failed (e.g. Photoshop reported it unavailable) is easy
+    // to retry from the recent list or with ↑, and its query still learns
+    // the right result.
     const historyWrite =
         command.id !== RELOAD_PLUGIN_COMMAND_ID && command.type !== CommandTypes.PICKER
             ? history.add(query, command.id).catch((error) => {

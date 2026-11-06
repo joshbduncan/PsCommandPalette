@@ -122,7 +122,6 @@ export class PickerCommand extends Command {
                 await command.execute();
             } catch (error) {
                 await handleCommandExecutionError(command, error, query);
-                return;
             }
 
             // Record the item actually chosen here, not the PickerCommand
@@ -132,7 +131,8 @@ export class PickerCommand extends Command {
             // picker was opened". A "picker" item is itself just navigation
             // into another sub-palette, not a completed action, so it's left
             // unrecorded the same way - the eventual terminal selection
-            // inside it records itself, recursively.
+            // inside it records itself, recursively. Recorded even if the
+            // command failed, same as main.ts's launchPalette.
             const selectedItem = itemsByCommandId.get(command.id);
             if (selectedItem && selectedItem.kind !== "picker") {
                 await history.add(query, command.id).catch((error) => {
