@@ -172,6 +172,7 @@ const USER_MIGRATIONS: Record<number, Migration<UserFile>> = {
     },
 };
 
+/** Bring a parsed `user.json` up to `USER_SCHEMA_VERSION`. */
 function migrateUserFile(raw: unknown): { data: UserFile; migrated: boolean } {
     return runMigrations<UserFile>(raw, USER_SCHEMA_VERSION, USER_MIGRATIONS);
 }
@@ -199,6 +200,7 @@ function isNonEmptyString(value: unknown): value is string {
     return typeof value === "string" && value.length > 0;
 }
 
+/** A complete `BookmarkRecord` with a known file/folder `type`. */
 function isValidBookmark(value: unknown): value is BookmarkRecord {
     if (!value || typeof value !== "object") return false;
     const b = value as Record<string, unknown>;
@@ -211,6 +213,7 @@ function isValidBookmark(value: unknown): value is BookmarkRecord {
     );
 }
 
+/** A `PickerItem` of a known `kind` with that kind's required fields. */
 function isValidPickerItem(value: unknown): value is PickerItem {
     if (!value || typeof value !== "object") return false;
     const item = value as Record<string, unknown>;
@@ -228,6 +231,7 @@ function isValidPickerItem(value: unknown): value is PickerItem {
     }
 }
 
+/** A `PickerRecord` whose items are all valid `PickerItem`s. */
 function isValidPicker(value: unknown): value is PickerRecord {
     if (!value || typeof value !== "object") return false;
     const p = value as Record<string, unknown>;
@@ -273,9 +277,8 @@ export class User {
      * NOT called by our own `write()` - this instance's in-memory state is
      * always the freshest available right after it writes, so treating our
      * own write as "invalidated" would just discard that state and trigger
-     * a pointless reload from the file we ourselves just wrote (this is
-     * exactly what the vanilla plugin's `globalThis.invalidateUserData()`
-     * did, on every single write). Reserved as an extension point for a
+     * a pointless reload from the file we ourselves just wrote. Reserved as
+     * an extension point for a
      * future detector of genuine external edits (e.g. the user hand-editing
      * `user.json` - the "Show Plugin Data" command opens that file's
      * folder, so this is a real if rare scenario) - not currently wired to
@@ -385,6 +388,10 @@ export class User {
         return isValid;
     }
 
+    /**
+     * The plugin's UXP data folder (where `user.json` lives), looked up once and
+     * cached until `reload()`.
+     */
     async getDataFolder(): Promise<FSFolder> {
         if (!this._dataFolder) {
             this._dataFolder = await fs.getDataFolder();
@@ -417,6 +424,17 @@ export class User {
         this.data = data;
     }
 
+    /**
+     * Load `user.json` into `data`. In order of what can go wrong:
+     * - a file from an older schema is migrated, and saved back if it was;
+     * - malformed fields or records are repaired by `validateData()` and
+     *   the corrected file saved;
+     * - a missing file is recovered from the `.bak`/`.tmp` an interrupted
+     *   write left behind, if there is one, otherwise defaults are used
+     *   (first run);
+     * - unreadable JSON or any other read error backs the file up (see
+     *   `createBackupOnError()`) and falls back to defaults.
+     */
     async load(): Promise<void> {
         console.log("Loading user data...");
         try {
@@ -474,6 +492,10 @@ export class User {
         }
     }
 
+    /**
+     * Drop all cached state (data, file handle, data folder) and load
+     * `user.json` again from disk.
+     */
     async reload(): Promise<void> {
         this.data = null;
         this.file = null;
@@ -496,6 +518,11 @@ export class User {
         return run;
     }
 
+    /**
+     * The actual write, run by `write()` once earlier writes have settled:
+     * validate, then write atomically with the schema envelope (see
+     * `atomicWriteJSON`). Alerts and rethrows on failure.
+     */
     private async writeNow(): Promise<void> {
         if (!this.data || Object.keys(this.data).length === 0) {
             return;
@@ -601,7 +628,5 @@ export class User {
     }
 }
 
-// Explicit singleton, replacing the vanilla plugin's `const USER = new User()`
-// implicit-global pattern (main.js declared it, other files read it by bare
-// name with no import). Import `{ user }` from this module instead.
+// The shared instance - import `{ user }` from this module.
 export const user = new User();

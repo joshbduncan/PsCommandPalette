@@ -27,6 +27,9 @@ export class PluginCommand extends Command {
         this.callback = callback;
     }
 
+    /**
+     * Run the registry entry's callback.
+     */
     override async execute(): Promise<unknown> {
         return await this.callback();
     }

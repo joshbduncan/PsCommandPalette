@@ -84,6 +84,7 @@ export function setItemSelected(item: Element, selected: boolean): void {
     item.setAttribute("aria-selected", String(selected));
 }
 
+/** Highlight segments as nodes: matched runs wrapped in `<strong>`, the rest plain text. */
 function renderSegments(segments: HighlightSegment[]): (Node | string)[] {
     return segments.map((segment) =>
         segment.matched ? createElement("strong", {}, segment.text) : segment.text

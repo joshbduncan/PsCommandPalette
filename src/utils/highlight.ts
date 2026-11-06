@@ -2,13 +2,6 @@ import { matchQueryParts } from "./matchQuery";
 
 export type HighlightSegment = { text: string; matched: boolean };
 
-/**
- * The vanilla plugin had `Command.addQueryHighlights()`/
- * `removeQueryHighlights()` for this (imperative innerHTML mutation) but
- * never actually called them from anywhere - this is a genuinely new,
- * wired-up feature, not a straight port.
- */
-
 /** Group a per-character matched-flag array into contiguous runs for rendering `<strong>` around matched characters. */
 function toSegments(text: string, matchedChars: boolean[]): HighlightSegment[] {
     if (text.length === 0) return [{ text: "", matched: false }];

@@ -159,8 +159,7 @@ export class CommandPalette {
         // box deliberately gets only an accessible name, not
         // role="combobox"/aria-activedescendant/tabindex - sp-textfield is a
         // native UXP widget that owns its own focus and Enter handling, and
-        // the svelte-migration branch's attempt at full combobox wiring was
-        // reverted.
+        // an earlier attempt at full combobox wiring on it was reverted.
         const querybox = createElement("sp-textfield", {
             id: "query",
             type: "search",
@@ -266,6 +265,7 @@ export class CommandPalette {
         }, DEBOUNCE_MS);
     }
 
+    /** The searchable set: a picker's static list, or the live global store. */
     private get liveCommands(): Command[] {
         return this.#options.commands ?? commandsStore.commands;
     }
@@ -345,6 +345,10 @@ export class CommandPalette {
         this.renderInfo();
     }
 
+    /**
+     * Rebuild the result rows for `#visibleCommands` (or the empty-state row
+     * when there are none) and keep the selected row in view.
+     */
     private renderList(): void {
         const listbox = this.#listbox;
         if (!listbox) return;
@@ -385,6 +389,10 @@ export class CommandPalette {
         return "No matching commands.";
     }
 
+    /**
+     * Update the info line under the list: the result count, which command
+     * types are still loading, and any unknown `#type` filters in the query.
+     */
     private renderInfo(): void {
         if (!this.#info) return;
 
@@ -414,6 +422,7 @@ export class CommandPalette {
         this.#info.textContent = `Unknown ${label}: ${unknownTags.join(", ")} — ${countText}`;
     }
 
+    /** Move the selection to row `index`, restyling only the two rows involved. */
     private setSelectedIndex(index: number): void {
         const items = this.#listbox?.children;
         if (items) {
@@ -438,6 +447,10 @@ export class CommandPalette {
         el?.scrollIntoView({ block: "nearest", behavior: "auto" });
     }
 
+    /**
+     * Fill the query box with `recentQueries[index]` and search for it,
+     * staying in history-scroll mode (see `handleKeydown()`).
+     */
     private recallHistoryQuery(index: number): void {
         this.#historyIndex = index;
         const query = this.recentQueries[index];
@@ -445,6 +458,12 @@ export class CommandPalette {
         this.setQuery(query);
     }
 
+    /**
+     * Palette keyboard handling: Escape closes; Up/Down walk query history
+     * while the box is empty (or already showing a recalled query) and move
+     * the selection otherwise; Tab/Shift+Tab always move the selection.
+     * Enter isn't handled here - it submits the form natively.
+     */
     private handleKeydown(event: KeyboardEvent): void {
         if (event.key === "Escape") {
             // sp-textfield[type="search"] has its own native "Escape clears
@@ -496,10 +515,12 @@ export class CommandPalette {
         }
     }
 
+    /** Close the palette, resolving it with `command` and the query that found it. */
     private selectCommand(command: Command): void {
         this.#close?.({ query: this.#rawQuery, command });
     }
 
+    /** Select the highlighted row, if any (Enter / form submit). */
     private submitCommand(): void {
         const command = this.#visibleCommands[this.#selectedIndex];
         if (command) this.selectCommand(command);

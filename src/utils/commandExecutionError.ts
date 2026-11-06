@@ -21,6 +21,10 @@ export type CommandLogContext = {
     hostVersion: string;
 };
 
+/**
+ * Build the `CommandLogContext` for `command` (and the query that led to
+ * it, if known) to spread into a log call.
+ */
 export function buildCommandLogContext(
     command: Command,
     query?: string

@@ -61,8 +61,7 @@ let currentGeneration = 0;
 /**
  * Kick off loading every command type into `commandsStore`, without waiting
  * for any of them - each type populates the store independently as soon as
- * IT resolves, instead of the vanilla plugin's `loadCommands()` gating the
- * whole flat array behind `Promise.all`. Tools/actions/API/plugin/bookmarks
+ * IT resolves, rather than waiting for the slowest. Tools/actions/API/plugin/bookmarks
  * are all fast or synchronous and should be searchable well before menu
  * commands land, even on a cold run with no cache yet.
  *
@@ -226,6 +225,7 @@ function loadMenuCommandsWithCache(): Promise<void> {
     return menuLoadInFlight;
 }
 
+/** Build a `MenuCommand` from cached or live `MenuCommandData`. */
 function toMenuCommand(data: MenuCommandData): MenuCommand {
     return new MenuCommand(data);
 }
@@ -234,6 +234,7 @@ function toMenuCommand(data: MenuCommandData): MenuCommand {
 // command type load functions //
 /////////////////////////////////
 
+/** One `ActionCommand` per action in every set of Photoshop's Actions panel. */
 async function loadActionCommands(): Promise<Command[]> {
     const actionTree = app.actionTree;
     const actions: Command[] = new Array(
@@ -249,6 +250,7 @@ async function loadActionCommands(): Promise<Command[]> {
     return actions;
 }
 
+/** One `APICommand` per entry in the merged `commands/api/*.ts` registries. */
 function loadAPICommands(): Command[] {
     return Object.entries(apiCommands).map(
         ([key, obj]) =>
@@ -262,6 +264,7 @@ function loadAPICommands(): Command[] {
     );
 }
 
+/** One file or folder bookmark command per record in `user.data.bookmarks`. */
 async function loadBookmarkCommands({ user }: LoadContext): Promise<Command[]> {
     if (!user.data?.bookmarks) return [];
     return user.data.bookmarks.map((bookmark) =>
@@ -388,11 +391,13 @@ async function fetchLiveMenuCommandData(): Promise<MenuCommandData[]> {
     return commands;
 }
 
+/** One `PickerCommand` per record in `user.data.pickers`. */
 async function loadPickerCommands({ user }: LoadContext): Promise<Command[]> {
     if (!user.data?.pickers) return [];
     return user.data.pickers.map((picker) => new PickerCommand({ ...picker }));
 }
 
+/** One `PluginCommand` per entry in `commands/plugin/commands.ts`. */
 function loadPluginCommands(): Command[] {
     return Object.entries(pluginCommands).map(
         ([key, obj]) =>
@@ -406,6 +411,7 @@ function loadPluginCommands(): Command[] {
     );
 }
 
+/** One `ToolCommand` per tool listed in `tools.json`. */
 function loadToolCommands(): Command[] {
     return toolsData.tools.map(
         (tool) =>

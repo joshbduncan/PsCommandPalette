@@ -11,8 +11,7 @@ export type CommandRegistry = Record<string, CommandRegistryEntry>;
 
 /**
  * Merge command registries into one, throwing on duplicate keys instead of
- * silently overwriting (the vanilla plugin merged its 5 api/*.js registry
- * files via unguarded `Object.assign`, which had a latent collision risk).
+ * silently letting a later registry overwrite an earlier one's command.
  */
 export function mergeRegistries(...registries: CommandRegistry[]): CommandRegistry {
     const merged: CommandRegistry = {};

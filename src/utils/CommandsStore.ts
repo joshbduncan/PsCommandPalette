@@ -73,6 +73,10 @@ export class CommandsStore {
         this.notify();
     }
 
+    /**
+     * Call every subscribed listener. A listener that throws is logged and
+     * skipped, so one broken subscriber can't stop the others updating.
+     */
     private notify(): void {
         for (const listener of this.#listeners) {
             try {

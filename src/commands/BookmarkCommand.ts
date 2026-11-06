@@ -199,6 +199,7 @@ const fnv1a = (bytes: Uint8Array, seed: number): number => {
     return hash >>> 0;
 };
 
+/** A fixed-length, Unicode-safe hex digest of `path` - see `fnv1a`, above. */
 const hashPath = (path: string): string => {
     const bytes = new TextEncoder().encode(path);
     const a = fnv1a(bytes, 0x811c9dc5);

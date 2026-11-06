@@ -75,9 +75,9 @@ const CONTENT_HTML = `
     <h3>Known Issues</h3>
     <ul>
         <li>
-            Some menu commands occasionally stop executing via the API after
-            Photoshop's been sitting idle a while (they still work fine from the
-            actual menu)
+            Photoshop occasionally reports a menu command as unavailable when it
+            isn't. The palette quietly retries a few times, but if you still get
+            the error, just run it again (it still works from the actual menu)
         </li>
         <li>
             Commands aren't greyed out based on whether Photoshop currently says

@@ -20,6 +20,7 @@ const { app, core } = photoshop;
 // the command did not run, so retrying it can't run it twice.
 const UNAVAILABLE_RETRY_DELAYS_MS = [50, 150, 300];
 
+/** Resolve after `ms` milliseconds. */
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export type MenuCommandData = {

@@ -45,6 +45,7 @@ const HISTORY_MIGRATIONS: Record<number, Migration<HistoryFile>> = {
     }),
 };
 
+/** Bring a parsed `history.json` up to `HISTORY_SCHEMA_VERSION`. */
 function migrateHistoryFile(raw: unknown): { data: HistoryFile; migrated: boolean } {
     return runMigrations<HistoryFile>(raw, HISTORY_SCHEMA_VERSION, HISTORY_MIGRATIONS);
 }
@@ -72,10 +73,15 @@ export class History {
      */
     private writeChain: Promise<void> = Promise.resolve();
 
+    /** Every command id in history, deduplicated, most recently used first. */
     get commandIDs(): string[] {
         return [...new Set(this.data.map((entry) => entry.commandID))];
     }
 
+    /**
+     * The plugin's UXP data folder (where `history.json` lives), looked up once and
+     * cached until `reload()`.
+     */
     async getDataFolder(): Promise<FSFolder> {
         if (!this._dataFolder) {
             this._dataFolder = await fs.getDataFolder();
@@ -138,6 +144,18 @@ export class History {
         }
     }
 
+    /**
+     * Load `history.json` into `data`, then rebuild the lookup tables. In
+     * order of what can go wrong:
+     * - a file from an older schema is migrated, and saved back if it was;
+     * - malformed entries are dropped by `validateData()` and the
+     *   corrected file saved;
+     * - a missing file is recovered from the `.bak`/`.tmp` an interrupted
+     *   write left behind, if there is one, otherwise history starts empty
+     *   (first run);
+     * - unreadable JSON or any other read error backs the file up (see
+     *   `createBackupOnError()`) and starts with an empty history.
+     */
     async load(): Promise<void> {
         console.log("Loading user history...");
         try {
@@ -305,6 +323,11 @@ export class History {
         return run;
     }
 
+    /**
+     * The actual write, run by `write()` once earlier writes have settled:
+     * validate, write atomically (see `atomicWriteJSON`), then rebuild the
+     * lookup tables. Alerts and rethrows on failure.
+     */
     private async writeNow(force: boolean): Promise<void> {
         if (
             !force &&
@@ -410,14 +433,11 @@ export class History {
         this.data = [];
         // force:true - write()'s empty-data guard would otherwise silently skip
         // this write, and a subsequent reload() would then read the stale file
-        // straight back into memory (the vanilla plugin's "Clear History" was a
-        // no-op on disk because of this).
+        // straight back into memory.
         await this.write(true);
         await showAlert("History cleared!");
     }
 }
 
-// Explicit singleton, replacing the vanilla plugin's `const HISTORY = new
-// History()` implicit-global pattern (main.js declared it, other files read
-// it by bare name with no import). Import `{ history }` from this module.
+// The shared instance - import `{ history }` from this module.
 export const history = new History();

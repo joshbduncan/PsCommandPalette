@@ -40,6 +40,10 @@ history.onInvalidate = () => {
     console.log("History data invalidated - will reload on next access.");
 };
 
+/**
+ * (Re)load `user.json`/`history.json` if they're flagged as needing it. On
+ * failure, logs and leaves both flagged, so the next call retries.
+ */
 async function loadUserDataIfNeeded(): Promise<void> {
     try {
         if (userNeedsReload) {
