@@ -125,8 +125,8 @@ dialog#ps-command-palette {
    (no greyed-out/disabled styling). They used to be, styled to match
    Photoshop's own menu bar - but for MenuCommand, `enabled` is sourced from
    Photoshop's `menuBarInfo`, which has demonstrated real staleness/
-   inaccuracy on some Photoshop versions (same category of issue as the
-   `getMenuCommandState` FIXME in MenuCommand.ts). A row that looks
+   inaccuracy on some Photoshop versions (see `Command.enabled` in
+   Command.ts). A row that looks
    "disabled" but is actually fully clickable/runnable (or vice versa) reads
    as broken, so every row now gets identical styling regardless of
    `enabled` - selection/execution was never gated on it either (see

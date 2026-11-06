@@ -69,40 +69,10 @@ export class MenuCommand extends Command {
     }
 
     /**
-     * Get the current command title (some titles change based on current
-     * context/app state).
-     */
-    async getTitle(): Promise<string> {
-        return core.getMenuCommandTitle({ commandID: this.commandID });
-    }
-
-    /**
-     * Check the current menu command state.
-     */
-    async getState(): Promise<unknown> {
-        return core.getMenuCommandState({ commandID: this.commandID });
-    }
-
-    /**
      * Perform menu command.
      */
     override async execute(): Promise<unknown> {
         try {
-            // ensure a menu command is still available since sometimes after long
-            // periods between app operations ps will report the command is
-            // available (e.g. undo and redo)
-
-            // TODO: determine always unavailable menu command that can be ignored or patched
-            // FIXME: disabled because 27.9.1 is reporting many commands are not available
-            // const commandState: any = await this.getState();
-            // const isAvailable = commandState?.[0];
-            // if (!isAvailable) {
-            //     app.showAlert(
-            //         "Command not available\n\nPhotoshop is reporting that your selected command is not available via the API at this time."
-            //     );
-            //     return;
-            // }
-
             let result = await core.performMenuCommand({
                 commandID: this.commandID,
             });
@@ -130,10 +100,10 @@ export class MenuCommand extends Command {
                     result,
                 });
                 // Photoshop's API doesn't expose *why* a command is
-                // unavailable (confirmed - neither this result nor
-                // getMenuCommandState() carries a reason, see the FIXME
-                // above), so this can only name what failed and offer the
-                // single most common cause, not diagnose the actual one.
+                // unavailable (neither this result nor
+                // core.getMenuCommandState() carries a reason), so this can
+                // only name what failed and offer the single most common
+                // cause, not diagnose the actual one.
                 const noOpenDocument = app.documents.length === 0;
                 await showAlert(
                     `Command execution error\n\n"${this.name}" (${this.description}) did not run.` +

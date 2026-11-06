@@ -18,9 +18,9 @@ export class Command {
      * distinguish a row in renderCommandItem.ts - both were tried and
      * reverted. For `MenuCommand` this is sourced from Photoshop's
      * `menuBarInfo`, which has demonstrated real staleness/inaccuracy on
-     * some Photoshop versions (same category of issue as the
-     * `getMenuCommandState` FIXME in MenuCommand.ts), so it isn't reliable
-     * enough to act on either way - blocking interaction made actually-
+     * some Photoshop versions (`core.getMenuCommandState()` is no better -
+     * 27.9.1 reported many available commands as unavailable), so it isn't
+     * reliable enough to act on either way - blocking interaction made actually-
      * available commands unreachable, and greying the row out just made an
      * otherwise-normal command look broken. Kept on the model as plain data
      * regardless - it becomes meaningful again the moment Photoshop's own

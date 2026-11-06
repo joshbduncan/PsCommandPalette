@@ -21,8 +21,8 @@ export type CommandItemOptions = {
  * Every row renders identically regardless of `command.enabled`, and
  * selection/execution was never gated on it either. `enabled` (menu
  * commands especially, from Photoshop's own `menuBarInfo`) has demonstrated
- * real staleness/inaccuracy on some Photoshop versions (same category of
- * issue as the `getMenuCommandState` FIXME in MenuCommand.ts) - a row that
+ * real staleness/inaccuracy on some Photoshop versions (see
+ * `Command.enabled`) - a row that
  * LOOKED disabled but was actually clickable/runnable (or vice versa) read
  * as broken, so the visual distinction was dropped entirely rather than
  * left half-trustworthy. A genuinely-unavailable command still surfaces via
