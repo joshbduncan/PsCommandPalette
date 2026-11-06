@@ -5,7 +5,7 @@ import {
     isNotFoundError,
     recoverFromInterruptedWrite,
 } from "../utils/atomicWriteJSON";
-import { runMigrations } from "../utils/schemaMigration";
+import { runMigrations, type Migration } from "../utils/schemaMigration";
 import { showAlert } from "../utils/showAlert";
 import type { FSFile, FSFolder } from "../utils/uxpTypes";
 import {
@@ -68,79 +68,92 @@ export type UserFile = UserData & {
     updatedAt: number;
 };
 
+/** Pre-versioning `user.json` (see migration 0). Every field may be missing. */
+type UserFileV0 = {
+    bookmarks?: unknown;
+    disabledCommandTypes?: unknown;
+    hiddenCommands?: unknown;
+    pickers?: unknown;
+    startupCommands?: unknown;
+} | null;
+
+/** Schema v1 `user.json`: the current shape, except pickers (see migration 1). */
+type UserFileV1 = Omit<UserFile, "pickers"> & {
+    pickers?: Array<{
+        id: string;
+        name: string;
+        description?: string;
+        commands?: Array<{ id: string; name: string; description?: string }>;
+    }>;
+};
+
 /**
  * Migrations for `runMigrations`, each keyed by the version it migrates
  * FROM. Add the next one here (keyed `USER_SCHEMA_VERSION`, and bump
  * `USER_SCHEMA_VERSION` itself) rather than reshaping `UserData` in place -
  * that's what leaves existing users' `user.json` unreadable/silently reset.
  */
-const USER_MIGRATIONS: Record<number, (raw: any) => unknown> = {
+const USER_MIGRATIONS: Record<number, Migration<UserFile>> = {
     // Pre-versioning `user.json` had no `schemaVersion` field at all,
     // `disabledCommandTypes`/`hiddenCommands`/`startupCommands` flat at the
     // top level (now grouped under `settings`), and `plugin`/`app`
     // version-stamp fields that only ever duplicated `host.ts`'s live info -
     // dropped rather than migrated, since nothing ever read them back.
-    0: (raw: {
-        bookmarks?: unknown;
-        disabledCommandTypes?: unknown;
-        hiddenCommands?: unknown;
-        pickers?: unknown;
-        startupCommands?: unknown;
-    }): UserFile => ({
-        schemaVersion: 1,
-        updatedAt: Date.now(),
-        settings: {
-            disabledCommandTypes: Array.isArray(raw?.disabledCommandTypes)
-                ? raw.disabledCommandTypes
-                : [],
-            hiddenCommands: Array.isArray(raw?.hiddenCommands)
-                ? raw.hiddenCommands
-                : [],
-            startupCommands: Array.isArray(raw?.startupCommands)
-                ? raw.startupCommands
-                : [],
-        },
-        bookmarks: Array.isArray(raw?.bookmarks) ? raw.bookmarks : [],
-        pickers: Array.isArray(raw?.pickers) ? raw.pickers : [],
-    }),
+    0: (input) => {
+        const raw = input as UserFileV0;
+        return {
+            schemaVersion: 1,
+            updatedAt: Date.now(),
+            settings: {
+                disabledCommandTypes: Array.isArray(raw?.disabledCommandTypes)
+                    ? raw.disabledCommandTypes
+                    : [],
+                hiddenCommands: Array.isArray(raw?.hiddenCommands)
+                    ? raw.hiddenCommands
+                    : [],
+                startupCommands: Array.isArray(raw?.startupCommands)
+                    ? raw.startupCommands
+                    : [],
+            },
+            bookmarks: Array.isArray(raw?.bookmarks) ? raw.bookmarks : [],
+            pickers: Array.isArray(raw?.pickers) ? raw.pickers : [],
+        };
+    },
     // v1 pickers held a flat `commands: {id, name, description?}[]` list,
     // every entry implicitly running the same hard-coded demo callback
     // (see PickerCommand.ts). Recast each as a `kind: "value"` PickerItem -
     // the closest equivalent to that demo behavior - using the old entry's
     // `id` as the literal value and `name` as its display label.
-    1: (raw: {
-        pickers?: Array<{
-            id: string;
-            name: string;
-            description?: string;
-            commands?: Array<{ id: string; name: string; description?: string }>;
-        }>;
-    }): UserFile => ({
-        ...(raw as unknown as UserFile),
-        schemaVersion: 2,
-        updatedAt: Date.now(),
-        pickers: Array.isArray(raw?.pickers)
-            ? raw.pickers.map((picker) => ({
-                  id: picker.id,
-                  name: picker.name,
-                  description: picker.description,
-                  items: Array.isArray(picker.commands)
-                      ? picker.commands.map(
-                            (c): PickerItem => ({
-                                kind: "value",
-                                value: c.id,
-                                label: c.name,
-                            })
-                        )
-                      : [],
-              }))
-            : [],
-    }),
+    1: (input) => {
+        const raw = input as UserFileV1;
+        return {
+            ...raw,
+            schemaVersion: 2,
+            updatedAt: Date.now(),
+            pickers: Array.isArray(raw?.pickers)
+                ? raw.pickers.map((picker) => ({
+                      id: picker.id,
+                      name: picker.name,
+                      description: picker.description,
+                      items: Array.isArray(picker.commands)
+                          ? picker.commands.map(
+                                (c): PickerItem => ({
+                                    kind: "value",
+                                    value: c.id,
+                                    label: c.name,
+                                })
+                            )
+                          : [],
+                  }))
+                : [],
+        };
+    },
     // v2 and earlier saved `startupCommands: ["ps_plugin_about"]` as the
     // default, which hid the recent-commands fallback for good (it only
     // applies when the list is empty). Clear it only when it's exactly that
     // default, so a list the user set themselves is left alone.
-    2: (raw: UserFile): UserFile => {
+    2: (input) => {
+        const raw = input as UserFile;
         const startup = raw?.settings?.startupCommands;
         const isOldDefault =
             Array.isArray(startup) &&

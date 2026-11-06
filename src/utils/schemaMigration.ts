@@ -6,7 +6,12 @@
  * - the implicit starting point every legacy file migrates from.
  */
 
-export type Migration<T> = (raw: any) => T;
+/**
+ * One migration step. Takes `unknown` - a step only knows the shape it was
+ * written for, and should cast `raw` to that legacy shape itself (and treat
+ * every field as possibly missing) rather than trust its input.
+ */
+export type Migration<T> = (raw: unknown) => T;
 
 /**
  * Runs `migrations` (each keyed by the version it migrates FROM) starting

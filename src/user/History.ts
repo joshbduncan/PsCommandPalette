@@ -6,7 +6,7 @@ import {
     recoverFromInterruptedWrite,
 } from "../utils/atomicWriteJSON";
 import { normalizeQuery } from "../utils/queryNormalize";
-import { runMigrations } from "../utils/schemaMigration";
+import { runMigrations, type Migration } from "../utils/schemaMigration";
 import { showAlert } from "../utils/showAlert";
 import type { FSFile, FSFolder } from "../utils/uxpTypes";
 
@@ -35,10 +35,10 @@ type HistoryFile = {
  * FROM. Add the next one here (keyed `HISTORY_SCHEMA_VERSION`, and bump
  * `HISTORY_SCHEMA_VERSION` itself) rather than reshaping the file in place.
  */
-const HISTORY_MIGRATIONS: Record<number, (raw: any) => unknown> = {
+const HISTORY_MIGRATIONS: Record<number, Migration<HistoryFile>> = {
     // Pre-versioning `history.json` was a bare `HistoryEntry[]` array with
     // no wrapper (and so no `schemaVersion` field to detect) at all.
-    0: (raw: unknown): HistoryFile => ({
+    0: (raw) => ({
         schemaVersion: 1,
         updatedAt: Date.now(),
         entries: Array.isArray(raw) ? raw : [],
